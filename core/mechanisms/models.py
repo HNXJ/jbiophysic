@@ -202,3 +202,43 @@ def build_vip_cell():
     cell.length = 10.0
     cell.insert(jx.channels.HH())
     return cell
+
+# --- Architectural Enrichment Utilities ---
+
+def make_synapses_independent(net: jx.Network, param_name: str):
+    """
+    Ensures every synapse in the network has its own independent trainable parameter.
+    By default, make_trainable() might share a single parameter across all edges.
+    """
+    net.select(edges="all").make_trainable(param_name)
+    print(f"✅ Every synapse now has an independent trainable '{param_name}'.")
+
+def get_parameter_summary(net: jx.Network):
+    """
+    Returns a summary of the trainable parameters in the network.
+    Helps verify if parameters are shared or independent.
+    """
+    params = net.get_parameters()
+    
+    summary = []
+    total_elements = 0
+    
+    # Traverse the PyTree structure (list of dicts typically)
+    for i, group in enumerate(params):
+        for key, value in group.items():
+            size = jnp.size(value)
+            total_elements += size
+            summary.append({
+                "group_index": i,
+                "parameter": key,
+                "count": size,
+                "is_independent": "Yes" if size > 1 else "No (Shared)"
+            })
+            
+    print("\n--- JAXley Parameter Summary ---")
+    for s in summary:
+        print(f"[{s['group_index']}] {s['parameter']}: Count={s['count']} | Independent={s['is_independent']}")
+    print(f"Total Trainable Elements: {total_elements}")
+    print("--------------------------------\n")
+    
+    return summary, total_elements
