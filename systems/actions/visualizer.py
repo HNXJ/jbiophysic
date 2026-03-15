@@ -21,11 +21,8 @@ from systems.visualizers.calculate_firing_rates import calculate_firing_rates
 
 def generate_plotly_summary(voltages, time_axis, dt, output_path, spike_threshold=-20.0):
     """Generates a Plotly-based HTML summary (Raster + Spectrogram)."""
-    print(f"   📊 Generating Plotly Dynamics Summary: {output_path}")
-    
     num_neurons = voltages.shape[0]
     
-    # 1. Raster Data
     spike_indices = []
     spike_times = []
     for i in range(num_neurons):
@@ -34,94 +31,71 @@ def generate_plotly_summary(voltages, time_axis, dt, output_path, spike_threshol
         spike_times.extend(times.tolist())
         spike_indices.extend([i] * len(times))
 
-    # 2. Spectrogram Data
     fs = 1000.0 / dt
     mean_v = np.mean(voltages, axis=0)
     freqs, times, Sxx = signal.spectrogram(mean_v, fs=fs, nperseg=int(250/dt))
     
     fig = make_subplots(rows=2, cols=1, subplot_titles=("Raster Plot", "Mean Spectrogram"), vertical_spacing=0.1)
-    
-    # Raster Trace
-    fig.add_trace(go.Scatter(x=spike_times, y=spike_indices, mode='markers', 
-                             marker=dict(size=3, color='white'), name="Spikes"), row=1, col=1)
-    
-    # Spectrogram Trace
-    fig.add_trace(go.Heatmap(x=times*1000, y=freqs, z=np.log10(Sxx + 1e-9), 
-                             colorscale='Jet', name="Power"), row=2, col=1)
-    fig.update_yaxes(title_text="Neuron Index", row=1, col=1)
+    fig.add_trace(go.Scatter(x=spike_times, y=spike_indices, mode='markers', marker=dict(size=3, color='white'), name="Spikes"), row=1, col=1)
+    fig.add_trace(go.Heatmap(x=times*1000, y=freqs, z=np.log10(Sxx + 1e-9), colorscale='Jet', name="Power"), row=2, col=1)
     fig.update_yaxes(title_text="Frequency (Hz)", range=[1, 100], row=2, col=1)
-    fig.update_xaxes(title_text="Time (ms)", row=2, col=1)
-    
-    fig.update_layout(height=1000, width=1000, template="plotly_dark", title_text="Network Dynamics Summary")
+    fig.update_layout(height=1000, width=1000, template="plotly_dark")
     fig.write_html(output_path)
 
-def run_visualizer_pipeline(
+def plot_training_history(log: Dict, output_path: str):
+    """Generates an optimization trajectory report."""
+    epochs = range(len(log["loss"]))
+    fig = make_subplots(rows=4, cols=1, subplot_titles=("Loss Trajectory", "Energy Consumption", "Global Firing Rate", "Parameter Change"), vertical_spacing=0.08)
+    
+    fig.add_trace(go.Scatter(x=list(epochs), y=log["loss"], name="Loss", line=dict(color='gold')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=list(epochs), y=log["energy"], name="Energy", line=dict(color='magenta')), row=2, col=1)
+    fig.add_trace(go.Scatter(x=list(epochs), y=log["firing_rate"], name="Global FR", line=dict(color='cyan')), row=3, col=1)
+    fig.add_trace(go.Scatter(x=list(epochs), y=log["param_change"], name="dParam/P", line=dict(color='white')), row=4, col=1)
+    
+    fig.update_layout(height=1200, width=1000, template="plotly_dark", title_text="Optimization History")
+    fig.write_html(output_path)
+
+def run_standardized_visualizer(
     net: jx.Network,
-    params: Any,
+    params_list: List[Any],
+    labels: List[str],
     meta: List[Dict],
-    output_dir: str = "/Users/hamednejat/workspace/Computational/mscz/figures",
+    training_log: Optional[Dict] = None,
+    name_label: str = "integrated_run",
     t_max: float = 1500.0,
-    dt: float = 0.1,
-    save_svg: bool = False
+    dt: float = 0.1
 ):
-    """Generates the full 8-10 figure biophysical report, saving figures as HTML."""
-    os.makedirs(output_dir, exist_ok=True)
-    print(f"🎬 Visualizer Pipeline: Generating reports in {output_dir}...")
+    """Standardized Visualizer Pipeline: Supports multiple snapshots and organized folders."""
+    base_dir = f"/Users/hamednejat/workspace/Computational/mscz/figures/{name_label}"
+    os.makedirs(base_dir, exist_ok=True)
+    print(f"🎬 Standardized Visualizer: Generating snapshots in {base_dir}...")
 
-    # 1. Simulation
-    net.cell('all').branch(0).loc(0.0).record('v')
-    print(f"   🚀 Simulating {t_max}ms for analysis...")
-    voltages = jx.integrate(net, params=params, delta_t=dt, t_max=t_max)
-    time_axis = np.arange(voltages.shape[1]) * dt
+    # 1. Plot Training History if log is provided
+    if training_log:
+        history_path = os.path.join(base_dir, "optimization_history.html")
+        plot_training_history(training_log, history_path)
 
-    # 2. Standard Dynamics Report (Plotly HTML)
-    summary_html = os.path.join(output_dir, "simulation_summary.html")
-    generate_plotly_summary(voltages, time_axis, dt, summary_html)
+    # 2. Iterate through Parameter Snapshots
+    for params, label in zip(params_list, labels):
+        snapshot_dir = os.path.join(base_dir, label)
+        os.makedirs(snapshot_dir, exist_ok=True)
+        print(f"   🖼️ Snapshot {label}...")
 
-    # 2b. Optional SVG (Matplotlib)
-    if save_svg:
-        print("   📊 Generating Static SVG Summary...")
-        summary_svg = os.path.join(output_dir, "simulation_summary.svg")
-        plot_full_simulation_summary(voltages, time_axis, dt, save=True, savename=summary_svg)
+        # Simulation
+        voltages = jx.integrate(net, params=params, delta_t=dt, t_max=t_max)
+        time_axis = np.arange(voltages.shape[1]) * dt
 
-    # 3. 3D Architecture (Figure 5)
-    print("   🌐 Generating 3D Architecture (HTML)...")
-    report_3d = os.path.join(output_dir, "network_3d.html")
-    plot_network_3d(net, meta, report_3d)
-
-    # 4. Auxiliary Biophysics (Figures 6-10)
-    print("   📈 Generating Biophysical Analysis Suite (HTML)...")
-    fig_extra = make_subplots(
-        rows=5, cols=1,
-        subplot_titles=("Population Average Vm", "Biophysical LFP Proxy", "Firing Rate Distribution", "gAMPA Weights", "gGABAa Weights"),
-        vertical_spacing=0.05
-    )
-
-    # 4.1 Avg Vm
-    fig_extra.add_trace(go.Scatter(x=time_axis, y=np.mean(voltages, axis=0), name="Avg Vm", line=dict(color='gold')), row=1, col=1)
-
-    # 4.2 LFP
-    lfp = estimate_lfp(voltages, meta, dt)
-    fig_extra.add_trace(go.Scatter(x=time_axis, y=lfp, name="LFP", line=dict(color='magenta')), row=2, col=1)
-
-    # 4.3 FR Dist
-    frs = calculate_firing_rates(voltages, dt).flatten()
-    fig_extra.add_trace(go.Histogram(x=frs, name="FRs", marker_color='cyan'), row=3, col=1)
-
-    # 4.4/4.5 Weight Dists
-    # Handle list of dicts or nested dicts safely
-    try:
-        g_ampa = params[0].get('gAMPA', np.zeros(1))
-        g_gaba = params[1].get('gGABAa', np.zeros(1))
-    except (KeyError, IndexError):
-        g_ampa, g_gaba = np.zeros(1), np.zeros(1)
+        # Interactive Reports
+        generate_plotly_summary(voltages, time_axis, dt, os.path.join(snapshot_dir, "dynamics.html"))
+        plot_network_3d(net, meta, os.path.join(snapshot_dir, "architecture.html"))
         
-    fig_extra.add_trace(go.Histogram(x=g_ampa, name="gAMPA", marker_color='orange'), row=4, col=1)
-    fig_extra.add_trace(go.Histogram(x=g_gaba, name="gGABAa", marker_color='blue'), row=5, col=1)
+        # Biophysical Suite
+        fig_suite = make_subplots(rows=3, cols=1, subplot_titles=("Population Avg Vm", "LFP Proxy", "FR Distribution"))
+        fig_suite.add_trace(go.Scatter(x=time_axis, y=np.mean(voltages, axis=0), name="Avg Vm"), row=1, col=1)
+        fig_suite.add_trace(go.Scatter(x=time_axis, y=estimate_lfp(voltages, meta, dt), name="LFP"), row=2, col=1)
+        frs = calculate_firing_rates(voltages, dt).flatten()
+        fig_suite.add_trace(go.Histogram(x=frs, name="FRs"), row=3, col=1)
+        fig_suite.update_layout(height=1000, width=1000, template="plotly_dark")
+        fig_suite.write_html(os.path.join(snapshot_dir, "biophysical_suite.html"))
 
-    fig_extra.update_layout(height=1500, width=1000, title_text="Biophysical Analysis Suite", template="plotly_dark")
-    extra_path = os.path.join(output_dir, "biophysical_suite.html")
-    fig_extra.write_html(extra_path)
-
-    print(f"✅ Visualizer Pipeline Complete. All figures saved in {output_dir}")
-    return voltages
+    print(f"✅ Visualization Pipeline Complete.")

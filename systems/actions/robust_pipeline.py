@@ -90,12 +90,12 @@ def run_plausibility_sweep(net, dt=0.1, sim_time=1000.0):
 
 # --- Step 3: Training Config & Loss ---
 
-def get_robust_loss_fn(network: jx.Network, dt: float, target_fr: float = 15.0):
+def get_robust_loss_fn(network: jx.Network, dt: float, target_fr: float = 15.0, t_max: float = 1000.0):
     """Loss function with metabolic cost and stability hardwires."""
     def loss_fn(params: Dict[str, Any]):
         # Record only somas for efficiency
         network.cell('all').branch(0).loc(0.0).record('v')
-        voltages = jx.integrate(network, t_max=1000, delta_t=dt, params=params)
+        voltages = jx.integrate(network, t_max=t_max, delta_t=dt, params=params)
         
         # Step 5: Voltage hardwire
         voltages = jnp.clip(voltages, -100.0, 100.0)
@@ -158,7 +158,8 @@ def execute_robust_training(
     epochs: int = 200, 
     lr: float = 1e-3, 
     target_fr: float = 15.0,
-    force_x64: bool = False
+    force_x64: bool = False,
+    t_max: float = 1000.0
 ):
     """Main orchestration of the 7-step pipeline."""
     if force_x64:
@@ -178,7 +179,7 @@ def execute_robust_training(
         # return None
     
     # Step 3
-    loss_fn = get_robust_loss_fn(net, dt, target_fr)
+    loss_fn = get_robust_loss_fn(net, dt, target_fr, t_max=t_max)
     
     # Optimizer
     inner_opt = optax.adam(learning_rate=lr)

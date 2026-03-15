@@ -19,20 +19,18 @@ def get_cylinder_positions(n, z_mean, z_std, radius=100.0):
     z = np.random.normal(z_mean, z_std, n)
     return jnp.stack([r * jnp.cos(theta), r * jnp.sin(theta), z], axis=-1)
 
-def build_biophysical_column(
-    name: str, 
+def build_biophysical_cells(
     num_e: int = 36, 
     num_pv: int = 8, 
     num_sst: int = 6, 
     num_vip: int = 4, 
     seed: Optional[int] = None
-) -> Tuple[jx.Network, Dict[str, Any]]:
-    """Builds a single column with realistic 3D positions and biophysical sizes."""
+) -> Tuple[List[jx.Cell], Dict[str, Any]]:
+    """Builds raw cell objects for a single column with realistic 3D positions."""
     if seed is None:
         seed = int(np.random.randint(0, 2**31 - 1))
     np.random.seed(seed)
     
-    # Morphology
     comp_soma = jx.Compartment()
     comp_dend = jx.Compartment()
     
@@ -64,41 +62,130 @@ def build_biophysical_column(
         cell.insert(jx.channels.HH()); cell.insert(Inoise(initial_amp_noise=0.1, initial_tau=10.0))
 
     all_cells = e_cells + pv_cells + sst_cells + vip_cells
-    net = jx.Network(all_cells)
-    
-    # Internal Connectivity
-    l_total = len(all_cells)
-    l_e_indices = range(num_e)
-    l_pv_indices = range(num_e, num_e + num_pv)
-    l_sst_indices = range(num_e + num_pv, num_e + num_pv + num_sst)
-    l_vip_indices = range(num_e + num_pv + num_sst, l_total)
-
-    jx.connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(l_e_indices).branch(0).loc(0.0), GradedAMPA(g=0.5, tauD_AMPA=2.0))
-    jx.connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(l_pv_indices).branch(0).loc(0.0), GradedAMPA(g=0.5, tauD_AMPA=2.0))
-    jx.connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(l_sst_indices).branch(0).loc(0.0), GradedAMPA(g=0.5, tauD_AMPA=2.0))
-    jx.connect(net.cell(l_pv_indices).branch(0).loc(0.0), net.cell(l_e_indices).branch(0).loc(0.0), GradedGABAa(g=8.0, tauD_GABAa=5.0))
-    jx.connect(net.cell(l_sst_indices).branch(0).loc(0.0), net.cell(l_e_indices).branch(1).loc(1.0), GradedGABAb(g=1.0, tauD_GABAb=50.0))
-    jx.connect(net.cell(l_vip_indices).branch(0).loc(0.0), net.cell(l_sst_indices).branch(0).loc(0.0), GradedGABAa(g=2.0, tauD_GABAa=5.0))
-
-    counts = {"E": num_e, "PV": num_pv, "SST": num_sst, "VIP": num_vip, "total": l_total}
+    counts = {"E": num_e, "PV": num_pv, "SST": num_sst, "VIP": num_vip, "total": len(all_cells)}
     meta = [{'type': 'Pyr', 'layer': 'L2/3', 'xyz': c.xyz} for c in e_cells] + \
            [{'type': 'PV', 'layer': 'L4', 'xyz': c.xyz} for c in pv_cells] + \
            [{'type': 'SST', 'layer': 'L5', 'xyz': c.xyz} for c in sst_cells] + \
            [{'type': 'VIP', 'layer': 'L1', 'xyz': c.xyz} for c in vip_cells]
 
-    return net, {"counts": counts, "meta": meta}
+    return all_cells, {"counts": counts, "meta": meta}
+
+def build_biophysical_column(
+    name: str, 
+    num_e: int = 36, 
+    num_pv: int = 8, 
+    num_sst: int = 6, 
+    num_vip: int = 4, 
+    seed: Optional[int] = None
+) -> Tuple[jx.Network, Dict[str, Any]]:
+    """Builds a single column with realistic 3D positions and biophysical sizes."""
+    cells, info = build_biophysical_cells(num_e, num_pv, num_sst, num_vip, seed)
+    net = jx.Network(cells)
+    apply_column_internal_connectivity(net, 0, num_e, num_pv, num_sst, num_vip)
+    return net, info
+
+def apply_column_internal_connectivity(net, offset, num_e, num_pv, num_sst, num_vip):
+    """Applies internal connections to a specific column within a merged network."""
+    from jaxley.connect import sparse_connect
+    total = num_e + num_pv + num_sst + num_vip
+    e_indices = [offset + i for i in range(num_e)]
+    pv_indices = [offset + num_e + i for i in range(num_pv)]
+    sst_indices = [offset + num_e + num_pv + i for i in range(num_sst)]
+    vip_indices = [offset + num_e + num_pv + num_sst + i for i in range(num_vip)]
+
+    # Internal E->E (minus self)
+    for i in e_indices:
+        others = [j for j in e_indices if j != i]
+        if others:
+            sparse_connect(net.cell(i).branch(0).loc(0.0), net.cell(others).branch(0).loc(0.0), GradedAMPA(g=0.5, tauD_AMPA=2.0), p=1.0)
+
+    # E -> Interneurons
+    if pv_indices: sparse_connect(net.cell(e_indices).branch(0).loc(0.0), net.cell(pv_indices).branch(0).loc(0.0), GradedAMPA(g=0.5), p=1.0)
+    if sst_indices: sparse_connect(net.cell(e_indices).branch(0).loc(0.0), net.cell(sst_indices).branch(0).loc(0.0), GradedAMPA(g=0.5), p=1.0)
+    
+    # Internal Inhibitory
+    if pv_indices: sparse_connect(net.cell(pv_indices).branch(0).loc(0.0), net.cell(e_indices).branch(0).loc(0.0), GradedGABAa(g=8.0), p=1.0)
+    if sst_indices: sparse_connect(net.cell(sst_indices).branch(0).loc(0.0), net.cell(e_indices).branch(1).loc(1.0), GradedGABAb(g=1.0), p=1.0)
+    if vip_indices and sst_indices: sparse_connect(net.cell(vip_indices).branch(0).loc(0.0), net.cell(sst_indices).branch(0).loc(0.0), GradedGABAa(g=2.0), p=1.0)
+
+def build_three_area_mscz(
+    num_e: int = 8, 
+    num_pv: int = 2, 
+    num_sst: int = 0, 
+    num_vip: int = 0, 
+    seed: Optional[int] = 42
+) -> Tuple[jx.Network, Dict[str, Any]]:
+    """Builds three hierarchical columns (Low -> Mid -> High)."""
+    # Build raw cells
+    cells_l, info_l = build_biophysical_cells(num_e=num_e, num_pv=num_pv, num_sst=num_sst, num_vip=num_vip, seed=seed)
+    cells_m, info_m = build_biophysical_cells(num_e=num_e, num_pv=num_pv, num_sst=num_sst, num_vip=num_vip, seed=seed+1)
+    cells_h, info_h = build_biophysical_cells(num_e=num_e, num_pv=num_pv, num_sst=num_sst, num_vip=num_vip, seed=seed+2)
+    
+    # Initialize single network
+    all_cells = cells_l + cells_m + cells_h
+    net = jx.Network(all_cells)
+    
+    # Offsets and indices
+    l_total = info_l["counts"]["total"]
+    m_total = info_m["counts"]["total"]
+    h_total = info_h["counts"]["total"]
+    
+    l_offset = 0
+    m_offset = l_total
+    h_offset = l_total + m_total
+    
+    # Indices for FF/FB
+    l_e = range(l_offset, l_offset + num_e)
+    m_e = range(m_offset, m_offset + num_e)
+    m_pv = range(m_offset + num_e, m_offset + num_e + num_pv)
+    h_e = range(h_offset, h_offset + num_e)
+    h_pv = range(h_offset + num_e, h_offset + num_e + num_pv)
+
+    # 1. Apply Internal Connectivity
+    apply_column_internal_connectivity(net, l_offset, num_e, num_pv, num_sst, num_vip)
+    apply_column_internal_connectivity(net, m_offset, num_e, num_pv, num_sst, num_vip)
+    apply_column_internal_connectivity(net, h_offset, num_e, num_pv, num_sst, num_vip)
+
+    # 2. Hierarchical Connections
+    from jaxley.connect import sparse_connect
+    # FF: Low -> Mid
+    sparse_connect(net.cell(l_e).branch(0).loc(0.0), net.cell(m_e).branch(0).loc(0.0), GradedAMPA(g=0.2), p=1.0)
+    sparse_connect(net.cell(l_e).branch(0).loc(0.0), net.cell(m_pv).branch(0).loc(0.0), GradedAMPA(g=0.2), p=1.0)
+    
+    # FF: Mid -> High
+    sparse_connect(net.cell(m_e).branch(0).loc(0.0), net.cell(h_e).branch(0).loc(0.0), GradedAMPA(g=0.2), p=1.0)
+    sparse_connect(net.cell(m_e).branch(0).loc(0.0), net.cell(h_pv).branch(0).loc(0.0), GradedAMPA(g=0.2), p=1.0)
+    
+    # FB: High -> Mid
+    sparse_connect(net.cell(h_e).branch(0).loc(0.0), net.cell(m_e).branch(1).loc(1.0), GradedAMPA(g=0.1), p=1.0)
+    
+    # FB: Mid -> Low
+    sparse_connect(net.cell(m_e).branch(0).loc(0.0), net.cell(l_e).branch(1).loc(1.0), GradedAMPA(g=0.1), p=1.0)
+
+    # Enforce independent synapses
+    make_synapses_independent(net, "gAMPA")
+    make_synapses_independent(net, "gGABAa")
+    if num_sst > 0: make_synapses_independent(net, "gGABAb")
+
+    info = {
+        "l_info": info_l, "m_info": info_m, "h_info": info_h, 
+        "total_cells": len(all_cells),
+        "offsets": {"Low": l_offset, "Mid": m_offset, "High": h_offset},
+        "meta": info_l["meta"] + info_m["meta"] + info_h["meta"]
+    }
+    return net, info
 
 def build_hierarchical_mscz(
     num_e: int = 36, 
     seed: Optional[int] = 42
 ) -> Tuple[jx.Network, Dict[str, Any]]:
     """Builds two hierarchical columns (Lower -> Higher)."""
-    # Build columns
-    net_l, info_l = build_biophysical_column("Lower", num_e=num_e, seed=seed)
-    net_h, info_h = build_biophysical_column("Higher", num_e=num_e, seed=seed)
+    # Build raw cells
+    cells_l, info_l = build_biophysical_cells(num_e=num_e, num_pv=8, num_sst=6, num_vip=4, seed=seed)
+    cells_h, info_h = build_biophysical_cells(num_e=num_e, num_pv=8, num_sst=6, num_vip=4, seed=seed+1)
     
-    # Merge cells manually (Network.merge not existing)
-    all_cells = list(net_l.cells) + list(net_h.cells)
+    # Initialize single network
+    all_cells = cells_l + cells_h
     net = jx.Network(all_cells)
     
     l_total = info_l["counts"]["total"]
@@ -107,24 +194,24 @@ def build_hierarchical_mscz(
     h_e_indices = range(h_offset, h_offset + info_h["counts"]["E"])
     h_pv_indices = range(h_offset + info_h["counts"]["E"], h_offset + info_h["counts"]["E"] + info_h["counts"]["PV"])
 
-    # Re-apply internal connections for both areas (offset Higher)
-    # Area 1
-    jx.connect(net.cell(range(info_l["counts"]["E"])).branch(0).loc(0.0), net.cell(range(info_l["counts"]["E"])).branch(0).loc(0.0), GradedAMPA(g=0.5))
-    # ... (Simplified for brevity, usually calls internal connect logic)
+    # Re-apply internal connections
+    apply_column_internal_connectivity(net, 0, info_l["counts"]["E"], 8, 6, 4)
+    apply_column_internal_connectivity(net, h_offset, info_h["counts"]["E"], 8, 6, 4)
     
     # Hierarchical Connections
+    from jaxley.connect import sparse_connect
     # FF: Lower E -> Higher E & PV
-    jx.connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(h_e_indices).branch(0).loc(0.0), GradedAMPA(g=0.2))
-    jx.connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(h_pv_indices).branch(0).loc(0.0), GradedAMPA(g=0.2))
+    sparse_connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(h_e_indices).branch(0).loc(0.0), GradedAMPA(g=0.2), p=1.0)
+    sparse_connect(net.cell(l_e_indices).branch(0).loc(0.0), net.cell(h_pv_indices).branch(0).loc(0.0), GradedAMPA(g=0.2), p=1.0)
     # FB: Higher E -> Lower E Dend
-    jx.connect(net.cell(h_e_indices).branch(0).loc(0.0), net.cell(l_e_indices).branch(1).loc(1.0), GradedAMPA(g=0.1))
+    sparse_connect(net.cell(h_e_indices).branch(0).loc(0.0), net.cell(l_e_indices).branch(1).loc(1.0), GradedAMPA(g=0.1), p=1.0)
 
     # Enforce independent synapses
     make_synapses_independent(net, "gAMPA")
     make_synapses_independent(net, "gGABAa")
     make_synapses_independent(net, "gGABAb")
 
-    info = {"l_info": info_l, "h_info": info_h, "total_cells": len(all_cells)}
+    info = {"l_info": info_l, "h_info": info_h, "total_cells": len(all_cells), "meta": info_l["meta"] + info_h["meta"]}
     return net, info
 
 def run_pre_tuning_sweep(net: jx.Network, target_range: Tuple[float, float] = (1.0, 100.0)):
@@ -132,10 +219,6 @@ def run_pre_tuning_sweep(net: jx.Network, target_range: Tuple[float, float] = (1
     print("🌊 Running Constructor Pre-tuning Sweep...")
     dt = 0.1
     net.cell('all').branch(0).loc(0.0).record('v')
-    
-    for scale in [0.1, 1.0, 10.0]:
-        # Temporary scaling logic here
-        pass
     
     # Final check
     voltages = jx.integrate(net, t_max=1000.0, delta_t=dt)
