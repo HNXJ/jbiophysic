@@ -1,0 +1,447 @@
+🚀 Initializing 100-neuron Laminar Column Optimization...
+Number of newly added trainable parameters: 1. Total number of trainable parameters: 1
+Number of newly added trainable parameters: 1. Total number of trainable parameters: 2
+Starting 500-trial optimization loop...
+Added 100 recordings. See `.recordings` for details.
+  Trial 0 | Loss: 32.4576 | Alpha: 0.4653 | Kappa: 0.6767 | AFR: 0.65
+  Trial 10 | Loss: 25.9504 | Alpha: 0.2526 | Kappa: 0.3557 | AFR: 0.66
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 20 | Loss: 19.2338 | Alpha: 0.1000 | Kappa: 0.3938 | AFR: 1.63
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 30 | Loss: 11.6528 | Alpha: 0.1000 | Kappa: 0.3806 | AFR: 2.99
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 40 | Loss: 8.8978 | Alpha: 0.1000 | Kappa: 0.3293 | AFR: 3.48
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 50 | Loss: 10.8563 | Alpha: 0.1000 | Kappa: 0.3285 | AFR: 2.93
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 60 | Loss: 10.6487 | Alpha: 0.1000 | Kappa: 0.2926 | AFR: 2.81
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 70 | Loss: 7.7321 | Alpha: 0.1000 | Kappa: 0.3121 | AFR: 3.78
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 80 | Loss: 6.9263 | Alpha: 0.1000 | Kappa: 0.3127 | AFR: 4.18
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 90 | Loss: 6.0229 | Alpha: 0.1000 | Kappa: 0.2966 | AFR: 4.70
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 100 | Loss: 4.1016 | Alpha: 0.1000 | Kappa: 0.2051 | AFR: 9.14
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 110 | Loss: 4.6749 | Alpha: 0.1000 | Kappa: 0.2337 | AFR: 7.99
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 120 | Loss: 10.8409 | Alpha: 0.1000 | Kappa: 0.1532 | AFR: 12.79
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 130 | Loss: 4.3085 | Alpha: 0.1000 | Kappa: 0.2154 | AFR: 8.28
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 140 | Loss: 3.7882 | Alpha: 0.1000 | Kappa: 0.1894 | AFR: 9.50
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 150 | Loss: 4.8346 | Alpha: 0.1000 | Kappa: 0.2417 | AFR: 7.41
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 160 | Loss: 3.7882 | Alpha: 0.1000 | Kappa: 0.1894 | AFR: 9.50
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 170 | Loss: 3.7882 | Alpha: 0.1000 | Kappa: 0.1894 | AFR: 9.50
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 180 | Loss: 1390468.3750 | Alpha: 0.1000 | Kappa: 0.0252 | AFR: 1189.18
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 190 | Loss: 9000.4189 | Alpha: 0.1000 | Kappa: 0.0096 | AFR: 104.87
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 200 | Loss: 4.3237 | Alpha: 0.1000 | Kappa: 0.2162 | AFR: 9.04
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 210 | Loss: 3.3882 | Alpha: 0.1000 | Kappa: 0.1694 | AFR: 9.80
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 220 | Loss: 8.1586 | Alpha: 0.1000 | Kappa: 0.2998 | AFR: 3.53
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 230 | Loss: 7216.7622 | Alpha: 0.1000 | Kappa: 0.0087 | AFR: 94.95
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 240 | Loss: 3.8500 | Alpha: 0.1000 | Kappa: 0.1894 | AFR: 10.25
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 250 | Loss: 45.0152 | Alpha: 0.1000 | Kappa: 0.1393 | AFR: 16.50
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 260 | Loss: 3.3882 | Alpha: 0.1000 | Kappa: 0.1694 | AFR: 9.80
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 270 | Loss: 7041.1763 | Alpha: 0.1000 | Kappa: 0.0092 | AFR: 93.91
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 280 | Loss: 28.0940 | Alpha: 0.1000 | Kappa: 0.4411 | AFR: 0.61
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 290 | Loss: 3.3882 | Alpha: 0.1000 | Kappa: 0.1694 | AFR: 9.80
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 300 | Loss: 5.3530 | Alpha: 0.1000 | Kappa: 0.2677 | AFR: 6.71
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 310 | Loss: 12.4834 | Alpha: 0.1000 | Kappa: 0.1625 | AFR: 13.04
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 320 | Loss: 3.3882 | Alpha: 0.1000 | Kappa: 0.1694 | AFR: 9.80
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 330 | Loss: 5.3113 | Alpha: 0.1000 | Kappa: 0.2656 | AFR: 8.04
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 340 | Loss: 3.3882 | Alpha: 0.1000 | Kappa: 0.1694 | AFR: 9.80
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 350 | Loss: 5.4421 | Alpha: 0.1000 | Kappa: 0.2721 | AFR: 6.87
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 360 | Loss: 4.6465 | Alpha: 0.1000 | Kappa: 0.2323 | AFR: 8.18
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 370 | Loss: 4.3258 | Alpha: 0.1000 | Kappa: 0.2163 | AFR: 9.90
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 380 | Loss: 5.7452 | Alpha: 0.1000 | Kappa: 0.2873 | AFR: 6.55
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 390 | Loss: 7.3243 | Alpha: 0.1000 | Kappa: 0.3162 | AFR: 4.00
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 400 | Loss: 5.7585 | Alpha: 0.1000 | Kappa: 0.2879 | AFR: 5.41
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 410 | Loss: 4025.2102 | Alpha: 0.1000 | Kappa: 0.0121 | AFR: 73.44
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 420 | Loss: 12.9719 | Alpha: 0.1000 | Kappa: 0.3863 | AFR: 2.71
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 430 | Loss: 4.9876 | Alpha: 0.1000 | Kappa: 0.2494 | AFR: 7.29
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 440 | Loss: 4.2985 | Alpha: 0.1000 | Kappa: 0.2149 | AFR: 9.15
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 450 | Loss: 4.6547 | Alpha: 0.1000 | Kappa: 0.2327 | AFR: 8.42
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 460 | Loss: 5.2978 | Alpha: 0.1000 | Kappa: 0.2649 | AFR: 7.42
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 470 | Loss: 4.8932 | Alpha: 0.1000 | Kappa: 0.2447 | AFR: 8.06
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 480 | Loss: 3.3882 | Alpha: 0.1000 | Kappa: 0.1694 | AFR: 9.80
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+  Trial 490 | Loss: 5.3120 | Alpha: 0.1000 | Kappa: 0.2656 | AFR: 7.14
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.
+✅ Optimization complete. Saving parameters...
+⚠️ WARNING: AGSDR Alpha locked at floor (0.10000000149011612). Supervised variance is too low.

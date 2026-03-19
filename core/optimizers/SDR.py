@@ -2,6 +2,21 @@ import jax
 import jax.numpy as jnp
 import jaxley as jx
 import optax
+import numpy as np
+from typing import Callable, Any
+from flax.struct import dataclass
+
+class ClampTransform:
+    def __init__(self, lower, upper):
+        self.lower = lower
+        self.upper = upper
+    def forward(self, x):
+        return jnp.clip(x, self.lower, self.upper)
+
+@dataclass
+class SDRState:
+    momentum_accum: Any
+    step_count: int
 
 def SDR(
     learning_rate: float = 1e-2,
