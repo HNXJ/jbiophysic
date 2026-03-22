@@ -25,7 +25,7 @@ def generate_dashboard(report, title="Jbiophysics — Simulation Dashboard") -> 
     # Panel 2: Spectrogram
     try:
         from scipy import signal as sp_signal
-        from scipy.ndimage import gaussian_filter1d
+        from scipy.ndimage import gaussian_filter1d, zoom
         ds = max(1, int(1.0/dt)); ds_traces = traces_data[:, ::ds]; dt_ds = dt*ds; fs = 1000.0/dt_ds
         spike_mat = np.zeros_like(ds_traces)
         for i in range(ds_traces.shape[0]):
@@ -39,7 +39,15 @@ def generate_dashboard(report, title="Jbiophysics — Simulation Dashboard") -> 
         if np.any(fm) and Sxx.size > 0:
             Sxx_f = Sxx[fm, :]
             Sxx_n = np.sqrt((Sxx_f - Sxx_f.min()) / (Sxx_f.max() - Sxx_f.min() + 1e-12))
-            fig.add_trace(go.Heatmap(z=Sxx_n, x=times*1000, y=freqs[fm], colorscale="Jet", showscale=False), row=2, col=1)
+            # Bicubic 4× upsample for smooth heatmap
+            if Sxx_n.shape[0] > 2 and Sxx_n.shape[1] > 2:
+                Sxx_n = zoom(Sxx_n, (4, 4), order=3)
+                freqs_up = np.linspace(freqs[fm][0], freqs[fm][-1], Sxx_n.shape[0])
+                times_up = np.linspace(times[0], times[-1], Sxx_n.shape[1])
+            else:
+                freqs_up = freqs[fm]; times_up = times
+            fig.add_trace(go.Heatmap(z=Sxx_n, x=times_up*1000, y=freqs_up,
+                colorscale="Jet", showscale=False, zsmooth="best"), row=2, col=1)
     except Exception: pass
     fig.update_yaxes(title_text="Freq (Hz)", row=2, col=1)
     # Panel 3: PSD
