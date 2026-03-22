@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jbiophysics"
+version = "0.2.0"
+description = "Modular biophysical neural network modeling with Jaxley, JAX, and GSDR optimization"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = [
+    "jax>=0.4.20",
+    "jaxlib>=0.4.20",
+    "jaxley>=0.3.0",
+    "optax>=0.1.7",
+    "flax>=0.7.0",
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "plotly>=5.18",
+    "kaleido>=0.2.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ipython"]
+
+[tool.setuptools.packages.find]
+include = ["jbiophysics*"]
