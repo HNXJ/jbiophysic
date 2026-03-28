@@ -16,10 +16,15 @@ Hierarchical, JAX-differentiable biophysical modeling and optimization.
     1. **Isolated Stage**: Calibration of local E/I balance and population synchrony (**Fleiss Kappa < 0.1**).
     2. **Joint Stage**: Calibration of inter-areal FF/FB motifs and spectral matching (**SSS via log-PSD MSE**).
 
-## Specialized Knowledge Base
-- **Core Modeling (`coding-jbiophysics-core-modeling.md`)**: Implementation of differentiable circuits and AGSDR dynamics.
-- **Omission Paradigm (`science-jbiophysics-omission-paradigm.md`)**: Theoretical framework and hierarchical calibration protocols for predictive coding.
-- **API Dashboard (`analysis-jbiophysics-api-dashboard.md`)**: FastAPI backend and real-time visualization suite (Port 7701).
+## Folder Structure
+- **core/**: Biophysical primitives (mechanisms, neurons, optimizers).
+- **systems/**: Network architectures and high-level simulation pipelines.
+- **functions/**: Reusable utility functions for signal processing and analysis.
+- **scripts/**: Execution scripts for trials and batch processing.
+- **plans/**: Markdown research plans for systematic experimentation.
+- **skills/**: Expert agent skills for automated development and analysis.
+- **results/**: Generated data, reports, and visualization artifacts.
+
 ## Global Workspace Rules
 - **Folder Documentation**: Every folder under the workspace must contain a `README.md`.
 - **Content Requirement**: Each `README.md` must have a minimum of 10 words for every file present in that folder's root (excluding the `README.md` itself).
@@ -27,7 +32,6 @@ Hierarchical, JAX-differentiable biophysical modeling and optimization.
 ## Quick Start
 ```python
 import jbiophysics as jbp
-...
 net = (jbp.NetBuilder(seed=42)
     .add_population("E", n=80, cell_type="pyr", area="V1")
     .add_population("I", n=20, cell_type="pv", area="V1")
