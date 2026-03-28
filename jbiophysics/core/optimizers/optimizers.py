@@ -353,37 +353,43 @@ def AGSDR(
 
 # --- Analysis Tools ---
 
-def compute_kappa(spike_matrix: jnp.ndarray, fs: float = 10000.0, bin_size_ms: float = 5.0) -> float:
+def compute_kappa(spike_matrix: jnp.ndarray, fs: float = 10000.0, bin_size_ms: float = 5.0) -> jnp.ndarray:
     """
     Computes Fleiss' Kappa for a population of neurons to quantify synchrony.
-    Targeting [-0.1, 0.1] for physiological asynchrony.
+    JAX-native implementation. Targeting [-0.1, 0.1] for physiological asynchrony.
     """
     # 1. Binning
     bin_size_samples = int(bin_size_ms * fs / 1000.0)
     num_bins = spike_matrix.shape[1] // bin_size_samples
-    if num_bins == 0: return 0.0
     
-    # Reshape and sum to get counts per bin
-    # shape: (cells, bins, samples_per_bin)
-    binned = spike_matrix[:, :num_bins * bin_size_samples].reshape(
-        spike_matrix.shape[0], num_bins, bin_size_samples
-    ).sum(axis=2)
-    binned = (binned > 0).astype(float) # Binary: fired or not in bin
+    # Handle zero bins case
+    def zero_bins_kappa(): return jnp.array(0.0)
     
-    # 2. Fleiss' Kappa Math
-    N, k = binned.shape # N cells, k bins
-    if N < 2: return 0.0
-    
-    # Degree of agreement for each bin
-    # n_ij is count of cells spiking in bin j
-    n_spiking = binned.sum(axis=0)
-    P_i = (n_spiking**2 - n_spiking + (N - n_spiking)**2 - (N - n_spiking)) / (N * (N - 1))
-    P_bar = P_i.mean()
-    
-    # Expected agreement
-    P_mean = binned.mean()
-    if P_mean == 0 or P_mean == 1: return 0.0
-    P_e = P_mean**2 + (1 - P_mean)**2
-    
-    kappa = (P_bar - P_e) / (1 - P_e + 1e-12)
-    return float(kappa)
+    def calculate_kappa_logic():
+        # Reshape and sum to get counts per bin
+        # shape: (cells, bins, samples_per_bin)
+        binned = spike_matrix[:, :num_bins * bin_size_samples].reshape(
+            spike_matrix.shape[0], num_bins, bin_size_samples
+        ).sum(axis=2)
+        binned = (binned > 0).astype(jnp.float32) # Binary: fired or not in bin
+        
+        # 2. Fleiss' Kappa Math
+        N, k = binned.shape # N cells, k bins
+        
+        # Degree of agreement for each bin
+        # n_ij is count of cells spiking in bin j
+        n_spiking = binned.sum(axis=0)
+        P_i = (n_spiking**2 - n_spiking + (N - n_spiking)**2 - (N - n_spiking)) / (N * (N - 1) + 1e-12)
+        P_bar = P_i.mean()
+        
+        # Expected agreement
+        P_mean = binned.mean()
+        P_e = P_mean**2 + (1 - P_mean)**2
+        
+        # Edge case: all spikes or no spikes
+        is_edge = (P_mean <= 0.0) | (P_mean >= 1.0) | (N < 2)
+        
+        kappa = (P_bar - P_e) / (1 - P_e + 1e-12)
+        return jnp.where(is_edge, 0.0, kappa)
+
+    return jax.lax.cond(num_bins > 0, calculate_kappa_logic, zero_bins_kappa)

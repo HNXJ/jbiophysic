@@ -237,6 +237,7 @@ class OptimizerFacade:
         self.optimizer_kwargs = optimizer_kwargs
         self._constraints: Dict[str, Any] = {}
         self._pop_constraints: Dict[str, Dict[str, Any]] = {}
+        self._lag_constraints: Dict[str, Dict[str, float]] = {}
         self._target_psd: Optional[jnp.ndarray] = None
         self._pop_offsets: Optional[Dict[str, Tuple[int, int]]] = None
     
@@ -263,6 +264,15 @@ class OptimizerFacade:
             self._pop_constraints[pop_name]["firing_rate"] = firing_rate
         if kappa_max is not None:
             self._pop_constraints[pop_name]["kappa_max"] = kappa_max
+        return self
+
+    def set_lag_constraint(self, pop_name: str, target_ms: float, 
+                           stimulus_onset_ms: float) -> "OptimizerFacade":
+        """Set a target peak lag constraint for a population."""
+        self._lag_constraints[pop_name] = {
+            "target": target_ms,
+            "onset": stimulus_onset_ms
+        }
         return self
 
     def set_target(self, psd_profile: Optional[jnp.ndarray] = None) -> "OptimizerFacade":
@@ -342,6 +352,19 @@ class OptimizerFacade:
                         if "kappa_max" in constraints:
                             k_pop = compute_kappa(pop_spikes, fs=1000.0/dt)
                             total_loss += 100.0 * jnp.square(jax.nn.relu(k_pop - constraints["kappa_max"]))
+                    
+                    if pop_name in self._lag_constraints:
+                        lag_spec = self._lag_constraints[pop_name]
+                        # Soft-argmax lag estimation
+                        times = jnp.arange(spikes.shape[1]) * dt
+                        pop_avg = jnp.mean(pop_spikes, axis=0)
+                        # Mask to window after onset (e.g., 200ms window)
+                        mask = (times > lag_spec["onset"]) & (times < lag_spec["onset"] + 200.0)
+                        fr_masked = pop_avg * mask
+                        peak_time = jnp.sum(times * fr_masked) / (jnp.sum(fr_masked) + 1e-12)
+                        actual_lag = peak_time - lag_spec["onset"]
+                        # Penalize deviation from target lag
+                        total_loss += 10.0 * jnp.square(actual_lag - lag_spec["target"])
 
             # 3. PSD Loss
             loss_psd = 0.0
