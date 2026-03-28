@@ -1,3 +1,69 @@
-# Directory: Root
+# jbiophys
+Hierarchical, JAX-differentiable biophysical modeling and optimization using **Jaxley** and **AGSDR**.
 
-This directory is a critical node in the `jbiophysics` workspace architecture. It currently houses 8 primary files that contribute to the project's overall goal of differentiable biophysical modeling. In the context of the JAX-driven simulation environment, these components facilitate efficient computation and architectural flexibility. The files contained herein are responsible for various tasks ranging from core mathematical implementations to high-level orchestration logic. By maintaining strict adherence to JAX-traceability and numerical safety (e.g., via SafeHH), these assets ensure that the biophysical models remain stable during high-dimensional optimization tasks like AGSDR. Furthermore, the hierarchical nature of the toolkit is supported by the organized distribution of these files, allowing for seamless integration into multi-area columns like V1 and HO. ### Included Files: - **generate_readmes.py**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **Detailed_Long_Instructions_For_GCLI.md**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **__init__.py**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **test_jaxley_set.py**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **test_stim_shape.py**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **inspect_df_columns.py**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of
+## 1. Building a Hierarchy
+The `NetBuilder` provides a fluent API for constructing multi-area cortical circuits with area-aware indexing.
+
+```python
+from jbiophysics.compose import NetBuilder
+
+# 1. Build a 2-area hierarchy (V1 + HO)
+builder = (NetBuilder(seed=42)
+    .add_population("E", n=80, cell_type="pyr", area="V1")
+    .add_population("PV", n=20, cell_type="pv", area="V1")
+    .add_population("E", n=50, cell_type="pyr", area="HO")
+    # Intra-areal connection
+    .connect("E", "PV", synapse="AMPA", p=0.1, area="V1")
+    # Inter-areal Feedforward (V1 -> HO)
+    .connect("V1.E", "HO.E", synapse="AMPA", p=0.05, g=0.5)
+    .make_trainable(["gAMPA", "gGABAa"]))
+
+net = builder.build()
+```
+
+## 2. Simulation
+Integration is fully differentiable via **Jaxley**.
+
+```python
+import jaxley as jx
+import numpy as np
+
+# Record somatic voltage for all cells
+net.delete_recordings()
+net.cell("all").branch(0).loc(0.0).record("v")
+
+# Integrate (40 kHz sampling)
+traces = jx.integrate(net, delta_t=0.025, t_max=1000.0)
+traces_np = np.array(traces) # (N_cells, T_steps)
+```
+
+## 3. Optimization with AGSDR
+The `OptimizerFacade` orchestrates high-dimensional parameter tuning using the **Adaptive Genetic-Stochastic Delta-Rule (AGSDR v2)** with an **Adam** inner optimizer.
+
+```python
+from jbiophysics.compose import OptimizerFacade
+
+# 1. Initialize Optimizer (AGSDR + Adam)
+facade = (OptimizerFacade(net, method="AGSDR", lr=1e-3)
+    .set_pop_offsets(builder.population_offsets)
+    # 2. Set Multi-Objective Constraints
+    .set_constraints(firing_rate=(1.0, 50.0), kappa_max=0.1) # Global
+    .set_pop_constraints("V1.E", firing_rate=(2.0, 10.0))    # Per-area
+    # 3. Run Training Loop
+    .run(epochs=100, dt=0.025, t_max=1000.0))
+
+# 4. Access Optimized Parameters and Report
+report = facade
+print(f"Final Loss: {report.metadata['history']['loss'][-1]}")
+```
+
+### Key Optimization Concepts:
+- **Adaptive Alpha**: Balances supervised (Adam) and unsupervised (Stochastic) updates based on variance ratios.
+- **Stochastic Floor**: Prevents local minima deadlock via a hard `alpha_min=0.1` threshold.
+- **Squared Hinge Loss**: Ensures numerical stability in high-dimensional landscapes.
+- **Kappa Metrics**: Quantifies population synchrony for asynchrony targeting.
+
+## Installation
+```bash
+pip install -e .
+```

@@ -1,41 +1,36 @@
-# jbiophysics
+# jbiophys
 Hierarchical, JAX-differentiable biophysical modeling and optimization.
 
-## Core Architecture & Concepts
-- **Hierarchical NetBuilder**: Fluent API for constructing multi-area circuits. Key concept: **Area-Aware Indexing** (`Area.Population`) enables granular control over connectivity and localized loss calculation.
-- **Differentiable Integration**: Uses **Jaxley** for XLA-compiled ODE integration. **Mandate**: Stimulus inputs must be strictly 1D (`T,`) to maintain JAX traceability across single-compartment views.
-- **Safe Biophysics**: Employs `SafeHH` primitives with voltage clamping and NaN guards. **Mandate**: Explicit naming (`name="HH"`) is required for consistent parameter mapping.
-- **OptimizerFacade**: High-level orchestration of **AGSDR v2** (Adaptive Genetic-Stochastic Delta-Rule).
-    - **Adaptive Alpha**: Balances gradient-based (supervised) and stochastic (unsupervised) updates using EMA-smoothed variance ratios.
-    - **Stochastic Floor**: Maintains a hard `0.1` floor to prevent local minima deadlock (Stochastic Deadlock Prevention).
-    - **Numerical Stability**: Replaces exponential penalties with **Squared Hinge Loss** to ensure convergence in high-dimensional landscapes.
+## 1. Top-Level Architectural Mandates
+- **Differentiability**: Zero Python control flow on traced arrays; use `jnp.where` and `jax.lax.cond`.
+- **Area-Aware Indexing**: Use `Area.Population` (e.g., `V1.E`, `PFC.PV`) for all connectivity, metrics, and population-level loss calculation.
+- **Traceability**: `NetBuilder` maintains a strict `N_cells` mapping. Stimulus inputs MUST be 1D `(T,)` for JAX-native broadcasting across the flattened network view.
+- **Numerical Stability**: Use `SafeHH(name="HH")` for all cells. Replace exponential penalties with **Squared Hinge Loss** (`soft_range_loss`) for firing rate and synchrony (Kappa) constraints.
 
-## Calibration & Paradigm Workflow
-- **Multi-Context Calibration**: Simultaneous optimization across BU/TD contexts (FF, Spontaneous, Attended, Omission) to find robust parameter regimes.
-- **Two-Stage Tuning**:
-    1. **Isolated Stage**: Calibration of local E/I balance and population synchrony (**Fleiss Kappa < 0.1**).
-    2. **Joint Stage**: Calibration of inter-areal FF/FB motifs and spectral matching (**SSS via log-PSD MSE**).
+## 2. Advanced Optimization: AGSDR v2
+- **Unified Engine**: `OptimizerFacade` orchestrates **Adaptive Genetic-Stochastic Delta-Rule**.
+- **Adaptive Alpha**: `alpha = var_supervised / (var_supervised + var_stochastic)`. A hard `0.1` floor prevents "Stochastic Deadlock" by ensuring constant exploration.
+- **Multi-Context Calibration**: Simultaneously optimize across multiple trial states (FF-only, Spontaneous, Attended, Omission) to find robust parameter regimes that generalize across sensory conditions.
+- **Two-Stage Strategy**:
+    1. **Stage 1 (Isolated)**: Local E/I balance and asynchrony targeting (**Fleiss Kappa < 0.1**).
+    2. **Stage 2 (Joint)**: Inter-areal motif tuning and spectral matching (**log-PSD MSE**).
 
-## Folder Structure
+## 3. Highly Useful Hints
+- **Seed Persistence**: Always initialize `NetBuilder(seed=X)` and `OptimizerFacade(seed=Y)` to ensure reproducible hierarchy and gradient trajectories.
+- **Param Independence**: Use `.make_trainable(["gAMPA", "gGABAa"])` to decouple shared synaptic parameters for granular per-area tuning.
+- **Laminar Flow**: $t=0$ should always align with the first sensory trigger (Code 101.0). Omission windows typically start at $t=1031ms$ (P2 onset).
+- **Inhibition Control**: **PV+** deficits (perisomatic) primarily disrupt gamma/gain; **SST+** deficits (dendritic) impair subtractive prediction cancellation; **VIP+** cells act as "Omission Triggers" via disinhibition.
+
+## 4. Folder Structure
 - **core/**: Biophysical primitives (mechanisms, neurons, optimizers).
 - **systems/**: Network architectures and high-level simulation pipelines.
-- **functions/**: Reusable utility functions for signal processing and analysis.
-- **scripts/**: Execution scripts for trials and batch processing.
+- **functions/**: Reusable utility functions for signal processing (Morlet TFR, PSD).
+- **scripts/**: Trial execution and batch processing scripts.
 - **plans/**: Markdown research plans for systematic experimentation.
 - **skills/**: Expert agent skills for automated development and analysis.
 - **results/**: Generated data, reports, and visualization artifacts.
 
-## Global Workspace Rules
-- **Folder Documentation**: Every folder under the workspace must contain a `README.md`.
-- **Content Requirement**: Each `README.md` must have a minimum of 10 words for every file present in that folder's root (excluding the `README.md` itself).
-
-## Quick Start
-```python
-import jbiophysics as jbp
-net = (jbp.NetBuilder(seed=42)
-    .add_population("E", n=80, cell_type="pyr", area="V1")
-    .add_population("I", n=20, cell_type="pv", area="V1")
-    .connect("E", "I", synapse="AMPA", p=0.1, area="V1")
-    .make_trainable(["gAMPA"])
-    .build())
-```
+## 5. Workspace Rules
+- **Folder Documentation**: Every folder must contain a `README.md`.
+- **Content Requirement**: Minimum of 10 words for every file present in that folder's root (excluding the `README.md`).
+- **Sync Protocol**: Push Python code to repos immediately after validation.

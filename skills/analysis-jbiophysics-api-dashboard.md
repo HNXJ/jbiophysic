@@ -1,35 +1,28 @@
 ---
 name: analysis-jbiophysics-api-dashboard
-description: FastAPI backend and interactive visualization dashboard for the jbiophysics repository.
+description: Scientific plotting, dashboard management, and API orchestration for jbiophysics.
 ---
 # analysis-jbiophysics-api-dashboard
 
-This skill covers the computational backend and interactive visualization suite for the `jbiophysics` repository. It allows for remote simulation control and real-time monitoring of biophysical experiments.
+This skill documents the visualization and analysis layer for hierarchical biophysical simulations.
 
-## 1. FastAPI Backend (Port 7701)
-The `jbiophysics.api` module exposes the modeling engine via REST endpoints.
+## 1. Scientific Plotting Protocols
+- **Raster Plots**: Always order by `Area.Population` (e.g., Sensory at the bottom, Executive at the top) to visualize temporal hierarchical flow.
+- **TFR Analysis**: Use the manual **Morlet Wavelet** implementation for Time-Frequency Representations; `scipy.signal.cwt` is deprecated and often incompatible with JAX traces.
+- **Spectral Matching (SSS)**: Use log-scale Power Spectral Density (PSD) for comparing simulations with empirical monkey data. Focus on peak detection (Alpha/Beta peaks).
 
-### Key Endpoints
-- **POST `/simulate/v1`**: Executes a 200-neuron V1 column simulation.
-- **POST `/simulate/omission`**: Executes a 5000ms two-column omission trial.
-- **POST `/tuning/run`**: Starts a background GSDR tuning session.
-- **GET `/tuning/status`**: Returns real-time epoch and loss metrics.
-- **GET `/visualize`**: Returns a JSON payload containing Base64-encoded PNGs (Raster, LFP, TFR).
+## 2. API & Real-Time Monitoring
+- **Backend Persistence**: The JBiophysics API typically persists on **Port 7701**.
+- **Live Tuning**: Monitor optimization trajectories via `/tuning/status`. Gradients are streamed as JSON for real-time visualization of the 3D error surface.
+- **Interactive Dashboard**: Use Plotly for interactive exploration of traces and rasters. Ensure `MPLCONFIGDIR=/tmp/matplotlib_cache` is set to avoid font-cache permission issues on remote compute.
 
-## 2. Visualization Suite (`jbiophysics/viz/`)
-- **Interactive Dashboards**: Powered by Plotly for local browser-based analysis.
-- **Static Reports**: Matplotlib-based `omission_viz.py` optimized for API streaming.
-    - **Raster Plots**: Coloured by cell type (L23, L4, L56, PV, SST, VIP).
-    - **LFP Traces**: Dual-column comparisons with Gaussian smoothing.
-    - **TFR Spectrograms**: Morlet wavelet transforms highlighting power in canonical bands.
+## 3. Highly Useful Hints for Analysis
+- **LFP Calculation**: Use the `LFP_tools` in `systems/visualizers/` to compute virtual Local Field Potentials from the somatic currents of pyramidal populations.
+- **Kappa Targeting**: Use `compute_kappa()` in `viz/` to confirm the model is in the asynchronous-irregular regime (Kappa < 0.1).
+- **Report Generation**: Use `scripts/build_html_report.py` to consolidate simulation artifacts into a single sharable dashboard.
+- **Export Formats**: Prefer `.json` for metadata and `.pkl` for optimized parameter sets. Use `report.export_json()` to capture the full state of an `OptimizerFacade` run.
 
-## 3. Agent Bridge
-The `/agent/ask` endpoint allows for interactive network design by relaying prompts to a local LLM (e.g., Qwen-3.5-9B). The agent provides JSON-formatted `NetworkConfig` blocks which can be directly fed into the `/build` endpoint to instantiate new architectures.
-
-## 4. Usage Commands
-```bash
-# Start the backend
-uvicorn jbiophysics.api:app --port 7701
-# Trigger an omission trial
-curl -X POST http://localhost:7701/simulate/omission -d '{"bu_on": false, "td_on": true}'
-```
+## 4. Common Pitfalls
+- **Sampling Artifacts**: Ensure `delta_t` matches the recording resolution (typically 40 kHz or 0.025ms). Incorrect resolution will lead to spectral aliasing.
+- **VRAM Exhaustion**: Large-scale TFR analysis can consume high VRAM on M3 Max. Perform TFR sequentially or on downsampled traces for large hierarchies.
+- **Color Palettes**: Adhere to the project style: **Madelane Golden Dark** (#CFB87C Gold / #9400D3 Violet) for publication-quality figures.

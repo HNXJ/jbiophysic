@@ -4,51 +4,31 @@ description: Hierarchical biophysical modeling and optimization API using Jaxley
 ---
 # coding-jbiophysics-core-modeling
 
-This skill documents the unified API for building, simulating, and optimizing hierarchical biophysical networks. It leverages **Jaxley** for differentiable simulations and provides a multi-area `NetBuilder`.
+This skill documents the unified API for building, simulating, and optimizing hierarchical biophysical networks.
 
 ## 1. Multi-Area Fluent Builder: `NetBuilder`
 Declarative construction of hierarchical circuits using the `Area.Population` indexing pattern.
 
-### Example Construction
-```python
-import jbiophysics as jbp
-
-builder = (jbp.NetBuilder(seed=42)
-    .add_population("E", n=80, cell_type="pyr", area="V1")
-    .add_population("PV", n=20, cell_type="pv", area="V1")
-    .add_population("E", n=50, cell_type="pyr", area="HO")
-    .connect("E", "PV", synapse="AMPA", p=0.1, area="V1")  # Intra-areal
-    .connect("V1.E", "HO.E", synapse="AMPA", p=0.05)      # Feedforward
-    .make_trainable(["gAMPA", "gGABAa"]))
-
-net = builder.build()
-```
+### Key Logic & API
+- **Area Indexing**: `builder.add_population(..., area="V1")` creates isolated logical blocks.
+- **Param Independence**: `builder.make_trainable(["gAMPA"])` makes every `gAMPA` in the network independent for tuning.
+- **Traceability**: `builder.build()` returns a flattened `jx.Network` while preserving area metadata in `builder.population_offsets`.
 
 ## 2. Differentiable Optimization: `OptimizerFacade`
-A unified interface for gradient-based (Adam) and stochastic (AGSDR) optimization.
+A unified interface for **AGSDR v2** (Adaptive Genetic-Stochastic Delta-Rule) with an **Adam** inner optimizer.
 
-### Adaptive GSDR (AGSDR v2) Logic
-- **Alpha Scaling**: `alpha = var_supervised / (var_supervised + var_stochastic)`.
-- **Stochastic Floor**: `alpha_min = 0.1` prevents deadlock by ensuring constant exploration.
-- **Numerical Stability**: Uses **Squared Hinge Loss** (`soft_range_loss`) to prevent `jnp.exp` overflows.
+### Highly Useful Hints
+- **Constraint Weights**: Use `set_constraints(firing_rate=(1, 50), weight=1.0)` to balance stability vs. precision.
+- **Population Locking**: Set per-area constraints (e.g., `V1.E`) to prevent higher areas from overpowering sensory input during Joint-Stage tuning.
+- **Alpha Floor**: The `0.1` floor in AGSDR is critical; if the network stops exploring, check if `var_stochastic` has collapsed.
+- **Squared Hinge Loss**: Replaces exponential penalties with `(jnp.maximum(0, val - limit)**2)`. This ensures numerical stability at extreme parameter values.
 
-### Multi-Objective Calibration
-```python
-facade = (jbp.OptimizerFacade(net, method="AGSDR", lr=1e-3)
-    .set_pop_offsets(builder.population_offsets)
-    .set_constraints(firing_rate=(1.0, 100.0), kappa_max=0.1) # Global
-    .set_pop_constraints("V1.E", firing_rate=(2.0, 10.0))    # Per-area
-    .set_target(target_psd_array))                           # Spectral
+## 3. Highly Useful Hints for Implementation
+- **SafeHH Naming**: Always use `SafeHH(name="HH")`. `Jaxley` maps parameters by name; inconsistent naming leads to untrainable parameters.
+- **Broadcasting Stimuli**: Stimuli MUST be 1D `(T,)`. Jaxley automatically broadcasts this across all compartments in a `cell_view`.
+- **Differentiable Control Flow**: Use `jax.lax.cond` or `jnp.where`. Never use Python `if` inside a function that will be `jax.jit` compiled (like the loss function).
 
-report = facade.run(epochs=100)
-```
-
-## 3. Metrics & Mechanisms
-- **Fleiss Kappa**: Quantifies population synchrony; target **Kappa < 0.10** for asynchrony.
-- **Spectral Match**: MSE on log-scale PSD to match oscillatory profiles (e.g., Alpha/Beta).
-- **SafeHH**: Modified Hodgkin-Huxley with voltage clipping and NaN guards.
-- **Graded Synapses**: `GradedAMPA`, `GradedGABAa`, `GradedNMDA`, `GradedGABAb`.
-
-## 4. Parameter Management
-- **Independence**: `make_trainable(["gAMPA"])` decouples shared parameters for granular tuning.
-- **Offsets**: `builder.population_offsets` and `builder.area_offsets` provide the metadata required for per-area loss calculation.
+## 4. Common Pitfalls
+- **Python Control Flow**: Using `if val > 0:` inside a loss function will cause a `ConcretizationError`.
+- **NaN Gradients**: Often caused by `jnp.exp(v)` in the HH equations. `SafeHH` clamps `v` to `[-100, 100]` to mitigate this.
+- **Unlinked Parameters**: Forgetting `make_trainable()` will result in zero gradients for those parameters.
