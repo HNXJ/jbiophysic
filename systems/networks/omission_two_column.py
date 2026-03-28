@@ -25,13 +25,13 @@ from dataclasses import dataclass, field
 from typing import Optional, Dict, List, Tuple
 import sys, os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..")) # Point to project root
 from core.mechanisms.models import (
     SafeHH, Inoise,
     GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA,
 )
 from systems.networks.omission_v1_column import (
-    build_v1_column, V1PopIndices,
+    create_v1_cells, wire_v1_column, V1PopIndices,
     generate_sensory_input, make_stim_schedule,
     _set_pyr_params, _set_pv_params, _set_sst_params,
 )
@@ -71,7 +71,7 @@ def _build_ho_cells(
         soma, dend = jx.Compartment(), jx.Compartment()
         c = jx.Cell([soma, dend], parents=[-1, 0])
         c.radius, c.length = 1.0, 100.0
-        c.insert(SafeHH())
+        c.insert(SafeHH(name="HH"))
         c.insert(Inoise(
             initial_amp_noise=float(np.clip(rng.uniform(noise*0.5, noise*1.5), 0.0, 0.3)),
             initial_tau=20.0,
@@ -82,7 +82,7 @@ def _build_ho_cells(
     def _inh(setter, noise: float) -> jx.Cell:
         c = jx.Cell([jx.Compartment()], parents=[-1])
         c.radius, c.length = 1.0, 10.0
-        c.insert(SafeHH())
+        c.insert(SafeHH(name="HH"))
         c.insert(Inoise(
             initial_amp_noise=float(np.clip(rng.uniform(noise*0.5, noise*1.5), 0.0, 0.3)),
             initial_tau=10.0,
@@ -164,11 +164,10 @@ def build_omission_network(
     np.random.seed(seed)
 
     # ── V1 column (cells 0..199) ─────────────────────────────────────────────
-    v1_net, v1_pops = build_v1_column(
+    v1_cells, v1_pops = create_v1_cells(
         n_l23=v1_l23, n_l4=v1_l4, n_l56=v1_l56,
         n_pv=v1_pv, n_sst=v1_sst, n_vip=v1_vip, seed=seed,
     )
-    v1_cells = list(v1_net.cells)
     n_v1 = len(v1_cells)
 
     # ── HO column (cells 200..299, offset applied) ───────────────────────────
@@ -180,6 +179,9 @@ def build_omission_network(
 
     # ── Combined network ─────────────────────────────────────────────────────
     net = jx.Network(v1_cells + ho_cells)
+
+    # ── Wiring ───────────────────────────────────────────────────────────────
+    wire_v1_column(net, v1_pops)
 
     # ── Intra-V1 wiring (re-apply into combined net) ─────────────────────────
     # E→E recurrent

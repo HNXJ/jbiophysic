@@ -139,15 +139,33 @@ def plot_tfr(
     Returns Base64 PNG of Morlet wavelet TFR.
     Highlights alpha (8-13 Hz) and beta (13-30 Hz) bands.
     """
-    from scipy.signal import morlet2, cwt
+    # Manual Morlet and CWT to avoid missing scipy.signal.morlet2/cwt in this env
+    def _morlet2(n, s, w=5.0):
+        return np.exp(-0.5 * (n / s)**2) * np.exp(1j * w * n / s)
 
     fs     = 1000.0 / dt_ms
     t_ms   = np.arange(len(lfp)) * dt_ms
     freqs  = np.logspace(np.log10(f_min), np.log10(f_max), n_freqs)
-    widths = 5.0 * fs / (2 * np.pi * freqs)  # morlet w=5
-
-    # Continuous wavelet transform
-    cwtm = cwt(lfp - np.mean(lfp), morlet2, widths, w=5.0)
+    
+    # Continuous wavelet transform via convolution
+    cwtm = np.zeros((len(freqs), len(lfp)), dtype=complex)
+    lfp_norm = lfp - np.mean(lfp)
+    
+    for i, f in enumerate(freqs):
+        s = 5.0 * fs / (2 * np.pi * f) # w=5
+        # Convolution kernel width
+        M = int(10 * s)
+        if M % 2 == 0: M += 1
+        n = np.arange(M) - (M - 1) / 2
+        kernel = _morlet2(n, s, w=5.0)
+        # Normalization to match scipy.signal.cwt roughly
+        kernel *= np.power(np.pi, -0.25) * np.sqrt(1/s)
+        res = np.convolve(lfp_norm, kernel, mode='same')
+        # Ensure 'same' length as lfp_norm (numpy 'same' returns max(len(lfp_norm), len(kernel)))
+        if len(res) > len(lfp_norm):
+            start = (len(res) - len(lfp_norm)) // 2
+            res = res[start : start + len(lfp_norm)]
+        cwtm[i, :] = res
     power = np.abs(cwtm) ** 2
 
     # Normalise per-frequency (dB relative to mean)

@@ -7,8 +7,24 @@ from jaxley.synapses import Synapse
 from jaxley.connect import fully_connect
 from typing import Optional
 
-# These dependencies (Inoise, GradedAMPA, GradedGABAa) were extracted 
-# from the local biophys_jx_gsdr.py and are now part of the AAE package.
+class SafeHH(jx.channels.HH):
+    """Hodgkin-Huxley with physical limits and NaN guards."""
+    def __init__(self, name: str = "HH"):
+        super().__init__(name)
+
+    def update_states(self, states, dt, v, params):
+        # Clip voltage to physiological range before HH calculation
+        v_safe = jnp.clip(v, -100.0, 100.0)
+        new_states = super().update_states(states, dt, v_safe, params)
+        # Apply NaN guard and physical limits to gating variables [0, 1]
+        for k, val in new_states.items():
+            safe_val = jnp.nan_to_num(val, nan=0.0, posinf=1.0, neginf=0.0)
+            new_states[k] = jnp.clip(safe_val, 0.0, 1.0)
+        return new_states
+
+    def compute_current(self, states, v, params):
+        v_safe = jnp.clip(v, -100.0, 100.0)
+        return super().compute_current(states, v_safe, params)
 
 class Inoise(jx.channels.Channel):
     """Stochastic Ornstein-Uhlenbeck noise channel."""
@@ -41,7 +57,7 @@ class Inoise(jx.channels.Channel):
         drift = (mu - n) / tau * dt
         diffusion = sigma * jnp.sqrt(2.0 / tau) * xi * jnp.sqrt(dt)
         new_n = n + drift + diffusion
-        new_n = jnp.where(jnp.isnan(new_n) | jnp.isinf(new_n), n, new_n)
+        new_n = jnp.nan_to_num(new_n, nan=0.0)
         return {"n": new_n, "step": step + 1.0}
 
     def compute_current(self, states, v, params): return -states["n"]
@@ -58,8 +74,8 @@ class GradedAMPA(jx.synapses.Synapse):
         activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thAMPA"]) / params["slopeAMPA"]))
         d_s = (-s / params["tauDAMPA"]) + activation * ((1 - s) / params["tauRAMPA"])
         new_s = s + d_s * dt
-        # Physical realisticity barrier for float32 stability
-        new_s = jnp.where(jnp.isnan(new_s) | jnp.isinf(new_s), s, new_s)
+        new_s = jnp.nan_to_num(new_s, nan=0.0)
+        new_s = jnp.clip(new_s, 0.0, 1.0)
         return {"sAMPA": new_s}
     def compute_current(self, states, pre_v, post_v, params): return params["gAMPA"] * states["sAMPA"] * (post_v - params["EAMPA"])
 
@@ -74,12 +90,12 @@ class GradedGABAa(jx.synapses.Synapse):
         activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thGABAa"]) / params["slopeGABAa"]))
         d_s = (-s / params["tauDGABAa"]) + activation * ((1 - s) / params["tauRGABAa"])
         new_s = s + d_s * dt
-        new_s = jnp.where(jnp.isnan(new_s) | jnp.isinf(new_s), s, new_s)
+        new_s = jnp.nan_to_num(new_s, nan=0.0)
+        new_s = jnp.clip(new_s, 0.0, 1.0)
         return {"sGABAa": new_s}
     def compute_current(self, states, pre_v, post_v, params): return params["gGABAa"] * states["sGABAa"] * (post_v - params["EGABAa"])
 
 class GradedGABAb(jx.synapses.Synapse):
-    """Graded slow Inhibitory Synapse (GABAb)."""
     def __init__(self, g: float = 1.0, tauD_GABAb: Optional[float] = None):
         super().__init__()
         self.synapse_params = {
@@ -93,13 +109,13 @@ class GradedGABAb(jx.synapses.Synapse):
         activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thGABAb"]) / params["slopeGABAb"]))
         d_s = (-s / params["tauDGABAb"]) + activation * ((1 - s) / params["tauRGABAb"])
         new_s = s + d_s * dt
-        new_s = jnp.where(jnp.isnan(new_s) | jnp.isinf(new_s), s, new_s)
+        new_s = jnp.nan_to_num(new_s, nan=0.0)
+        new_s = jnp.clip(new_s, 0.0, 1.0)
         return {"sGABAb": new_s}
     def compute_current(self, states, pre_v, post_v, params): 
         return params["gGABAb"] * states["sGABAb"] * (post_v - params["EGABAb"])
 
 class GradedNMDA(jx.synapses.Synapse):
-    """Graded NMDA Synapse with Magnesium Block."""
     def __init__(self, g: float = 1.0, tauD_NMDA: float = 100.0):
         super().__init__()
         self.synapse_params = {
@@ -112,21 +128,17 @@ class GradedNMDA(jx.synapses.Synapse):
         activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thNMDA"]) / params["slopeNMDA"]))
         d_s = (-s / params["tauDNMDA"]) + activation * ((1 - s) / params["tauRNMDA"])
         new_s = s + d_s * dt
-        new_s = jnp.where(jnp.isnan(new_s) | jnp.isinf(new_s), s, new_s)
+        new_s = jnp.nan_to_num(new_s, nan=0.0)
+        new_s = jnp.clip(new_s, 0.0, 1.0)
         return {"sNMDA": new_s}
     def compute_current(self, states, pre_v, post_v, params):
-        # Magnesium block factor
         m_block = 1.0 / (1.0 + 0.28 * jnp.exp(-0.062 * post_v))
         return params["gNMDA"] * states["sNMDA"] * m_block * (post_v - params["ENMDA"])
 
 def build_net_eig(num_e: int, num_ig: int, num_il: int, seed: Optional[int] = None):
-    """
-    Constructs a JAXley neural network with specified numbers of excitatory and inhibitory neurons.
-    If seed is None, a random seed is generated for connectivity.
-    """
     if seed is None:
         seed = int(np.random.randint(0, 2**31 - 1))
-    np.random.seed(seed) # Set numpy seed for connectivity
+    np.random.seed(seed)
     
     comp = jx.Compartment()
     branch = jx.Branch(comp, ncomp=2)
@@ -138,128 +150,74 @@ def build_net_eig(num_e: int, num_ig: int, num_il: int, seed: Optional[int] = No
     for cell in e_cells + i_cells_g + i_cells_l:
         r_d_tau_diff = np.random.uniform(5.0, 50.0)
         r_amp_diff = np.clip(np.random.uniform(-0.1, 0.1), 0.0, 0.1)
-        cell.insert(HH())
+        cell.insert(SafeHH())
         cell.insert(Inoise(initial_amp_noise=r_amp_diff, initial_tau=r_d_tau_diff, initial_mean=0.0))
         cell.radius = 1.0
         cell.length = 1.0
 
     net = jx.Network(e_cells + i_cells_g + i_cells_l)
     
-    # E -> all (AMPA)
     pre = net.cell([ik for ik in range(num_e)]).branch(0).loc(0.0)
     post = net.cell([ik for ik in range(num_e+num_ig+num_il)]).branch(1).loc(1.0)
     fully_connect(pre, post, GradedAMPA(tauD_AMPA=2.0))
 
-    # Ig -> all (GABAa)
     pre = net.cell([ik for ik in range(num_e, num_e+num_ig)]).branch(0).loc(0.0)
     post = net.cell([ik for ik in range(num_e+num_ig+num_il)]).branch(1).loc(1.0)
     fully_connect(pre, post, GradedGABAa(g=5.0, tauD_GABAa=5.0))
 
-    # Il -> subset of all (GABAa)
     pre_il = net.cell([ik for ik in range(num_e+num_ig, num_e+num_ig+num_il)]).branch(0).loc(0.0)
     num_posts_to_select = int((num_e+num_ig+num_il)*0.1)
     posts_pool_indices = jnp.arange(0, num_e + num_ig + num_il)
-    
-    # Randomize connectivity key using the main seed
     key_conn = jax.random.PRNGKey(seed)
     selected_post_indices = np.array(jax.random.choice(key_conn, posts_pool_indices, shape=(num_posts_to_select,), replace=False))
     post_il = net.cell(selected_post_indices).branch(1).loc(1.0)
-    fully_connect(pre_il, post_il, GradedGABAa(g=5.0, tauD_GABAa=5.0)) # Increased to 5.0ms
+    fully_connect(pre_il, post_il, GradedGABAa(g=5.0, tauD_GABAa=5.0))
 
     return net
 
-
-def build_pyramidal_mc(seed=None):
-    """Multi-compartment Pyramidal cell (Soma + Distal Dendrite)."""
-    if seed is None: seed = 42
-    comp_soma = jx.Compartment()
-    comp_dend = jx.Compartment()
-    # Simple cable: Soma (0) -> Dendrite (1)
-    cell = jx.Cell([comp_soma, comp_dend], parents=[-1, 0])
-    cell.radius = 1.0
-    cell.length = 100.0 # Length drives axial resistance
-    return cell
-
-
-# --- Cell Models (Pyramidal, PV, SST, VIP) ---
-
 def build_pyramidal_cell():
-    """Regular Spiking (RS) Pyramidal Cell with adaptation."""
     comp_soma = jx.Compartment()
     comp_dend = jx.Compartment()
     cell = jx.Cell([comp_soma, comp_dend], parents=[-1, 0])
     cell.radius = 1.0
     cell.length = 100.0
-    # High adaptation, standard HH
-    cell.insert(jx.channels.HH())
-    # Assuming Jaxley HH has gK, gNa, gl. 
-    # For RS: gK is moderate, gNa is moderate.
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def build_pv_cell():
-    """Fast Spiking (FS) Parvalbumin Interneuron."""
     comp_soma = jx.Compartment()
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 1.0
     cell.length = 10.0
-    cell.insert(jx.channels.HH())
-    # FS typically has very high gNa and gK for fast repolarization
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def build_sst_cell():
-    """Low-Threshold Spiking (LTS) Somatostatin Interneuron."""
     comp_soma = jx.Compartment()
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 1.0
     cell.length = 10.0
-    cell.insert(jx.channels.HH())
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def build_vip_cell():
-    """Irregular Spiking / Bursting VIP Interneuron."""
     comp_soma = jx.Compartment()
     cell = jx.Cell([comp_soma], parents=[-1])
-    cell.radius = 0.5 # Smaller size, lower capacitance
+    cell.radius = 0.5
     cell.length = 10.0
-    cell.insert(jx.channels.HH())
+    cell.insert(SafeHH(name="HH"))
     return cell
 
-# --- Architectural Enrichment Utilities ---
-
 def make_synapses_independent(net: jx.Network, param_name: str):
-    """
-    Ensures every synapse in the network has its own independent trainable parameter.
-    By default, make_trainable() might share a single parameter across all edges.
-    """
     net.select(edges="all").make_trainable(param_name)
-    print(f"✅ Every synapse now has an independent trainable '{param_name}'.")
 
 def get_parameter_summary(net: jx.Network):
-    """
-    Returns a summary of the trainable parameters in the network.
-    Helps verify if parameters are shared or independent.
-    """
     params = net.get_parameters()
-    
     summary = []
     total_elements = 0
-    
-    # Traverse the PyTree structure (list of dicts typically)
     for i, group in enumerate(params):
         for key, value in group.items():
             size = jnp.size(value)
             total_elements += size
-            summary.append({
-                "group_index": i,
-                "parameter": key,
-                "count": size,
-                "is_independent": "Yes" if size > 1 else "No (Shared)"
-            })
-            
-    print("\n--- JAXley Parameter Summary ---")
-    for s in summary:
-        print(f"[{s['group_index']}] {s['parameter']}: Count={s['count']} | Independent={s['is_independent']}")
-    print(f"Total Trainable Elements: {total_elements}")
-    print("--------------------------------\n")
-    
+            summary.append({"group_index": i, "parameter": key, "count": size, "is_independent": "Yes" if size > 1 else "No (Shared)"})
     return summary, total_elements

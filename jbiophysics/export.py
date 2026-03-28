@@ -86,10 +86,32 @@ class ResultsReport:
     
     def to_dict(self) -> Dict[str, Any]:
         """Serialize to JSON-compatible dict."""
-        return {"num_cells": self.num_cells, "dt": self.dt, "t_max": self.t_max,
-                "loss_history": [float(x) for x in self.loss_history],
-                "metadata": self.metadata, "traces_shape": list(self.traces.shape)}
-    
+        return {
+            "num_cells": self.num_cells, 
+            "dt": self.dt, 
+            "t_max": self.t_max,
+            "loss_history": [float(x) for x in self.loss_history],
+            "metadata": self.metadata, 
+            "traces": self.traces.tolist() if isinstance(self.traces, np.ndarray) else self.traces
+        }
+
+    def save_json(self, path: str):
+        """Saves the report to a JSON file."""
+        with open(path, "w") as f:
+            json.dump(self.to_dict(), f)
+        print(f"💾 JSON report saved → {path}")
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]):
+        """Loads a report from a dict."""
+        return cls(
+            traces=np.array(data["traces"]),
+            dt=data.get("dt", 0.1),
+            t_max=data.get("t_max", 1500.0),
+            loss_history=data.get("loss_history", []),
+            metadata=data.get("metadata", {})
+        )
+
     def export(self, formats: Union[str, List[str]] = "plotly",
                output_dir: str = "./results", caption: str = "") -> Dict[str, str]:
         """Multi-format batch export."""

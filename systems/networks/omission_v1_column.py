@@ -20,7 +20,7 @@ from dataclasses import dataclass
 
 # ── local imports ──────────────────────────────────────────────────────────────
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..")) # Point to project root
 from core.mechanisms.models import (
     SafeHH, Inoise,
     GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA,
@@ -82,7 +82,7 @@ class V1PopIndices:
         return self.all_pyr + self.all_inh
 
 
-def build_v1_column(
+def create_v1_cells(
     n_l23: int = 56,
     n_l4:  int = 40,
     n_l56: int = 64,
@@ -90,13 +90,13 @@ def build_v1_column(
     n_sst: int = 12,
     n_vip: int = 8,
     seed:  Optional[int] = 0,
-) -> Tuple[jx.Network, V1PopIndices]:
+) -> Tuple[List[jx.Cell], V1PopIndices]:
     """
-    Build a 200-neuron V1 laminar column.
+    Create a list of 200 neurons with Lamina/Cell-type identities.
 
     Returns:
-        net   – jaxley Network (200 cells, fully wired)
-        pops  – V1PopIndices dataclass with per-population cell indices
+        cells – List[jx.Cell]
+        pops  – V1PopIndices dataclass with relative cell indices
     """
     np.random.seed(seed)
     total = n_l23 + n_l4 + n_l56 + n_pv + n_sst + n_vip
@@ -113,7 +113,7 @@ def build_v1_column(
         cell = jx.Cell([soma, dend], parents=[-1, 0])
         cell.radius = 1.0
         cell.length = 100.0
-        cell.insert(SafeHH())
+        cell.insert(SafeHH(name="HH"))
         cell.insert(Inoise(
             initial_amp_noise=float(np.clip(np.random.uniform(noise_amp*0.5, noise_amp*1.5), 0.0, 0.3)),
             initial_tau=20.0,
@@ -126,7 +126,7 @@ def build_v1_column(
         cell = jx.Cell([soma], parents=[-1])
         cell.radius = 1.0
         cell.length = 10.0
-        cell.insert(SafeHH())
+        cell.insert(SafeHH(name="HH"))
         cell.insert(Inoise(
             initial_amp_noise=float(np.clip(np.random.uniform(noise_amp*0.5, noise_amp*1.5), 0.0, 0.3)),
             initial_tau=10.0,
@@ -171,9 +171,16 @@ def build_v1_column(
     offset += n_vip
 
     assert offset == total
+    return all_cells, pops
 
-    net = jx.Network(all_cells)
-
+def wire_v1_column(net: jx.Network, pops: V1PopIndices):
+    """
+    Apply intra-column synaptic wiring to a jaxley Network.
+    
+    Args:
+        net  - jaxley Network (already containing V1 cells)
+        pops - V1PopIndices (relative or absolute, must match net indexing)
+    """
     # ── Intra-column synaptic wiring ──────────────────────────────────────────
     # E→all  (AMPA, recurrent excitation)
     sparse_connect(
@@ -238,9 +245,13 @@ def build_v1_column(
         GradedAMPA(g=0.5), p=0.3,
     )
 
-    print(f"✅ V1 column built: {total} cells | "
-          f"L23={n_l23} L4={n_l4} L56={n_l56} "
-          f"PV={n_pv} SST={n_sst} VIP={n_vip}")
+    print(f"✅ V1 column wired into network.")
+
+def build_v1_column(*args, **kwargs) -> Tuple[jx.Network, V1PopIndices]:
+    """Standalone builder: creates cells, creates network, and wires it."""
+    cells, pops = create_v1_cells(*args, **kwargs)
+    net = jx.Network(cells)
+    wire_v1_column(net, pops)
     return net, pops
 
 
