@@ -11,7 +11,7 @@ import warnings
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/AAE')
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/jbiophys')
 
-from core.mechanisms.models import GradedAMPA
+from jbiophysics.core.mechanisms.models import GradedAMPA
 
 def sort_cells_by_depth(cells: List[jx.Cell], meta: List[Dict]) -> Tuple[List[jx.Cell], List[Dict]]:
     """

@@ -12,7 +12,7 @@ import pickle
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/AAE')
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/jbiophys')
 
-from core.optimizers.AGSDR import AGSDR
+from jbiophysics.core.optimizers.AGSDR import AGSDR
 from .robust_pipeline import calculate_spike_train, calculate_firing_rate, calculate_kappa, apply_global_stability
 
 def calculate_biophysical_metrics(network, voltages, dt, meta):

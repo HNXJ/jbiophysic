@@ -9,9 +9,6 @@ from typing import Optional
 
 class SafeHH(jx.channels.HH):
     """Hodgkin-Huxley with physical limits and NaN guards."""
-    def __init__(self, name: str = "HH"):
-        super().__init__(name)
-
     def update_states(self, states, dt, v, params):
         # Clip voltage to physiological range before HH calculation
         v_safe = jnp.clip(v, -100.0, 100.0)
@@ -181,7 +178,7 @@ def build_pyramidal_cell():
     cell = jx.Cell([comp_soma, comp_dend], parents=[-1, 0])
     cell.radius = 1.0
     cell.length = 100.0
-    cell.insert(SafeHH(name="HH"))
+    cell.insert(SafeHH())
     return cell
 
 def build_pv_cell():
@@ -189,7 +186,7 @@ def build_pv_cell():
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 1.0
     cell.length = 10.0
-    cell.insert(SafeHH(name="HH"))
+    cell.insert(SafeHH())
     return cell
 
 def build_sst_cell():
@@ -197,7 +194,7 @@ def build_sst_cell():
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 1.0
     cell.length = 10.0
-    cell.insert(SafeHH(name="HH"))
+    cell.insert(SafeHH())
     return cell
 
 def build_vip_cell():
@@ -205,7 +202,7 @@ def build_vip_cell():
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 0.5
     cell.length = 10.0
-    cell.insert(SafeHH(name="HH"))
+    cell.insert(SafeHH())
     return cell
 
 def make_synapses_independent(net: jx.Network, param_name: str):

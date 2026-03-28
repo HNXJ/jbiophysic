@@ -3,13 +3,13 @@ import jax.numpy as jnp
 import jaxley as jx
 import numpy as np
 from typing import List, Tuple, Dict
-from core.mechanisms.models import GradedAMPA, GradedGABAa
+from jbiophysics.core.mechanisms.models import GradedAMPA, GradedGABAa
 
 def connect_cortical_areas(source_config: Dict, target_config: Dict, p_ff=0.2, p_fb=0.1, g_ff=0.5, g_fb=0.3):
     """
     Builds two cortical columns and connects them using canonical laminar motifs.
     """
-    from systems.networks.laminar_column import build_laminar_cells
+    from jbiophysics.systems.networks.laminar_column import build_laminar_cells
     from jaxley.connect import sparse_connect
     
     # 1. Build Cells for both areas
@@ -73,7 +73,7 @@ def connect_cortical_areas(source_config: Dict, target_config: Dict, p_ff=0.2, p
     return net, (src_meta, tgt_meta)
 
 if __name__ == "__main__":
-    from systems.networks.laminar_column import build_laminar_column
+    from jbiophysics.systems.networks.laminar_column import build_laminar_column
     print("Building Two-Area Network...")
     net_low, meta_low = build_laminar_column(num_superficial=10, num_mid=5, num_deep=10, seed=1)
     net_high, meta_high = build_laminar_column(num_superficial=10, num_mid=5, num_deep=10, seed=2)

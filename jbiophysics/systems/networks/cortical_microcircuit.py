@@ -3,7 +3,7 @@ import jax.numpy as jnp
 import jaxley as jx
 import numpy as np
 from typing import Optional
-from core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb
+from jbiophysics.core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb
 
 def build_cortical_column(name_prefix: str, num_e: int=36, num_pv: int=8, num_sst: int=6, num_vip: int=4, seed: Optional[int] = None):
     if seed is None:

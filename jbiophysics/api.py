@@ -151,7 +151,7 @@ async def simulate_generic(net_id: str, dt: float = 0.1, t_max: float = 1000.0):
 async def simulate_v1(config: V1SimConfig = Body(default_factory=V1SimConfig)):
     """Run 200-neuron V1 column for t_max ms and return traces + dashboard."""
     import jaxley as jx
-    from systems.networks.omission_v1_column import (
+    from jbiophysics.systems.networks.omission_v1_column import (
         build_v1_column, generate_sensory_input,
     )
 
@@ -215,7 +215,7 @@ async def simulate_omission(config: OmissionSimConfig = Body(default_factory=Omi
     Default: BU=OFF, TD=ON  (omission context 3).
     """
     import jaxley as jx
-    from systems.networks.omission_two_column import (
+    from jbiophysics.systems.networks.omission_two_column import (
         build_omission_network, OmissionTrialConfig,
         make_context_inputs, extract_lfp, detect_spikes,
     )
@@ -326,12 +326,12 @@ async def tuning_run(
     Kick off GSDR tuning in a background thread (non-blocking).
     Poll /tuning/status for live progress.
     """
-    from systems.networks.omission_two_column import (
+    from jbiophysics.systems.networks.omission_two_column import (
         build_omission_network, OmissionTrialConfig,
         make_context_inputs, extract_lfp, detect_spikes,
     )
-    from core.optimizers.omission_objective import OmissionLoss, run_gsdr_tuning
-    from core.optimizers.omission_metrics import empirical_omission_target_lfp
+    from jbiophysics.core.optimizers.omission_objective import OmissionLoss, run_gsdr_tuning
+    from jbiophysics.core.optimizers.omission_metrics import empirical_omission_target_lfp
 
     def _run():
         import jaxley as jx

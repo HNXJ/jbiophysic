@@ -14,10 +14,10 @@ from scipy import signal
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/AAE')
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/jbiophys')
 
-from systems.visualizers.plot_full_simulation_summary import plot_full_simulation_summary
-from systems.visualizers.spatial_3d import plot_network_3d
-from systems.visualizers.lfp_tools import estimate_lfp
-from systems.visualizers.calculate_firing_rates import calculate_firing_rates
+from jbiophysics.systems.visualizers.plot_full_simulation_summary import plot_full_simulation_summary
+from jbiophysics.systems.visualizers.spatial_3d import plot_network_3d
+from jbiophysics.systems.visualizers.lfp_tools import estimate_lfp
+from jbiophysics.systems.visualizers.calculate_firing_rates import calculate_firing_rates
 
 def generate_plotly_summary(voltages, time_axis, dt, output_path, spike_threshold=-20.0):
     """Generates a Plotly-based HTML summary (Raster + Spectrogram)."""

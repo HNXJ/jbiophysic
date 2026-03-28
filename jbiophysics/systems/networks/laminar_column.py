@@ -3,8 +3,8 @@ import jax.numpy as jnp
 import jaxley as jx
 import numpy as np
 from typing import Optional, Dict, List
-from core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb
-from core.neurons.hh_cells import build_pyramidal_rs, build_pv_fs
+from jbiophysics.core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb
+from jbiophysics.core.neurons.hh_cells import build_pyramidal_rs, build_pv_fs
 
 def build_laminar_cells(
     num_superficial: int = 40,

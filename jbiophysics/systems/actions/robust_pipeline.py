@@ -14,8 +14,8 @@ import pickle
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/AAE')
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/jbiophys')
 
-from core.mechanisms.models import GradedAMPA, GradedGABAa, make_synapses_independent, get_parameter_summary
-from core.optimizers.AGSDR import AGSDR
+from jbiophysics.core.mechanisms.models import GradedAMPA, GradedGABAa, make_synapses_independent, get_parameter_summary
+from jbiophysics.core.optimizers.AGSDR import AGSDR
 
 # --- Stability Hardwires & Analysis Helpers ---
 

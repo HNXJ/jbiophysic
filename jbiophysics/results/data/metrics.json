@@ -1,0 +1,22 @@
+[
+  {
+    "context": "FF_Only",
+    "mfr_v1": 0.805,
+    "mfr_ho": 8.805
+  },
+  {
+    "context": "Spontaneous",
+    "mfr_v1": 0.805,
+    "mfr_ho": 8.805
+  },
+  {
+    "context": "Attended",
+    "mfr_v1": 0.7575,
+    "mfr_ho": 8.555
+  },
+  {
+    "context": "Omission",
+    "mfr_v1": 0.8025,
+    "mfr_ho": 8.435
+  }
+]

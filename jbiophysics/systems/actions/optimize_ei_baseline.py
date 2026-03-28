@@ -11,11 +11,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Import from the local jbiophys package
-from core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa
-from core.optimizers.GSDR import GSDR
-from core.optimizers.AGSDR import AGSDR
-from systems.visualizers.compute_kappa import compute_kappa
-from systems.visualizers.calculate_firing_rates import calculate_firing_rates
+from jbiophysics.core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa
+from jbiophysics.core.optimizers.GSDR import GSDR
+from jbiophysics.core.optimizers.AGSDR import AGSDR
+from jbiophysics.systems.visualizers.compute_kappa import compute_kappa
+from jbiophysics.systems.visualizers.calculate_firing_rates import calculate_firing_rates
 
 from jax import config
 config.update("jax_platform_name", "cpu")

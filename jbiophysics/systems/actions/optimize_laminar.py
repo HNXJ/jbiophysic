@@ -10,11 +10,11 @@ import optax
 import numpy as np
 import matplotlib.pyplot as plt
 
-from core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa
-from core.optimizers.AGSDR import AGSDR, ClampTransform
-from systems.networks.laminar_column import build_laminar_column
-from systems.visualizers.compute_kappa import compute_kappa
-from systems.visualizers.calculate_firing_rates import calculate_firing_rates
+from jbiophysics.core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa
+from jbiophysics.core.optimizers.AGSDR import AGSDR, ClampTransform
+from jbiophysics.systems.networks.laminar_column import build_laminar_column
+from jbiophysics.systems.visualizers.compute_kappa import compute_kappa
+from jbiophysics.systems.visualizers.calculate_firing_rates import calculate_firing_rates
 
 from jax import config
 config.update("jax_platform_name", "cpu")

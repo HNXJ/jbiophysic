@@ -10,11 +10,11 @@ import numpy as np
 import pandas as pd
 import time
 
-from systems.networks.laminar_column import build_laminar_cells
-from systems.networks.inter_area import connect_cortical_areas
-from core.mechanisms.IPnoise import IPnoise
-from systems.visualizers.compute_kappa import compute_kappa
-from systems.visualizers.calculate_firing_rates import calculate_firing_rates
+from jbiophysics.systems.networks.laminar_column import build_laminar_cells
+from jbiophysics.systems.networks.inter_area import connect_cortical_areas
+from jbiophysics.core.mechanisms.IPnoise import IPnoise
+from jbiophysics.systems.visualizers.compute_kappa import compute_kappa
+from jbiophysics.systems.visualizers.calculate_firing_rates import calculate_firing_rates
 
 from jax import config
 config.update("jax_platform_name", "cpu")

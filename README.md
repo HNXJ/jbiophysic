@@ -57,11 +57,17 @@ report = facade
 print(f"Final Loss: {report.metadata['history']['loss'][-1]}")
 ```
 
-### Key Optimization Concepts:
-- **Adaptive Alpha**: Balances supervised (Adam) and unsupervised (Stochastic) updates based on variance ratios.
-- **Stochastic Floor**: Prevents local minima deadlock via a hard `alpha_min=0.1` threshold.
-- **Squared Hinge Loss**: Ensures numerical stability in high-dimensional landscapes.
-- **Kappa Metrics**: Quantifies population synchrony for asynchrony targeting.
+## Project Structure
+All core logic, scripts, and research plans are consolidated within the `jbiophysics/` package directory:
+
+- **jbiophysics/core/**: Biophysical primitives (mechanisms, neurons, optimizers).
+- **jbiophysics/systems/**: Network architectures and simulation pipelines.
+- **jbiophysics/scripts/**: Trial execution and batch processing.
+- **jbiophysics/plans/**: Markdown research plans for systematic experimentation.
+- **jbiophysics/results/**: Generated data, reports, and dashboards.
+- **jbiophysics/viz/**: Visualization and analysis tools.
+- **jbiophysics/functions/**: Reusable signal processing utilities.
+- **jbiophysics/skills/**: Expert agent skills.
 
 ## Installation
 ```bash

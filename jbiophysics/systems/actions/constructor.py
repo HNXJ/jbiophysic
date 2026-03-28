@@ -9,7 +9,7 @@ import sys
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/AAE')
 sys.path.insert(0, '/Users/hamednejat/workspace/Repositories/jbiophys')
 
-from core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA, make_synapses_independent
+from jbiophysics.core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA, make_synapses_independent
 
 def get_cylinder_positions(n, z_mean, z_std, radius=100.0):
     """Generates 3D coordinates in a cylinder."""
