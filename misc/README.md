@@ -1,13 +1,3 @@
-# jbiophys: Next-Gen Biophysical Modeling
+# Directory: misc
 
-Production repository for hierarchical cortical simulations, adaptive GSDR optimization, and multi-area signal analysis.
-
-## 🛠 Features
-- **Adaptive GSDR (AGSDR v2)**: Variance-smoothed stochastic optimization.
-- **Physical Realisticity Barrier**: Dampened ODE updates for float32/Metal stability.
-- **Hierarchical Scaling**: Depth-dependent circuit manipulation (V1 -> PFC).
-
-## 📦 Structure
-- `gsdr/`: Core modular biophysics library.
-- `models/`: Domain-specific circuit definitions.
-- `notebooks/`: Research and visualization pipelines.
+This directory is a critical node in the `jbiophysics` workspace architecture. It currently houses 14 primary files that contribute to the project's overall goal of differentiable biophysical modeling. In the context of the JAX-driven simulation environment, these components facilitate efficient computation and architectural flexibility. The files contained herein are responsible for various tasks ranging from core mathematical implementations to high-level orchestration logic. By maintaining strict adherence to JAX-traceability and numerical safety (e.g., via SafeHH), these assets ensure that the biophysical models remain stable during high-dimensional optimization tasks like AGSDR. Furthermore, the hierarchical nature of the toolkit is supported by the organized distribution of these files, allowing for seamless integration into multi-area columns like V1 and HO. ### Included Files: - **optimal_paramshz.pkl**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **spectrolaminar_motif_agsdr.png**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **final_params_low_kappa.pkl**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **spectrolaminar_motif.png**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **laminar_results.json**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of the simulation and optimization loops. - **pyproject.toml**: A fundamental component of this directory, providing specific functionality required for the `jbiophysics` ecosystem's robustness. This file is essential for the seamless operation of

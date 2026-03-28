@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jbiophysics — Neural Architect & Agent</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #111111;
+    --gold: #CFB87C;
+    --violet: #9400D3;
+    --cyan: #00FFFF;
+    --text-primary: #f0f0f0;
+    --text-secondary: #888888;
+    --border: #222222;
+    --success: #3fb950;
+    --warning: #d29922;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+  }
+  .app-header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .app-header h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(207, 184, 124, 0.1);
+    color: var(--gold);
+    border: 1px solid rgba(207, 184, 124, 0.3);
+  }
+  .app-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr 320px;
+    height: calc(100vh - 50px);
+  }
+  .panel {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-right { border-right: none; border-left: 1px solid var(--border); }
+  .scroll-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-left: 2px solid var(--gold);
+    padding-left: 10px;
+  }
+  .card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .form-group { margin-bottom: 8px; }
+  .form-group label { font-size: 10px; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-family: inherit;
+  }
+  .btn {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .btn-gold { background: var(--gold); color: #000; border-color: var(--gold); }
+  .btn-gold:hover { background: #e0ca8c; }
+  .btn-outline { background: transparent; color: var(--gold); border-color: var(--gold); }
+  .btn-outline:hover { background: rgba(207, 184, 124, 0.1); }
+  .btn-full { width: 100%; padding: 10px; margin-top: 10px; font-size: 13px; }
+  
+  /* Agent UI */
+  .agent-chat { flex: 1; display: flex; flex-direction: column; }
+  .chat-history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .msg { margin-bottom: 15px; padding: 10px; border-radius: 6px; }
+  .msg-agent { background: rgba(148, 0, 211, 0.05); border: 1px solid rgba(148, 0, 211, 0.2); border-left: 3px solid var(--violet); }
+  .msg-user { background: rgba(0, 255, 255, 0.05); border: 1px solid rgba(0, 255, 255, 0.2); border-left: 3px solid var(--cyan); text-align: right; }
+  .chat-input { padding: 15px; background: var(--bg-tertiary); border-top: 1px solid var(--border); }
+
+  /* Main ViewPort */
+  .viewport { display: flex; flex-direction: column; background: #000; }
+  .status-bar {
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    font-size: 11px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #333; }
+  .dot.online { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  #canvas { flex: 1; position: relative; overflow: hidden; }
+  
+  .pop-item, .conn-item {
+    border-left: 2px solid var(--violet);
+    margin-bottom: 8px;
+    padding-left: 8px;
+  }
+  .conn-item { border-left-color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>⚡ Jbiophysics Architect</h1>
+  <span class="badge">AGENT-CONNECTED</span>
+  <span style="flex:1"></span>
+  <div style="font-size: 11px; color: var(--gold)">Madelane Golden Dark v2</div>
+</div>
+
+<div class="app-layout">
+  <!-- Left Panel: Structural Control -->
+  <div class="panel">
+    <div class="scroll-content">
+      <div class="section-title">Quick Presets</div>
+      <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom: 20px">
+        <button class="btn btn-outline" onclick="loadPreset('column')">Canonical Column</button>
+        <button class="btn btn-outline" onclick="loadPreset('gamma')">Gamma Loop</button>
+        <button class="btn btn-gold" onclick="loadLaminarDemo()">Show Laminar Motif</button>
+      </div>
+
+      <div class="section-title">Network Parameters</div>
+      <div class="card">
+        <div class="form-group">
+          <label>T_MAX (ms)</label>
+          <input type="number" id="t_max" value="1000">
+        </div>
+        <div class="form-group">
+          <label>Seed</label>
+          <input type="number" id="seed" value="42">
+        </div>
+      </div>
+
+      <div class="section-title">Populations</div>
+      <div id="pop-list"></div>
+      <button class="btn btn-outline btn-full" onclick="addPop()">+ New Population</button>
+
+      <div class="section-title" style="margin-top: 20px">Connections</div>
+      <div id="conn-list"></div>
+      <button class="btn btn-outline btn-full" onclick="addConn()">+ New Connection</button>
+
+      <button class="btn btn-gold btn-full" style="margin-top: 30px" onclick="runSim()">
+        RUN SIMULATION
+      </button>
+    </div>
+  </div>
+
+  <!-- Center Panel: The Viewport -->
+  <div class="viewport">
+    <div class="status-bar">
+      <div class="dot online"></div>
+      <span id="status">Ready — Awaiting architectural input.</span>
+    </div>
+    <div id="canvas">
+      <div id="plotly-view" style="width: 100%; height: 100%"></div>
+    </div>
+  </div>
+
+  <!-- Right Panel: AI Agent -->
+  <div class="panel panel-right">
+    <div class="agent-chat">
+      <div class="section-title" style="margin: 20px 20px 0 20px">Independent Modeling Agent</div>
+      <div class="chat-history" id="chat-history">
+        <div class="msg msg-agent">
+          Greetings. I am your local Qwen-3.5 modeling partner. I can design cortical circuits or suggest GSDR objectives. How shall we begin?
+        </div>
+      </div>
+      <div class="chat-input">
+        <textarea id="agent-input" placeholder="Ask the architect..." rows="3"></textarea>
+        <button class="btn btn-gold btn-full" onclick="askAgent()">CONSULT AGENT</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let populations = [
+  {id: 0, name: 'Pyr', n: 80, type: 'pyramidal'},
+  {id: 1, name: 'PV', n: 20, type: 'pv'}
+];
+let connections = [
+  {id: 0, pre: 'Pyr', post: 'all', synapse: 'AMPA', p: 0.1, g: 2.0},
+  {id: 1, pre: 'PV', post: 'Pyr', synapse: 'GABAa', p: 0.4, g: 5.0}
+];
+
+function addPop() {
+  const id = Date.now();
+  populations.push({id, name: 'NewPop', n: 10, type: 'pyramidal'});
+  render();
+}
+
+function addConn() {
+  const id = Date.now();
+  connections.push({id, pre: populations[0].name, post: 'all', synapse: 'AMPA', p: 0.1, g: 1.0});
+  render();
+}
+
+function loadPreset(name) {
+  populations = []; connections = [];
+  if (name === 'column') {
+    populations = [
+      {id: 0, name: 'Pyr', n: 80, type: 'pyramidal'},
+      {id: 1, name: 'PV', n: 10, type: 'pv'},
+      {id: 2, name: 'SST', n: 7, type: 'sst'},
+      {id: 3, name: 'VIP', n: 3, type: 'vip'}
+    ];
+    connections = [
+      {id: 0, pre: 'Pyr', post: 'all', synapse: 'AMPA', p: 0.1, g: 1.5},
+      {id: 1, pre: 'PV', post: 'Pyr', synapse: 'GABAa', p: 0.5, g: 4.0},
+      {id: 2, pre: 'SST', post: 'Pyr', synapse: 'GABAb', p: 0.6, g: 2.0},
+      {id: 3, pre: 'SST', post: 'PV', synapse: 'GABAa', p: 0.4, g: 1.5},
+      {id: 4, pre: 'VIP', post: 'SST', synapse: 'GABAa', p: 0.8, g: 5.0}
+    ];
+  } else if (name === 'gamma') {
+    populations = [
+      {id: 0, name: 'E', n: 40, type: 'pyramidal'},
+      {id: 1, name: 'I', n: 10, type: 'pv'}
+    ];
+    connections = [
+      {id: 0, pre: 'E', post: 'I', synapse: 'AMPA', p: 0.2, g: 2.0},
+      {id: 1, pre: 'I', post: 'E', synapse: 'GABAa', p: 0.5, g: 8.0},
+      {id: 2, pre: 'I', post: 'I', synapse: 'GABAa', p: 0.4, g: 2.0}
+    ];
+  }
+  render();
+}
+
+function render() {
+  document.getElementById('pop-list').innerHTML = populations.map(p => `
+    <div class="pop-item card">
+      <div class="form-group">
+        <label>Name / Count</label>
+        <div style="display:flex; gap:5px">
+          <input type="text" value="${p.name}" onchange="p.name=this.value">
+          <input type="number" value="${p.n}" style="width:60px" onchange="p.n=+this.value">
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('conn-list').innerHTML = connections.map(c => `
+    <div class="conn-item card">
+      <div class="form-group">
+        <label>${c.pre} &rarr; ${c.post} (${c.synapse})</label>
+        <input type="number" value="${c.g}" step="0.1" onchange="c.g=+this.value">
+      </div>
+    </div>
+  `).join('');
+}
+
+async function runSim() {
+  document.getElementById('status').innerText = "⏳ Dispatching to JAX engine...";
+  const config = {
+    seed: +document.getElementById('seed').value,
+    t_max: +document.getElementById('t_max').value,
+    populations: populations.map(p => ({name: p.name, n: p.n, cell_type: p.type})),
+    connections: connections.map(c => ({pre: c.pre, post: c.post, synapse: c.synapse, p: c.p, g: c.g}))
+  };
+
+  const buildResp = await fetch('/build', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(config)
+  });
+  const {net_id} = await buildResp.json();
+
+  const simResp = await fetch(`/simulate/${net_id}`, { method: 'POST' });
+  const {dashboard} = await simResp.json();
+  
+  Plotly.newPlot('plotly-view', dashboard.data, dashboard.layout);
+  document.getElementById('status').innerText = `✅ Simulation complete: ${net_id}`;
+}
+
+async function askAgent() {
+  const input = document.getElementById('agent-input');
+  const prompt = input.value;
+  if(!prompt) return;
+
+  const history = document.getElementById('chat-history');
+  history.innerHTML += `<div class="msg msg-user">${prompt}</div>`;
+  input.value = '';
+
+  const resp = await fetch('/agent/ask', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({prompt})
+  });
+  const {agent_response} = await resp.json();
+  
+  history.innerHTML += `<div class="msg msg-agent">${agent_response}</div>`;
+  history.scrollTop = history.scrollHeight;
+}
+
+async function loadLaminarDemo() {
+  document.getElementById('status').innerText = "⌛ Loading Spectrolaminar Motif (AGSDR)...";
+  const resp = await fetch('/laminar_demo');
+  if(!resp.ok) {
+    const error = await resp.json();
+    alert("Error: " + error.detail);
+    return;
+  }
+  const {dashboard} = await resp.json();
+  Plotly.newPlot('plotly-view', dashboard.data, dashboard.layout);
+  document.getElementById('status').innerText = "✅ Spectrolaminar Motif (Replica: Bastos 2012) Loaded.";
+}
+
+render();
+</script>
+</body>
+</html>
