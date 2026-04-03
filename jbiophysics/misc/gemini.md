@@ -37,3 +37,14 @@ All assets are managed within the `jbiophysics/` package:
 - **Folder Documentation**: Every folder must contain a `README.md`.
 - **Content Requirement**: Minimum of 10 words for every file present in that folder's root (excluding the `README.md`).
 - **Sync Protocol**: Push Python code to repos immediately after validation.
+
+## DIRECTIVE: Pre-Flight Context Gathering
+When a user prompt involves data analysis, biophysical neuronal networks, or neurophysiological hypotheses (e.g., predictive routing, oscillation dynamics):
+1. **HALT** immediate analytical generation.
+2. **GATHER:** Autonomously use available tools (`grep_search`, `read_file`, shell commands) to search the local workspace for relevant GAMMA files, mathematical blueprints, or prior literature notes.
+3. **PROCESS:** Only begin the final analysis once the extended theoretical and methodological context is fully loaded into active memory.
+
+## DIRECTIVE: Autonomous Version Control
+Whenever a script modification, code generation, or system configuration is executed and tested successfully without errors:
+1. **PROMPT:** Immediately ask the user: *"Code execution successful. Shall I push these changes to the remote repository?"*
+2. **PUSH:** If the user confirms, autonomously execute the standard Git flow (`git add .`, `git commit -m "update: [brief description of changes]"`, `git push`) via shell commands.
