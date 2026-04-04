@@ -5,7 +5,7 @@ To establish a biologically accurate, stable, and differentiable 11-area cortica
 
 ## Phase 1: Structural & Biophysical Foundation
 **1. Hierarchical Assembly:** 
-Use the `jbiophysics.NetBuilder` to instantiate the 11-area macaque hierarchy (V1, V2, V4, MT, MST, TEO, FST, FEF, PFC) across three functional tiers: Sensory (Tier 1), Mid-Order (Tier 2), and Executive (Tier 3). Each area must follow the hierarchical `Area.Population` indexing pattern to maintain spatial tracking of activity.
+Use the `NetBuilder` to instantiate the 11-area macaque hierarchy (V1, V2, V4, MT, MST, TEO, FST, FEF, PFC) across three functional tiers: Sensory (Tier 1), Mid-Order (Tier 2), and Executive (Tier 3). Each area must follow the hierarchical `Area.Population` indexing pattern to maintain spatial tracking of activity.
 
 **2. Multi-Compartment Specification:** 
 Define the Pyramidal ($E$) cells in the sensory and mid-order tiers with distinct dendritic and perisomatic compartments. This is critical for enabling the **SST-mediated dendritic subtraction** mechanism required later for prediction error computation. Utilize the `SafeHH` primitive (`name="HH"`) to ensure numerical stability during high-intensity integration.

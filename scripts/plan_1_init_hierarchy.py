@@ -8,9 +8,9 @@ import sys
 # Add current directory to path
 sys.path.insert(0, os.getcwd())
 
-from jbiophysics.compose import NetBuilder, OptimizerFacade
-from jbiophysics.networks.omission_v1_column import build_v1_column
-from jbiophysics.networks.omission_two_column import build_omission_network
+from compose import NetBuilder, OptimizerFacade
+from networks.omission_v1_column import build_v1_column
+from networks.omission_two_column import build_omission_network
 
 def build_11_area_hierarchy(seed=42):
     """

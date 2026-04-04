@@ -8,7 +8,7 @@ import sys
 # Add current directory to path
 sys.path.insert(0, os.getcwd())
 
-from jbiophysics.compose import NetBuilder, OptimizerFacade
+from compose import NetBuilder, OptimizerFacade
 
 def run_lag_tuning():
     """

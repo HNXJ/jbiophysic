@@ -2,9 +2,9 @@
 
 import os
 from dataclasses import asdict
-from jbiophysics.compose import OptimizerFacade
-from jbiophysics.networks.omission_two_column import OmissionTrialConfig, build_omission_network
-from jbiophysics.neurons.cortical import make_synapses_independent
+from compose import OptimizerFacade
+from networks.omission_two_column import OmissionTrialConfig, build_omission_network
+from neurons.cortical import make_synapses_independent
 
 # Ensure the output directory exists
 output_dir = "./jbiophysics/results/campaign_260328_omission/optimization"

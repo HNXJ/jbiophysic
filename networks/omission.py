@@ -3,7 +3,7 @@ import numpy as np
 import jax.numpy as jnp
 from dataclasses import dataclass
 from typing import List, Dict, Tuple
-from jbiophysics.networks.v1 import create_v1_cells, wire_v1_column, V1PopIndices
+from networks.v1 import create_v1_cells, wire_v1_column, V1PopIndices
 
 @dataclass
 class OmissionTrialConfig:

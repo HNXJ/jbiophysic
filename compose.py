@@ -1,5 +1,5 @@
 """
-jbiophysics.compose — Fluent builder API for biophysical networks.
+compose — Fluent builder API for biophysical networks.
 
 Usage:
     import jbiophysics as jbp
@@ -22,12 +22,12 @@ from jaxley.connect import fully_connect, sparse_connect
 from typing import Optional, List, Dict, Any, Tuple, Union
 from dataclasses import dataclass, field
 
-from jbiophysics.channels import SafeHH, Inoise
-from jbiophysics.connect import GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA
-from jbiophysics.neurons import (
+from channels import SafeHH, Inoise
+from connect import GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA
+from neurons import (
     build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell
 )
-from jbiophysics.optimizers import SDR, GSDR, AGSDR
+from optimizers import SDR, GSDR, AGSDR
 
 # --- Cell Type Registry ---
 
@@ -284,9 +284,9 @@ class OptimizerFacade:
             return method_fn(inner_optimizer=inner, **self.optimizer_kwargs)
     
     def run(self, epochs: int = 100, dt: float = 0.1, t_max: float = 1500.0, seed: int = 42):
-        from jbiophysics.export import ResultsReport
-        from jbiophysics.viz.psd import compute_psd
-        from jbiophysics.optimizers.optimizers import compute_kappa
+        from export import ResultsReport
+        from viz.psd import compute_psd
+        from optimizers.optimizers import compute_kappa
         import gc
 
         optimizer = self._build_optimizer()

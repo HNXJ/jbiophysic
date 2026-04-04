@@ -11,9 +11,9 @@ import optax
 # Add jbiophysics to path
 sys.path.insert(0, os.getcwd())
 
-from jbiophysics.compose import NetBuilder
-from jbiophysics.neurons.cortical import Inoise, GradedAMPA, GradedGABAa, GradedGABAb, SafeHH
-from jbiophysics.optimizers.optimizers import compute_kappa, AGSDR
+from compose import NetBuilder
+from neurons.cortical import Inoise, GradedAMPA, GradedGABAa, GradedGABAb, SafeHH
+from optimizers.optimizers import compute_kappa, AGSDR
 
 def run_laminar_motif_optimized():
     print("🚀 Replicating Spectrolaminar Motif (AGSDR Optimized v2)...")
@@ -122,7 +122,7 @@ def run_laminar_motif_optimized():
         print(f"Layer {l:5} | FR: {np.mean(frs[start:end]):5.1f} Hz | Kappa: {k:6.3f}")
 
     # 7. Export Results
-    from jbiophysics.export import ResultsReport
+    from export import ResultsReport
     report = ResultsReport(
         traces=traces_np,
         dt=dt,

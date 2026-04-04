@@ -3,7 +3,7 @@ import jax.numpy as jnp
 import jaxley as jx
 import optax
 from typing import Callable, Any
-from jbiophysics.optimizers.types import GSDRState
+from optimizers.types import GSDRState
 
 # ClampTransform removed (use jnp.clip)
 
@@ -75,7 +75,7 @@ def GSDR(
             _params, _new_params_opt, _new_inner_state_opt, _current_step = operand
             time_since_last_change = jnp.maximum(0, _current_step - step_of_last_optimal_change)
             
-            from jbiophysics.utils.math import success_expansion
+            from utils.math import success_expansion
             effective_lambda_d = lambda_d * success_expansion(time_since_last_change, tau_a_growth)
 
             inner_opt_key, a_key, noise_key = jax.random.split(key, 3)

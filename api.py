@@ -31,10 +31,10 @@ import uvicorn
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
-from jbiophysics.compose import NetBuilder
-from jbiophysics.export import ResultsReport
-from jbiophysics.viz.dashboard import generate_dashboard
-from jbiophysics.viz.omission_viz import plot_omission_raster, plot_lfp_traces, plot_tfr
+from compose import NetBuilder
+from export import ResultsReport
+from viz.dashboard import generate_dashboard
+from viz.omission_viz import plot_omission_raster, plot_lfp_traces, plot_tfr
 
 # ── Pydantic models ────────────────────────────────────────────────────────────
 
@@ -151,7 +151,7 @@ async def simulate_generic(net_id: str, dt: float = 0.1, t_max: float = 1000.0):
 async def simulate_v1(config: V1SimConfig = Body(default_factory=V1SimConfig)):
     """Run 200-neuron V1 column for t_max ms and return traces + dashboard."""
     import jaxley as jx
-    from jbiophysics.networks.omission_v1_column import (
+    from networks.omission_v1_column import (
         build_v1_column, generate_sensory_input,
     )
 
@@ -215,7 +215,7 @@ async def simulate_omission(config: OmissionSimConfig = Body(default_factory=Omi
     Default: BU=OFF, TD=ON  (omission context 3).
     """
     import jaxley as jx
-    from jbiophysics.networks.omission_two_column import (
+    from networks.omission_two_column import (
         build_omission_network, OmissionTrialConfig,
         make_context_inputs, extract_lfp, detect_spikes,
     )
@@ -326,12 +326,12 @@ async def tuning_run(
     Kick off GSDR tuning in a background thread (non-blocking).
     Poll /tuning/status for live progress.
     """
-    from jbiophysics.networks.omission_two_column import (
+    from networks.omission_two_column import (
         build_omission_network, OmissionTrialConfig,
         make_context_inputs, extract_lfp, detect_spikes,
     )
-    from jbiophysics.optimizers.omission_objective import OmissionLoss, run_gsdr_tuning
-    from jbiophysics.optimizers.omission_metrics import empirical_omission_target_lfp
+    from optimizers.omission_objective import OmissionLoss, run_gsdr_tuning
+    from optimizers.omission_metrics import empirical_omission_target_lfp
 
     def _run():
         import jaxley as jx

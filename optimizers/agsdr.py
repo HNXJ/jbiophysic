@@ -5,7 +5,7 @@ import optax
 from typing import Callable, Any
 from flax.struct import dataclass
 
-from jbiophysics.optimizers.types import GSDRState
+from optimizers.types import GSDRState
 
 def AGSDR(
     inner_optimizer: optax.GradientTransformation,
@@ -78,7 +78,7 @@ def AGSDR(
             # --- ALPHA JOLT Protocol ---
             is_jolt_epoch = (time_since_last_change == 0)
             
-            from jbiophysics.utils.math import success_expansion
+            from utils.math import success_expansion
             
             effective_lambda_d = lambda_d * success_expansion(time_since_last_change, tau_a_growth)
 

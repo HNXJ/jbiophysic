@@ -1,8 +1,8 @@
 import jax
 import jaxley as jx
 import numpy as np
-from jbiophysics.compose import NetBuilder
-from jbiophysics.neurons.cortical import SafeHH, Inoise
+from compose import NetBuilder
+from neurons.cortical import SafeHH, Inoise
 
 def test_safe_hh_naming():
     # Verify name is "HH" by default
@@ -19,7 +19,7 @@ def test_builder_synapse_normalization():
     assert len(builder._connections) == 2
 
 def test_v1_build():
-    from jbiophysics.networks.omission_v1_column import build_v1_column
+    from networks.omission_v1_column import build_v1_column
     net, pops = build_v1_column(seed=1)
     assert len(pops.all) == 200
     print("Foundation tests passed")

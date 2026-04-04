@@ -1,5 +1,5 @@
 import jaxley as jx
-from jbiophysics.channels.hh import SafeHH
+from channels.hh import SafeHH
 
 def build_pyramidal_cell():
     cell = jx.Cell()

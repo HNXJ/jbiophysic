@@ -40,7 +40,7 @@ source .venv_311/bin/activate
 ```python
 import jaxley as jx
 import numpy as np
-from jbiophysics.compose import NetBuilder
+from compose import NetBuilder
 
 net = (NetBuilder(seed=42)
     .add_population("E", n=80, cell_type="pyramidal")
@@ -74,7 +74,7 @@ These are the atomic biophysical components inserted into Jaxley cells. Every ne
 Subclasses `jaxley.channels.HH` with voltage clamping `[-100, 100] mV`, NaN guards, and gating variable clipping `[0, 1]`. **CRITICAL**: Always instantiate with `name="HH"` to ensure parameter prefixing matches downstream `cell.set("HH_gNa", ...)` calls. Using the default name will cause `KeyError`.
 
 ```python
-from jbiophysics.core.mechanisms.models import SafeHH
+from core.mechanisms.models import SafeHH
 cell.insert(SafeHH(name="HH"))
 cell.set("HH_gNa", 120.0)  # Only works if name="HH"
 cell.set("HH_gK", 36.0)

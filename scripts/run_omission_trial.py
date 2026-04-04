@@ -9,11 +9,11 @@ import base64
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
-from jbiophysics.networks.omission_two_column import (
+from networks.omission_two_column import (
     build_omission_network, OmissionTrialConfig,
     make_context_inputs, extract_lfp, detect_spikes,
 )
-from jbiophysics.viz.omission_viz import (
+from viz.omission_viz import (
     plot_omission_raster, plot_lfp_traces, plot_tfr,
     BG, GOLD, WHITE, CYAN, VIOLET
 )

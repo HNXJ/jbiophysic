@@ -1,5 +1,5 @@
 """
-jbiophysics.export — Multi-format results export.
+export — Multi-format results export.
 
 Supports: Plotly HTML, SVG, Markdown, dict serialization.
 """
@@ -41,7 +41,7 @@ class ResultsReport:
     
     def to_plotly(self, output_path: Optional[str] = None) -> Any:
         """Generate interactive Plotly HTML dashboard."""
-        from jbiophysics.viz.dashboard import generate_dashboard
+        from viz.dashboard import generate_dashboard
         fig = generate_dashboard(self)
         if output_path:
             fig.write_html(output_path, include_plotlyjs="cdn")
@@ -50,7 +50,7 @@ class ResultsReport:
     
     def to_svg(self, output_path: str, panel: str = "raster") -> str:
         """Export a specific panel as SVG."""
-        from jbiophysics.viz import raster, psd, traces as trace_viz
+        from viz import raster, psd, traces as trace_viz
         panel_map = {"raster": raster.plot_raster, "psd": psd.plot_psd, "traces": trace_viz.plot_traces}
         if panel not in panel_map:
             raise ValueError(f"Unknown panel '{panel}'. Options: {list(panel_map.keys())}")

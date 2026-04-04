@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def run_simulation(config):
     """Run a simulation from a JSON config dict."""
-    from jbiophysics.compose import NetBuilder
-    from jbiophysics.export import ResultsReport
+    from compose import NetBuilder
+    from export import ResultsReport
     
     seed = config.get("seed", 42)
     dt = config.get("dt", 0.1)
@@ -69,7 +69,7 @@ def run_simulation(config):
 
 def build_dashboard_json(report):
     """Build Plotly JSON for the dashboard."""
-    from jbiophysics.viz.dashboard import generate_dashboard
+    from viz.dashboard import generate_dashboard
     fig = generate_dashboard(report, title="Jbiophysics — Live Simulation")
     return fig.to_json()
 

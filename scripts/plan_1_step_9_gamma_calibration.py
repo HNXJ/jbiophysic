@@ -8,8 +8,8 @@ import sys
 # Add current directory to path
 sys.path.insert(0, os.getcwd())
 
-from jbiophysics.compose import NetBuilder, OptimizerFacade
-from jbiophysics.systems.visualizers.compute_psd import compute_psd
+from compose import NetBuilder, OptimizerFacade
+from systems.visualizers.compute_psd import compute_psd
 
 def run_gamma_calibration():
     """
