@@ -10,3 +10,4 @@ misc/*.pkl
 misc/*.png
 output/
 results/data/
+local/

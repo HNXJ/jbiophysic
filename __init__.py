@@ -1,7 +1,15 @@
-from channels import SafeHH, Inoise
-from connect import GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA
-from neurons import build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell
-from networks import build_v1_column, build_omission_network
-from optimizers import SDR, GSDR, AGSDR, GSDRState
-from compose import NetBuilder, OptimizerFacade
-from export import ResultsReport
+from channels.hh import SafeHH, Inoise
+from synapses.graded import graded_ampa, graded_gabaa, graded_gabab, graded_nmda
+from channels.neuromodulators import Dopamine as DA, Serotonin as S5HT, ACh, Norepinephrine as NE
+from modules.cortical import build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell, build_cb_cell, build_cr_cell
+from modules.v1 import build_v1_column
+from modules.omission import build_omission_network
+from optimize.sdr import SDR
+from optimize.gsdr import GSDR
+from optimize.agsdr import AGSDR
+from optimize.types import GSDRState
+
+# We do not expose local files automatically at the root unless requested, 
+# but for builder workflow backwards compatibility:
+from local.compose import NetBuilder, OptimizerFacade
+from local.export import ResultsReport
