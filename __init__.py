@@ -9,7 +9,10 @@ from modules.cortical import (
 from modules.v1 import build_v1_column
 from modules.omission import build_omission_network
 from modules.predictive import predictive_step
+from modules.hierarchy import build_11_area_hierarchy, train_sequence
 from utils.gamma import gamma_init, gamma_log, step_with_gamma
+from utils.lfp import analyze_hierarchy_output as lfp_pipeline
+from utils.plotting import plot_panel_a_tfr, plot_panel_b_corr_matrix, plot_panel_c_band_comparison
 from optimize.sdr import SDR
 from optimize.gsdr import GSDR
 from optimize.agsdr import AGSDR
