@@ -2,7 +2,7 @@ import jaxley as jx
 import numpy as np
 from dataclasses import dataclass
 from typing import List, Dict, Tuple
-from jbiophysics.core.mechanisms.models import build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell
+from jbiophysics.neurons.cortical import build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell
 
 @dataclass
 class V1PopIndices:

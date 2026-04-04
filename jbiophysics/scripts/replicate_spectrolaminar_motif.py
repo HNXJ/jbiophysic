@@ -12,8 +12,8 @@ import optax
 sys.path.insert(0, os.getcwd())
 
 from jbiophysics.compose import NetBuilder
-from jbiophysics.core.mechanisms.models import Inoise, GradedAMPA, GradedGABAa, GradedGABAb, SafeHH
-from jbiophysics.core.optimizers.optimizers import compute_kappa, AGSDR
+from jbiophysics.neurons.cortical import Inoise, GradedAMPA, GradedGABAa, GradedGABAb, SafeHH
+from jbiophysics.optimizers.optimizers import compute_kappa, AGSDR
 
 def run_laminar_motif_optimized():
     print("🚀 Replicating Spectrolaminar Motif (AGSDR Optimized v2)...")

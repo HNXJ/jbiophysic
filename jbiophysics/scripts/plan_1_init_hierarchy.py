@@ -9,8 +9,8 @@ import sys
 sys.path.insert(0, os.getcwd())
 
 from jbiophysics.compose import NetBuilder, OptimizerFacade
-from jbiophysics.systems.networks.omission_v1_column import build_v1_column
-from jbiophysics.systems.networks.omission_two_column import build_omission_network
+from jbiophysics.networks.omission_v1_column import build_v1_column
+from jbiophysics.networks.omission_two_column import build_omission_network
 
 def build_11_area_hierarchy(seed=42):
     """

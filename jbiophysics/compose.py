@@ -22,12 +22,12 @@ from jaxley.connect import fully_connect, sparse_connect
 from typing import Optional, List, Dict, Any, Tuple, Union
 from dataclasses import dataclass, field
 
-from jbiophysics.core.mechanisms.models import (
-    Inoise, GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA,
-    build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell,
-    make_synapses_independent,
+from jbiophysics.channels import SafeHH, Inoise
+from jbiophysics.connect import GradedAMPA, GradedGABAa, GradedGABAb, GradedNMDA
+from jbiophysics.neurons import (
+    build_pyramidal_cell, build_pv_cell, build_sst_cell, build_vip_cell
 )
-from jbiophysics.core.optimizers.optimizers import SDR, GSDR, AGSDR
+from jbiophysics.optimizers import SDR, GSDR, AGSDR
 
 # --- Cell Type Registry ---
 
@@ -286,7 +286,7 @@ class OptimizerFacade:
     def run(self, epochs: int = 100, dt: float = 0.1, t_max: float = 1500.0, seed: int = 42):
         from jbiophysics.export import ResultsReport
         from jbiophysics.viz.psd import compute_psd
-        from jbiophysics.core.optimizers.optimizers import compute_kappa
+        from jbiophysics.optimizers.optimizers import compute_kappa
         import gc
 
         optimizer = self._build_optimizer()

@@ -49,7 +49,7 @@ def SDR(
             grads, param_keys_tree
         )
 
-        from jbiophysics.core.optimizers.utils import apply_spatial_smoothing
+        from jbiophysics.utils.math import apply_spatial_smoothing
 
         random_factors = jax.tree.map(apply_spatial_smoothing, random_factors)
 
