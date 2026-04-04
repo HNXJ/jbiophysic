@@ -5,20 +5,7 @@ import optax
 from typing import Callable, Any
 from flax.struct import dataclass
 
-@dataclass
-class GSDRState:
-    inner_state: Any
-    params_opt: Any
-    inner_state_opt: Any
-    loss_opt: float
-    a: float
-    a_opt: float
-    lambda_d: float
-    step_count: int
-    consecutive_unchanged_epochs: int
-    last_optimal_change_step: int
-    var_sup_ema: float = 1.0
-    var_unsup_ema: float = 1.0
+from jbiophysics.core.optimizers.types import GSDRState
 
 def AGSDR(
     inner_optimizer: optax.GradientTransformation,
@@ -30,8 +17,8 @@ def AGSDR(
     tau_a_growth: float = 10.0,
     mcdp: bool = True,
     ema_momentum: float = 0.9,
-    alpha_min: float = 0.1,
-    alpha_max: float = 0.9
+    alpha_min: float = 0.05,
+    alpha_max: float = 0.8
 ) -> optax.GradientTransformation:
     """
     Adaptive GSDR (AGSDR) v2.5 with 'Alpha Jolt' protocol.
@@ -91,7 +78,9 @@ def AGSDR(
             # --- ALPHA JOLT Protocol ---
             is_jolt_epoch = (time_since_last_change == 0)
             
-            effective_lambda_d = (time_since_last_change**2) * (1.0 - jnp.exp(-(time_since_last_change) / tau_a_growth))
+            from jbiophysics.core.optimizers.utils import success_expansion
+            
+            effective_lambda_d = lambda_d * success_expansion(time_since_last_change, tau_a_growth)
 
             inner_opt_key, noise_key = jax.random.split(key, 2)
             inner_updates, updated_inner_state = inner_optimizer.update(grads, state.inner_state, _params, key=inner_opt_key)
@@ -105,20 +94,27 @@ def AGSDR(
             else:
                 delta = jax.tree.map(lambda n, p: n * p, delta_d, _params)
 
-            flat_inner = jnp.concatenate([jnp.ravel(x) for x in jax.tree.leaves(inner_updates)])
-            flat_delta = jnp.concatenate([jnp.ravel(x) for x in jax.tree.leaves(delta)])
-            curr_var_sup = jnp.var(flat_inner)
-            curr_var_unsup = jnp.var(flat_delta)
+            # --- MEMORY-EFFICIENT VARIANCE ENGINE ---
+            def tree_moments(tree):
+                n = jnp.array(sum(x.size for x in jax.tree.leaves(tree)), dtype=jnp.float32)
+                s1 = jax.tree.reduce(lambda a, b: a + jnp.sum(b), tree, 0.0)
+                s2 = jax.tree.reduce(lambda a, b: a + jnp.sum(jnp.square(b)), tree, 0.0)
+                return s1/n, s2/n
+
+            mu_sup, m2_sup = tree_moments(inner_updates)
+            mu_unsup, m2_unsup = tree_moments(delta)
             
+            curr_var_sup = (m2_sup - mu_sup**2) + 1e-12
+            curr_var_unsup = (m2_unsup - mu_unsup**2) + 1e-12
+            
+            # Update EMA
             new_var_sup_ema = ema_momentum * state.var_sup_ema + (1 - ema_momentum) * curr_var_sup
             new_var_unsup_ema = ema_momentum * state.var_unsup_ema + (1 - ema_momentum) * curr_var_unsup
             
-            epsilon = 1e-8
-            denom = new_var_sup_ema + new_var_unsup_ema + epsilon
-            next_a = jnp.where(denom > 1e-6, new_var_sup_ema / denom, 0.8)
-            
-            # Apply Jolt: next_a=0 if is_jolt_epoch, otherwise clipped to floor
-            next_a = jnp.where(is_jolt_epoch, 0.0, jnp.clip(next_a, alpha_min, alpha_max))
+            # Alpha based on variance ratio
+            ratio = new_var_sup_ema / (new_var_unsup_ema + 1e-12)
+            next_a = jnp.clip(1.0 / (1.0 + ratio), alpha_min, alpha_max)
+            next_a = jnp.where(is_jolt_epoch, 0.0, next_a)
             
             combined_updates = jax.tree.map(lambda d, g: effective_lambda_d * (next_a * d + (1.0 - next_a) * g), delta, inner_updates)
 

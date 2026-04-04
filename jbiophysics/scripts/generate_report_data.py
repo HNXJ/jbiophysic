@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import numpy as np
@@ -8,7 +9,7 @@ import json
 from dataclasses import asdict
 
 # Add project root to path
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, PROJECT_ROOT)
 
 from jbiophysics.systems.networks.omission_two_column import (
@@ -75,7 +76,12 @@ def run_context_sim(onet, context_name, bu_on, td_on, t_total=2000.0, dt=0.025):
     }
 
 def main():
-    os.makedirs("results/data", exist_ok=True)
+    parser = argparse.ArgumentParser(description="Generate context simulation data.")
+    parser.add_argument("--output_dir", type=str, default="results/data",
+                        help="Directory to save the output files.")
+    args = parser.parse_args()
+
+    os.makedirs(args.output_dir, exist_ok=True)
     onet = build_omission_network(seed=42)
     
     contexts = [
@@ -92,15 +98,17 @@ def main():
         
         # Save individual images for Markdown report
         for img_type in ["raster", "lfp", "tfr"]:
-            path = f"results/data/{name.lower()}_{img_type}.png"
+            path = os.path.join(args.output_dir, f"{name.lower()}_{img_type}.png")
             with open(path, "wb") as f:
                 f.write(base64.b64decode(res[img_type]))
                 
     # Save metrics JSON
-    with open("results/data/metrics.json", "w") as f:
-        json.dump([{k: v for k,v in r.items() if k not in ["raster", "lfp", "tfr"]} for r in results], f, indent=2)
+    metrics_to_save = [{k: v for k, v in r.items() if k not in ["raster", "lfp", "tfr"]} for r in results]
+    metrics_path = os.path.join(args.output_dir, "metrics.json")
+    with open(metrics_path, "w") as f:
+        json.dump(metrics_to_save, f, indent=2)
         
-    print("✅ Full Context Simulation Data Generated in 'results/data/'")
+    print(f"✅ Full Context Simulation Data Generated in '{args.output_dir}'")
 
 if __name__ == "__main__":
     main()

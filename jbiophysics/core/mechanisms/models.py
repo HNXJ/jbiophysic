@@ -9,6 +9,9 @@ from typing import Optional
 
 class SafeHH(jx.channels.HH):
     """Hodgkin-Huxley with physical limits and NaN guards."""
+    def __init__(self, name: str = "HH"):
+        super().__init__(name)
+
     def update_states(self, states, dt, v, params):
         # Clip voltage to physiological range before HH calculation
         v_safe = jnp.clip(v, -100.0, 100.0)
@@ -25,31 +28,36 @@ class SafeHH(jx.channels.HH):
 
 class Inoise(jx.channels.Channel):
     """Stochastic Ornstein-Uhlenbeck noise channel."""
-    def __init__(self, name: str = None, initial_seed: Optional[int] = None, initial_amp_noise: Optional[float] = None, initial_tau: Optional[float] = None, initial_mean: Optional[float] = None):
+    def __init__(self, name: str = "Inoise", initial_seed: Optional[int] = None, 
+                 initial_amp_noise: float = 0.01, initial_tau: float = 20.0, 
+                 initial_mean: float = 0.0):
         self.current_is_in_mA_per_cm2 = True
         super().__init__(name)
-        self.channel_params = {"amp_noise": 0.01, "mean": 0.00, "tau": 20.0}
-        if initial_seed is None:
-            self.channel_params["seed"] = float(np.random.randint(0, 2**16 - 1))
-        else:
-            self.channel_params["seed"] = float(initial_seed)
-        self.channel_params["amp_noise"] = float(initial_amp_noise) if initial_amp_noise is not None else 0.01
-        self.channel_params["tau"] = float(initial_tau) if initial_tau is not None else 20.0
-        self.channel_params["mean"] = float(initial_mean) if initial_mean is not None else 0.00
+        
+        seed = float(initial_seed) if initial_seed is not None else float(np.random.randint(0, 2**16 - 1))
+        
+        self.channel_params = {
+            "amp_noise": float(initial_amp_noise), 
+            "mean": float(initial_mean), 
+            "tau": float(initial_tau),
+            "seed": seed
+        }
         self.channel_states = {"n": 0.00, "step": 0.0}
         self.current_name = "i_noise"
 
     def update_states(self, states, dt, v, params):
         n, step, seeds_int = states["n"], states["step"], params["seed"].astype(int)
+        
+        # Consistent key generation for VMAP or single
         if seeds_int.ndim == 0:
             base_key = jax.random.PRNGKey(seeds_int)
+            step_key = jax.random.fold_in(base_key, step.astype(int))
+            xi = jax.random.normal(step_key)
         else:
             base_key = jax.vmap(jax.random.PRNGKey)(seeds_int)
-        if step.ndim == 0:
-            step_key = jax.random.fold_in(base_key, step.astype(int))
-        else:
             step_key = jax.vmap(jax.random.fold_in)(base_key, step.astype(int))
-        xi = jax.random.normal(step_key) if step_key.ndim == 1 else jax.vmap(jax.random.normal)(step_key)
+            xi = jax.vmap(jax.random.normal)(step_key)
+            
         mu, sigma, tau = params["mean"], params["amp_noise"], params["tau"]
         drift = (mu - n) / tau * dt
         diffusion = sigma * jnp.sqrt(2.0 / tau) * xi * jnp.sqrt(dt)
@@ -60,74 +68,44 @@ class Inoise(jx.channels.Channel):
     def compute_current(self, states, v, params): return -states["n"]
     def init_state(self, states, v, params, delta_t): return {"n": params["mean"], "step": 0.0}
 
-class GradedAMPA(jx.synapses.Synapse):
-    def __init__(self, g: float = 2.5, tauD_AMPA: Optional[float] = None):
+class _GradedSynapse(jx.synapses.Synapse):
+    """Base class for graded synapses to reduce duplication."""
+    def __init__(self, suffix: str, g: float, e: float, tauD: float, tauR: float, V_th: float, slope: float):
         super().__init__()
-        self.synapse_params = {"gAMPA": g, "EAMPA": 0.0, "tauDAMPA": 5.0, "tauRAMPA": 0.2, "slopeAMPA": 5.0, "V_thAMPA": -20.0}
-        if tauD_AMPA is not None: self.synapse_params["tauDAMPA"] = tauD_AMPA
-        self.synapse_states = {"sAMPA": 0.1}
-    def update_states(self, states, dt, pre_v, post_v, params):
-        s = states["sAMPA"]
-        activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thAMPA"]) / params["slopeAMPA"]))
-        d_s = (-s / params["tauDAMPA"]) + activation * ((1 - s) / params["tauRAMPA"])
-        new_s = s + d_s * dt
-        new_s = jnp.nan_to_num(new_s, nan=0.0)
-        new_s = jnp.clip(new_s, 0.0, 1.0)
-        return {"sAMPA": new_s}
-    def compute_current(self, states, pre_v, post_v, params): return params["gAMPA"] * states["sAMPA"] * (post_v - params["EAMPA"])
-
-class GradedGABAa(jx.synapses.Synapse):
-    def __init__(self, g: float = 5.0, tauD_GABAa: Optional[float] = None):
-        super().__init__()
-        self.synapse_params = {"gGABAa": g, "EGABAa": -80.0, "tauDGABAa": 5.0, "tauRGABAa": 0.5, "slopeGABAa": 5.0, "V_thGABAa": -20.0}
-        if tauD_GABAa is not None: self.synapse_params["tauDGABAa"] = tauD_GABAa
-        self.synapse_states = {"sGABAa": 0.1}
-    def update_states(self, states, dt, pre_v, post_v, params):
-        s = states["sGABAa"]
-        activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thGABAa"]) / params["slopeGABAa"]))
-        d_s = (-s / params["tauDGABAa"]) + activation * ((1 - s) / params["tauRGABAa"])
-        new_s = s + d_s * dt
-        new_s = jnp.nan_to_num(new_s, nan=0.0)
-        new_s = jnp.clip(new_s, 0.0, 1.0)
-        return {"sGABAa": new_s}
-    def compute_current(self, states, pre_v, post_v, params): return params["gGABAa"] * states["sGABAa"] * (post_v - params["EGABAa"])
-
-class GradedGABAb(jx.synapses.Synapse):
-    def __init__(self, g: float = 1.0, tauD_GABAb: Optional[float] = None):
-        super().__init__()
+        self.suffix = suffix
         self.synapse_params = {
-            "gGABAb": g, "EGABAb": -95.0, "tauDGABAb": 200.0, "tauRGABAb": 10.0, 
-            "slopeGABAb": 5.0, "V_thGABAb": -20.0
+            f"g{suffix}": g, f"E{suffix}": e, f"tauD{suffix}": tauD, 
+            f"tauR{suffix}": tauR, f"V_th{suffix}": V_th, f"slope{suffix}": slope
         }
-        if tauD_GABAb is not None: self.synapse_params["tauDGABAb"] = tauD_GABAb
-        self.synapse_states = {"sGABAb": 0.01}
-    def update_states(self, states, dt, pre_v, post_v, params):
-        s = states["sGABAb"]
-        activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thGABAb"]) / params["slopeGABAb"]))
-        d_s = (-s / params["tauDGABAb"]) + activation * ((1 - s) / params["tauRGABAb"])
-        new_s = s + d_s * dt
-        new_s = jnp.nan_to_num(new_s, nan=0.0)
-        new_s = jnp.clip(new_s, 0.0, 1.0)
-        return {"sGABAb": new_s}
-    def compute_current(self, states, pre_v, post_v, params): 
-        return params["gGABAb"] * states["sGABAb"] * (post_v - params["EGABAb"])
+        self.synapse_states = {f"s{suffix}": 0.1}
 
-class GradedNMDA(jx.synapses.Synapse):
+    def update_states(self, states, dt, pre_v, post_v, params):
+        s = states[f"s{self.suffix}"]
+        activation = 0.5 * (1 + jnp.tanh((pre_v - params[f"V_th{self.suffix}"]) / params[f"slope{self.suffix}"]))
+        d_s = (-s / params[f"tauD{self.suffix}"]) + activation * ((1 - s) / params[f"tauR{self.suffix}"])
+        new_s = jnp.clip(jnp.nan_to_num(s + d_s * dt, nan=0.0), 0.0, 1.0)
+        return {f"s{self.suffix}": new_s}
+
+    def compute_current(self, states, pre_v, post_v, params):
+        return params[f"g{self.suffix}"] * states[f"s{self.suffix}"] * (post_v - params[f"E{self.suffix}"])
+
+class GradedAMPA(_GradedSynapse):
+    def __init__(self, g: float = 2.5, tauD_AMPA: float = 5.0):
+        super().__init__("AMPA", g, 0.0, tauD_AMPA, 0.2, -20.0, 5.0)
+
+class GradedGABAa(_GradedSynapse):
+    def __init__(self, g: float = 5.0, tauD_GABAa: float = 5.0):
+        super().__init__("GABAa", g, -80.0, tauD_GABAa, 0.5, -20.0, 5.0)
+
+class GradedGABAb(_GradedSynapse):
+    def __init__(self, g: float = 1.0, tauD_GABAb: float = 200.0):
+        super().__init__("GABAb", g, -95.0, tauD_GABAb, 10.0, -20.0, 5.0)
+
+class GradedNMDA(_GradedSynapse):
     def __init__(self, g: float = 1.0, tauD_NMDA: float = 100.0):
-        super().__init__()
-        self.synapse_params = {
-            "gNMDA": g, "ENMDA": 0.0, "tauDNMDA": tauD_NMDA, "tauRNMDA": 2.0, 
-            "slopeNMDA": 5.0, "V_thNMDA": -20.0, "Mg": 1.0
-        }
-        self.synapse_states = {"sNMDA": 0.01}
-    def update_states(self, states, dt, pre_v, post_v, params):
-        s = states["sNMDA"]
-        activation = 0.5 * (1 + jnp.tanh((pre_v - params["V_thNMDA"]) / params["slopeNMDA"]))
-        d_s = (-s / params["tauDNMDA"]) + activation * ((1 - s) / params["tauRNMDA"])
-        new_s = s + d_s * dt
-        new_s = jnp.nan_to_num(new_s, nan=0.0)
-        new_s = jnp.clip(new_s, 0.0, 1.0)
-        return {"sNMDA": new_s}
+        super().__init__("NMDA", g, 0.0, tauD_NMDA, 2.0, -20.0, 5.0)
+        self.synapse_params["Mg"] = 1.0
+
     def compute_current(self, states, pre_v, post_v, params):
         m_block = 1.0 / (1.0 + 0.28 * jnp.exp(-0.062 * post_v))
         return params["gNMDA"] * states["sNMDA"] * m_block * (post_v - params["ENMDA"])
@@ -147,7 +125,7 @@ def build_net_eig(num_e: int, num_ig: int, num_il: int, seed: Optional[int] = No
     for cell in e_cells + i_cells_g + i_cells_l:
         r_d_tau_diff = np.random.uniform(5.0, 50.0)
         r_amp_diff = np.clip(np.random.uniform(-0.1, 0.1), 0.0, 0.1)
-        cell.insert(SafeHH())
+        cell.insert(SafeHH(name="HH"))
         cell.insert(Inoise(initial_amp_noise=r_amp_diff, initial_tau=r_d_tau_diff, initial_mean=0.0))
         cell.radius = 1.0
         cell.length = 1.0
@@ -178,7 +156,7 @@ def build_pyramidal_cell():
     cell = jx.Cell([comp_soma, comp_dend], parents=[-1, 0])
     cell.radius = 1.0
     cell.length = 100.0
-    cell.insert(SafeHH())
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def build_pv_cell():
@@ -186,7 +164,7 @@ def build_pv_cell():
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 1.0
     cell.length = 10.0
-    cell.insert(SafeHH())
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def build_sst_cell():
@@ -194,7 +172,7 @@ def build_sst_cell():
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 1.0
     cell.length = 10.0
-    cell.insert(SafeHH())
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def build_vip_cell():
@@ -202,7 +180,7 @@ def build_vip_cell():
     cell = jx.Cell([comp_soma], parents=[-1])
     cell.radius = 0.5
     cell.length = 10.0
-    cell.insert(SafeHH())
+    cell.insert(SafeHH(name="HH"))
     return cell
 
 def make_synapses_independent(net: jx.Network, param_name: str):

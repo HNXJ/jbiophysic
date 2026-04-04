@@ -30,7 +30,7 @@
 ### Installation & Activation
 
 ```bash
-cd /Users/hamednejat/workspace/Computational/jbiophysics
+cd ~/workspace/Computational/jbiophysics
 source .venv_311/bin/activate
 # OR: .venv_311/bin/python <script.py>
 ```

@@ -59,8 +59,14 @@ class OmissionLoss:
 
 # ── GSDR tuning state ──────────────────────────────────────────────────────────
 
+from jbiophysics.core.optimizers.types import GSDRState
+
+# ── GSDR tuning state (use common GSDRState or local if extra fields needed)
+# Here we'll stick to a local one but with corrected name for compatibility 
+# if it has unique fields like 'epoch' or 'sigma' which the common one might not.
+# Actually, let's keep the custom one but fix the name.
 @dataclass
-class GSRDState:
+class GSDRState:
     epoch:       int   = 0
     best_loss:   float = float("inf")
     best_params: Dict  = field(default_factory=dict)
@@ -70,8 +76,8 @@ class GSRDState:
     ema_var:     float = 0.0     # EMA of reward variance
     ema_alpha:   float = 0.1     # EMA weight
 
-
 # ── Simple param extractor / applier (JAXley-agnostic) ────────────────────────
+# ... (rest of code)
 
 def _extract_gparams(net: jx.Network) -> Dict[str, float]:
     """Read shared synaptic conductances from first param group."""
@@ -117,7 +123,7 @@ def run_gsdr_tuning(
     sigma_init:   float = 0.05,
     seed:         int = 0,
     status_store: Optional[Dict] = None,  # mutable dict for API /tuning/status
-) -> GSRDState:
+) -> GSDRState:
     """
     Genetic-Stochastic Delta-Rule loop.
 
@@ -129,7 +135,7 @@ def run_gsdr_tuning(
       5. Update σ via EMA of reward variance (AGSDR adaptive step).
     """
     rng    = np.random.default_rng(seed)
-    state  = GSRDState(sigma=sigma_init)
+    state  = GSDRState(sigma=sigma_init)
     params = net.get_parameters()
 
     # Initial evaluation

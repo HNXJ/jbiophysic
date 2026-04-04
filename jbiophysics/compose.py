@@ -40,20 +40,16 @@ CELL_BUILDERS = {
 }
 
 SYNAPSE_TYPES = {
-    "AMPA": GradedAMPA,
     "ampa": GradedAMPA,
-    "GABAa": GradedGABAa,
     "gabaa": GradedGABAa,
-    "GABAb": GradedGABAb,
     "gabab": GradedGABAb,
-    "NMDA": GradedNMDA,
     "nmda": GradedNMDA,
 }
 
 OPTIMIZER_METHODS = {
-    "SDR": SDR,
-    "GSDR": GSDR,
-    "AGSDR": AGSDR,
+    "sdr": SDR,
+    "gsdr": GSDR,
+    "agsdr": AGSDR,
 }
 
 
@@ -133,9 +129,6 @@ class NetBuilder:
         Names can be 'PopName' or 'Area.PopName'.
         If 'area' is provided, it's prepended to names if they don't have one.
         """
-        if synapse not in SYNAPSE_TYPES:
-            raise ValueError(f"Unknown synapse '{synapse}'. Options: {list(SYNAPSE_TYPES.keys())}")
-        
         def finalize_name(name):
             if area and "." not in name and name != "all":
                 return f"{area}.{name}"
@@ -143,7 +136,7 @@ class NetBuilder:
 
         self._connections.append(ConnectionSpec(
             pre=finalize_name(pre), post=finalize_name(post), 
-            synapse=synapse, p=p, g=g, kwargs=kwargs,
+            synapse=synapse.lower(), p=p, g=g, kwargs=kwargs,
         ))
         return self
     
@@ -189,7 +182,7 @@ class NetBuilder:
                 post_start, post_end = self._pop_offsets[conn.post]
                 post_indices = list(range(post_start, post_end))
             
-            syn_cls = SYNAPSE_TYPES[conn.synapse]
+            syn_cls = SYNAPSE_TYPES[conn.synapse.lower()]
             syn_kwargs = dict(conn.kwargs)
             if conn.g is not None:
                 syn_kwargs["g"] = conn.g
@@ -232,7 +225,7 @@ class OptimizerFacade:
     
     def __init__(self, net: jx.Network, method: str = "AGSDR", lr: float = 1e-3, **optimizer_kwargs):
         self.net = net
-        self.method = method
+        self.method = method.lower()
         self.lr = lr
         self.optimizer_kwargs = optimizer_kwargs
         self._constraints: Dict[str, Any] = {}
@@ -285,14 +278,14 @@ class OptimizerFacade:
         if method_fn is None:
             raise ValueError(f"Unknown optimizer '{self.method}'. Options: {list(OPTIMIZER_METHODS.keys())}")
         
-        if self.method == "SDR":
+        if self.method == "sdr":
             return method_fn(learning_rate=self.lr, **self.optimizer_kwargs)
         else:
             return method_fn(inner_optimizer=inner, **self.optimizer_kwargs)
     
     def run(self, epochs: int = 100, dt: float = 0.1, t_max: float = 1500.0, seed: int = 42):
         from jbiophysics.export import ResultsReport
-        from jbiophysics.systems.visualizers.compute_psd import compute_psd
+        from jbiophysics.viz.psd import compute_psd
         from jbiophysics.core.optimizers.optimizers import compute_kappa
         import gc
 
@@ -386,7 +379,7 @@ class OptimizerFacade:
             (loss_val, aux), grads = grad_fn(p)
             k, subkey = jax.random.split(k)
             # Handle GSDR requirements (value=loss, key=key)
-            if self.method in ["GSDR", "AGSDR"]:
+            if self.method in ["gsdr", "agsdr"]:
                 updates, next_state = optimizer.update(grads, state, p, value=loss_val, key=subkey)
             else:
                 updates, next_state = optimizer.update(grads, state, p)

@@ -6,12 +6,7 @@ import numpy as np
 from typing import Callable, Any
 from flax.struct import dataclass
 
-class ClampTransform:
-    def __init__(self, lower, upper):
-        self.lower = lower
-        self.upper = upper
-    def forward(self, x):
-        return jnp.clip(x, self.lower, self.upper)
+# ClampTransform removed (use jnp.clip)
 
 @dataclass
 class SDRState:
@@ -54,29 +49,16 @@ def SDR(
             grads, param_keys_tree
         )
 
-        def smooth_factor(x):
-            if x.ndim == 2:
-                n, m = x.shape
-                kn = max(1, int(np.sqrt(n)))
-                km = max(1, int(np.sqrt(m)))
-                kernel = jnp.ones((kn, km)) / (kn * km)
-                return jax.scipy.signal.convolve2d(x, kernel, mode='same')
-            elif x.ndim == 1:
-                n = x.shape[0]
-                k = max(1, int(np.sqrt(n)))
-                kernel = jnp.ones((k,)) / k
-                return jnp.convolve(x, kernel, mode='same')
-            return x
+        from jbiophysics.core.optimizers.utils import apply_spatial_smoothing
 
-        random_factors = jax.tree.map(smooth_factor, random_factors)
+        random_factors = jax.tree.map(apply_spatial_smoothing, random_factors)
 
         raw_updates = jax.tree.map(
             lambda s, r: -learning_rate * s * r,
             grad_signs, random_factors
         )
 
-        boundTransform = ClampTransform(change_lower_bound, change_upper_bound)
-        final_updates = jax.tree.map(lambda x: boundTransform.forward(x), raw_updates)
+        final_updates = jax.tree.map(lambda x: jnp.clip(x, change_lower_bound, change_upper_bound), raw_updates)
 
         new_state = SDRState(
             momentum_accum=new_momentum_accum,

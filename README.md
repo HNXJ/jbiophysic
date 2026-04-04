@@ -1,75 +1,33 @@
-# jbiophys
-Hierarchical, JAX-differentiable biophysical modeling and optimization using **Jaxley** and **AGSDR**.
+# jbiophysics
+> Advanced Biophysical Modeling for Omission Prediction (Jaxley/JAX)
 
-## 1. Building a Hierarchy
-The `NetBuilder` provides a fluent API for constructing multi-area cortical circuits with area-aware indexing.
-
-```python
-from jbiophysics.compose import NetBuilder
-
-# 1. Build a 2-area hierarchy (V1 + HO)
-builder = (NetBuilder(seed=42)
-    .add_population("E", n=80, cell_type="pyr", area="V1")
-    .add_population("PV", n=20, cell_type="pv", area="V1")
-    .add_population("E", n=50, cell_type="pyr", area="HO")
-    # Intra-areal connection
-    .connect("E", "PV", synapse="AMPA", p=0.1, area="V1")
-    # Inter-areal Feedforward (V1 -> HO)
-    .connect("V1.E", "HO.E", synapse="AMPA", p=0.05, g=0.5)
-    .make_trainable(["gAMPA", "gGABAa"]))
-
-net = builder.build()
-```
-
-## 2. Simulation
-Integration is fully differentiable via **Jaxley**.
-
-```python
-import jaxley as jx
-import numpy as np
-
-# Record somatic voltage for all cells
-net.delete_recordings()
-net.cell("all").branch(0).loc(0.0).record("v")
-
-# Integrate (40 kHz sampling)
-traces = jx.integrate(net, delta_t=0.025, t_max=1000.0)
-traces_np = np.array(traces) # (N_cells, T_steps)
-```
-
-## 3. Optimization with AGSDR
-The `OptimizerFacade` orchestrates high-dimensional parameter tuning using the **Adaptive Genetic-Stochastic Delta-Rule (AGSDR v2)** with an **Adam** inner optimizer.
-
-```python
-from jbiophysics.compose import OptimizerFacade
-
-# 1. Initialize Optimizer (AGSDR + Adam)
-facade = (OptimizerFacade(net, method="AGSDR", lr=1e-3)
-    .set_pop_offsets(builder.population_offsets)
-    # 2. Set Multi-Objective Constraints
-    .set_constraints(firing_rate=(1.0, 50.0), kappa_max=0.1) # Global
-    .set_pop_constraints("V1.E", firing_rate=(2.0, 10.0))    # Per-area
-    # 3. Run Training Loop
-    .run(epochs=100, dt=0.025, t_max=1000.0))
-
-# 4. Access Optimized Parameters and Report
-report = facade
-print(f"Final Loss: {report.metadata['history']['loss'][-1]}")
-```
+## Highlights
+- **Fluent API**: `NetBuilder` and `OptimizerFacade` for high-level simulation.
+- **Biophysical Primitives**: `SafeHH`, `Inoise`, and graded synapses.
+- **Cortical Logic**: Two-column V1 + HO architecture for omission modeling.
+- **Optimization**: SDR, GSDR, and AGSDR tuning for synaptic conductances.
+- **Reporting**: Automated Plotly dashboards, Reveal.js slides, and base64 API.
 
 ## Project Structure
-All core logic, scripts, and research plans are consolidated within the `jbiophysics/` package directory:
+- `jbiophysics/core`: Mechanisms (HH, Synapses) and Optimizers.
+- `jbiophysics/systems`: Pre-built network architectures (V1, Omission).
+- `jbiophysics/viz`: Visualization utilities (Spectrograms, Rasters).
+- `jbiophysics/scripts`: Production runners (simulation, tuning, reporting).
+- `api.py`: FastAPI backend on port 7701.
 
-- **jbiophysics/core/**: Biophysical primitives (mechanisms, neurons, optimizers).
-- **jbiophysics/systems/**: Network architectures and simulation pipelines.
-- **jbiophysics/scripts/**: Trial execution and batch processing.
-- **jbiophysics/plans/**: Markdown research plans for systematic experimentation.
-- **jbiophysics/results/**: Generated data, reports, and dashboards.
-- **jbiophysics/viz/**: Visualization and analysis tools.
-- **jbiophysics/functions/**: Reusable signal processing utilities.
-- **jbiophysics/skills/**: Expert agent skills.
+## Environment & Scripts
+- Recommended Python: 3.11 (`.venv_311/bin/python`).
+- `config.md`: Project settings (see `config.template.md`).
+- Primary entry point: `jbiophysics/scripts/run_omission_trial.py`.
 
-## Installation
-```bash
-pip install -e .
-```
+## Audit Results (2026-04-04)
+A full refactor of the repository was completed to resolve 32 severe issues, including:
+- Missing `systems/` and `viz/` directory recreation.
+- `SafeHH(name="HH")` naming fix across all builders.
+- Duplication and typo fixes in GSDR/AGSDR modules.
+- Absolute paths removed; environment logic improved.
+- Syntax and import bug fixes in runners and API.
+- Re-implementation of 5+ missing viz/network modules.
+
+---
+*Created and maintained by Antigravity.*

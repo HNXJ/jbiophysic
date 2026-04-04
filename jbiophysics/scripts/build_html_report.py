@@ -2,11 +2,18 @@ import os
 import json
 import base64
 
-def build_html_report():
-    os.makedirs("results", exist_ok=True)
-    
+import os
+import json
+import base64
+import argparse
+
+def image_to_base64(img_path):
+    with open(img_path, "rb") as f:
+        return base64.b64encode(f.read()).decode('utf-8')
+
+def build_html_report(input_dir, output_file):
     # Load metrics
-    with open("results/data/metrics.json", "r") as f:
+    with open(os.path.join(input_dir, "metrics.json"), "r") as f:
         metrics = json.load(f)
         
     contexts = ["ff_only", "spontaneous", "attended", "omission"]
@@ -81,6 +88,14 @@ def build_html_report():
 """
 
     for ctx, m in zip(contexts, metrics):
+        raster_path = os.path.join(input_dir, f"{ctx}_raster.png")
+        lfp_path = os.path.join(input_dir, f"{ctx}_lfp.png")
+        tfr_path = os.path.join(input_dir, f"{ctx}_tfr.png")
+
+        raster_b64 = image_to_base64(raster_path)
+        lfp_b64 = image_to_base64(lfp_path)
+        tfr_b64 = image_to_base64(tfr_path)
+
         html += f"""
             <section>
                 <section>
@@ -94,16 +109,16 @@ def build_html_report():
                         <div class="metric-value">{m['mfr_ho']:.1f} Hz</div>
                     </div>
                     <div>
-                        <img src="data/{ctx}_raster.png" style="max-height: 400px; width: auto;">
+                        <img src="data:image/png;base64,{raster_b64}" style="max-height: 400px; width: auto;">
                     </div>
                 </section>
                 <section>
                     <h3>LFP & Rhythms: {m['context']}</h3>
-                    <img src="data/{ctx}_lfp.png" style="max-height: 400px; width: auto;">
+                    <img src="data:image/png;base64,{lfp_b64}" style="max-height: 400px; width: auto;">
                 </section>
                 <section>
                     <h3>Spectral Profile: {m['context']}</h3>
-                    <img src="data/{ctx}_tfr.png" style="max_height: 400px; width: auto;">
+                    <img src="data:image/png;base64,{tfr_b64}" style="max_height: 400px; width: auto;">
                 </section>
             </section>
 """
@@ -134,10 +149,16 @@ def build_html_report():
 </html>
 """
 
-    with open("results/index.html", "w") as f:
+    with open(output_file, "w") as f:
         f.write(html)
         
-    print("✅ HTML Interactive Report Generated at 'results/index.html'")
+    print(f"✅ HTML Interactive Report Generated at '{output_file}'")
 
 if __name__ == "__main__":
-    build_html_report()
+    parser = argparse.ArgumentParser(description="Build a self-contained HTML report from simulation data.")
+    parser.add_argument("--input_dir", required=True, help="Directory containing metrics.json and PNG files.")
+    parser.add_argument("--output_file", required=True, help="Full path for the output HTML report.")
+    args = parser.parse_args()
+    
+    build_html_report(args.input_dir, args.output_file)
+

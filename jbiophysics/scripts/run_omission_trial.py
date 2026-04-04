@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import jaxley as jx
 import matplotlib.pyplot as plt
+import base64
 
 # Add project root to path
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -98,6 +99,5 @@ def run_trial(t_total=1000.0, dt=0.025, seed=42):
         
     print("✅ Results saved to 'results/' directory.")
 
-import base64
 if __name__ == "__main__":
     run_trial()

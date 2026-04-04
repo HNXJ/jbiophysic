@@ -170,7 +170,7 @@ async def simulate_v1(config: V1SimConfig = Body(default_factory=V1SimConfig)):
     # Apply as current clamp to L4 Pyr
     for cell_idx in pops.l4_pyr:
         net.cell(cell_idx).branch(0).loc(0.0).stimulate(
-            np.column_stack([t_ms, inp])
+            inp  # Passing (T,) is correct for single compartment
         )
 
     traces = jx.integrate(net, delta_t=config.dt, t_max=config.t_max)
@@ -409,7 +409,10 @@ async def visualize():
 
 @app.post("/agent/ask")
 async def agent_ask(req: AgentRequest):
-    sys.path.insert(0, "/Users/hamednejat/workspace/HNXJ/hnxj-gemini")
+    # Add project relative path if needed, but prefer env or installed package logic
+    gemini_path = os.environ.get("HNXJ_GEMINI_PATH", "")
+    if gemini_path and os.path.exists(gemini_path):
+        sys.path.insert(0, gemini_path)
     try:
         from qwen_subagent import call_qwen
         response = call_qwen(f"CONTEXT: {req.context or ''}\n\nUSER: {req.prompt}")
