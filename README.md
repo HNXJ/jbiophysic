@@ -1,56 +1,112 @@
-# 🧬 JBiophysics: Multi-Area Cortical Research Platform
+# 🧬 jbiophys
 
-[![Architecture: Axis 1-10](https://img.shields.io/badge/Architecture-Axis%201--10-CFB87C?style=for-the-badge&logo=biophysics&logoColor=9400D3)](file:///Users/hamednejat/.gemini/antigravity/brain/dd42fe4d-98fb-42d4-8cdf-f519161852f3/walkthrough.md)
-
-**JBiophysics** is a differentiable biophysical simulation and analysis suite built on JAX and Jaxley. It is designed to bridge the gap between high-fidelity neural circuit modeling and production-quality research posters/manuscripts.
-
-## 🧠 Core Architecture (The Ten Axes)
-
-| 🧬 Axis | Feature | Description |
-| :--- | :--- | :--- |
-| **1-4** | **Biophysics Meta-Layer** | Spiking NMDA/GABA kinetics + Hierarchical Gamma Trace (O(1) memory). |
-| **5-6** | **Learning Hierarchy** | 11-area cortical hierarchy (V1 → PFC) with STDP sequence training. |
-| **7-8** | **LFP Production Pipeline** | 15-step analysis (TFR, Coherence) → Poster-grade Golden Dark Figures. |
-| **9-10**| **Research Automation** | `gravia-write` CLI integration + LaTeX manuscript generation. |
+**A Differentiable Biophysical Framework for Multi-Area Cortical Dynamics, Predictive Coding, and Oscillatory Neuroscience**
 
 ---
 
-## 🚀 Getting Started
+## 📖 Overview
 
-### 📦 Installation
-```bash
-# Clone the repository
-git clone https://github.com/hnxj/jbiophysics.git
-cd jbiophysics
+**jbiophys** is a computational neuroscience framework for simulating and analyzing **multi-area cortical dynamics** using biologically grounded mechanisms, including:
 
-# Install with development dependencies
-uv pip install -e ".[dev]"
-```
+* Conductance-based synapses (AMPA, NMDA, GABA-A/B)
+* Cell-type specific microcircuits (Pyramidal, PV, SST, VIP, etc.)
+* Predictive coding architectures across cortical hierarchies (V1 → PFC)
+* Neuromodulatory control (Dopamine, Acetylcholine)
+* Synaptic plasticity (STDP and extensions)
 
-### ⌨️ CLI: `gravia-write`
-The platform core is exposed through a research-grade CLI:
+The system is designed to support **end-to-end scientific workflows**:
 
-```bash
-# 1. Run the full training-to-omission pipeline
-gravia-write run --steps 5000
-
-# 2. Render all 10 poster panels (TFR, Band Power, etc.)
-gravia-write render
-
-# 3. Export the research results to a LaTeX snippet
-gravia-write write
+```text
+simulation → LFP analysis → figure generation → manuscript
 ```
 
 ---
 
-## 📊 Poster Aesthetic
-All visualizations follow the **Madelane Golden Dark** standard:
-- **Base**: ![#0D0D0F](https://via.placeholder.com/15/0D0D0F/000000?text=+) `#0D0D0F`
-- **Primary**: ![#CFB87C](https://via.placeholder.com/15/CFB87C/000000?text=+) `#CFB87C` (Gold)
-- **Secondary**: ![#9400D3](https://via.placeholder.com/15/9400D3/000000?text=+) `#9400D3` (Violet)
+## 🧠 Scientific Motivation
+
+Cortical computation is shaped by:
+
+* Hierarchical predictive processing
+* Oscillatory coordination (gamma: feedforward, beta: feedback)
+* Sparse, distributed coding
+* Neuromodulatory regulation of gain and precision
+
+This repository provides a unified framework to:
+
+* Simulate these processes from first principles
+* Reproduce electrophysiological findings (e.g., omission paradigms)
+* Generate publication-ready analyses and figures
 
 ---
 
-## 📝 License
-Proprietary research platform. (c) 2026 Hamed Nejat. 
-Part of the **Gamma Protocol** ecosystem.
+## ⚙️ Core Features
+
+### 1. Multi-Area Cortical Hierarchy
+* Hierarchical organization (V1 → V2 → V4 → MT → … → PFC)
+* Bidirectional connectivity (feedforward / feedback)
+* Area-specific timescales
+
+### 2. Mechanism-Based Modeling
+All dynamics are defined through composable mechanisms:
+* Ion channels (Hodgkin–Huxley style)
+* Synapses (conductance-based)
+* Neuromodulators (parameter modulation)
+* Plasticity rules (STDP, extensions)
+
+### 3. Oscillatory Dynamics
+* **Gamma (~30–80 Hz)**: Feedforward processing
+* **Beta (~13–30 Hz)**: Feedback / prediction
+* Emergent from E/I balance (PV, SST circuits)
+
+### 4. LFP Analysis Pipeline (15-step)
+Includes standard spectral decomposition, coherence matrices, and cluster-based statistical comparisons.
+
+---
+
+## 🧪 Learning & Optimization
+
+### 🔁 STDP (Synaptic Plasticity)
+* Synapse-specific gating (`stdp_on`) and scaling (`stdp_delta`).
+
+### 🧠 AGSDR (Adaptive Gradient Synaptic Drift Regularization)
+* A pre-optimization framework used to stabilize network dynamics and enforce biologically plausible firing regimes before experimental simulation.
+
+### ⚡ GSDR / GSGD (Planned)
+* General synaptic drift regularization framework and SGD-based implementation for scalable optimization.
+
+---
+
+## 🚀 Usage
+
+### Run full experiment
+```bash
+python codes/scripts/run_full_experiment.py
+```
+
+### Outputs
+```text
+output/
+  lfp_signals.npy
+  lfp_results.json
+
+figures/
+  (poster-style panels)
+
+manuscript/
+  main.pdf
+```
+
+---
+
+## 🔬 Future Directions
+* Calcium-dependent plasticity (NMDA-driven)
+* Large-scale multi-session fitting (AGSDR)
+* GPU/TPU/Apple Silicon optimization
+
+---
+
+## 📌 Design Philosophy
+* **Mechanism-first** (not model-first)
+* **Analysis-integrated simulation**
+* **Reproducible by construction**
+* **Agent-compatible pipelines**
