@@ -1,7 +1,19 @@
 # cli/gravia_write.py
+import sys
 import yaml
 import json
-from manuscript.sections import generate_all_sections
+import os
+
+def get_manuscript_paths():
+    """Returns local output paths decoupled from original git tracking."""
+    return {"results_trace": "output/simulation_trace.json", "results_md": "output/manuscript/sections/results.md"}
+
+# Use try/except for local module if manuscript is placed under output
+try:
+    sys.path.append('output')
+    from manuscript.sections import generate_all_sections
+except ImportError:
+    generate_all_sections = None
 
 def load_context():
     """Load config, gamma, and simulation results."""
@@ -29,11 +41,4 @@ def gravia_write():
 if __name__ == "__main__":
     gravia_write()
 
-# configs/experiment.yaml
-experiment:
-  name: omission_v1_pfc
-  areas: [v1, v2, v4, mt, teo, fst, fef, pfc]
-  training: {steps: 2000, learning_rate: 0.001}
-  simulation: {steps: 3000, dt: 0.1, omission_time: 2000}
-  modulation: {da_baseline: 0.05, da_omission: 0.2, ach_baseline: 0.1, ach_omission: 0.0}
-  stdp: {enabled: true, delta: 0.01}
+

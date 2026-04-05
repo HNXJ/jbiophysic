@@ -23,7 +23,7 @@ dependencies = [
 ]
 
 [project.scripts]
-gravia-write = "jbiophysics.cli.main:main"
+gravia-write = "cli.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["."]

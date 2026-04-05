@@ -1,6 +1,6 @@
 # jbiophysics/cli/main.py
 import argparse
-from jbiophysics.cli.gravia_write import write_results, get_manuscript_paths
+from cli.gravia_write import write_results, get_manuscript_paths
 
 def main():
     parser = argparse.ArgumentParser(description="Gravia Write - Manuscript Generative Engine")
