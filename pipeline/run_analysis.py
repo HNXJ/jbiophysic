@@ -7,10 +7,11 @@ import json
 import os
 
 def generate_cache_key(data_array, params):
-    """Axis 14: SHA256 Caching to avoid redundant processing."""
-    data_bytes = np.asarray(data_array).tobytes()
+    """Axis 16: Lightweight SHA256 Caching to avoid redundant processing."""
+    # Fast shape + stats hashing rather than raw byte hashing
+    stats = f"mean:{np.mean(data_array):.5f}_var:{np.var(data_array):.5f}"
     param_bytes = json.dumps(params, sort_keys=True).encode('utf-8')
-    return hashlib.sha256(data_bytes + param_bytes).hexdigest()
+    return hashlib.sha256((str(np.asarray(data_array).shape) + stats).encode('utf-8') + param_bytes).hexdigest()
 
 def compute_spectral_features(lfp_signals, fs=1000.0, apply_window=True, use_cache=True):
     """
@@ -29,18 +30,21 @@ def compute_spectral_features(lfp_signals, fs=1000.0, apply_window=True, use_cac
     # Number of time steps
     n_steps = lfp_signals.shape[-1]
     
-    # Axis 14: Hann Windowing to prevent spectral leakage
+    # Axis 16: Hann Windowing broadcasted
     if apply_window:
         window = scipy.signal.windows.hann(n_steps)
+        if len(lfp_signals.shape) > 1:
+            window = window[None, :]
         lfp_signals = lfp_signals * window
 
-    # Axis 14: Use JAX FFT for GPU acceleration
+    # Axis 16: True PSD Biological normalization
     freqs = jnp.fft.rfftfreq(n_steps, d=1/fs)
     fft_mag = jnp.abs(jnp.fft.rfft(jnp.array(lfp_signals), axis=-1))
+    psd = (fft_mag ** 2) / n_steps
     
     # Power bands
-    gamma_pwr = jnp.mean(fft_mag[..., (freqs >= 30) & (freqs <= 80)], axis=-1)
-    beta_pwr = jnp.mean(fft_mag[..., (freqs >= 13) & (freqs <= 30)], axis=-1)
+    gamma_pwr = jnp.mean(psd[..., (freqs >= 30) & (freqs <= 80)], axis=-1)
+    beta_pwr = jnp.mean(psd[..., (freqs >= 13) & (freqs <= 30)], axis=-1)
     
     results = {
         "gamma_power": np.array(gamma_pwr).tolist(),

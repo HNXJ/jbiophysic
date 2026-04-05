@@ -9,12 +9,14 @@ def gsgd_step_parallel(population, rng, loss_fn_single: Callable, eta=0.001, sig
     Selection -> Crossover -> Mutation -> Parallel SGD Refinement.
     """
     # 1. Parallel Evaluation
-    # Note: Requires a machine with multiple devices to fully utilize.
-    # Fallback to vmap internally if only 1 device is present, but pmap is the target.
+    # Axis 16: pmap requires leading axis = num_devices
     num_devices = jax.device_count()
     if num_devices > 1:
-        # Assuming population size is divisible by num_devices
-        losses = jax.pmap(loss_fn_single)(population)
+        param_dim = population.shape[1:]
+        reshaped_pop = population.reshape(num_devices, -1, *param_dim)
+        losses = jax.pmap(jax.vmap(loss_fn_single))(reshaped_pop)
+        # Flatten back for selection
+        losses = losses.reshape(len(population))
     else:
         losses = jax.vmap(loss_fn_single)(population)
     
@@ -40,12 +42,22 @@ def gsgd_step_parallel(population, rng, loss_fn_single: Callable, eta=0.001, sig
     mutation = sigma_t * jax.random.normal(subkey, crossover_pop.shape)
     mutated_pop = crossover_pop + mutation
     
-    # Inject Elites to prevent regression
-    mutated_pop = mutated_pop.at[:k_elite].set(elites)
+    # Inject Elites to prevent regression (Replace worst)
+    worst_idx = jnp.argsort(losses)[-k_elite:]
+    mutated_pop = mutated_pop.at[worst_idx].set(elites)
     
     # 6. Parallel SGD Refinement (Pmapped jax.grad)
     if num_devices > 1:
-        grads = jax.pmap(jax.grad(loss_fn_single))(mutated_pop)
+        param_dim = mutated_pop.shape[1:]
+        reshaped_mutated = mutated_pop.reshape(num_devices, -1, *param_dim)
+        
+        def parallel_grad(p):
+            g = jax.vmap(jax.grad(loss_fn_single))(p)
+            return jax.lax.pmean(g, axis_name='i') # Axis 16: Synchronize if needed, though here each individual has distinct gradient. Pmean isn't strictly needed for independent individuals, only batch stats. Actually simply vmapping grad over the shard is correct:
+        
+        # Actually correctly map the vmapped grads over devices
+        grads_reshaped = jax.pmap(jax.vmap(jax.grad(loss_fn_single)))(reshaped_mutated)
+        grads = grads_reshaped.reshape(mutated_pop.shape)
     else:
         grads = jax.vmap(jax.grad(loss_fn_single))(mutated_pop)
         

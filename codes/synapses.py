@@ -39,10 +39,10 @@ class spiking_synapse(jx.connect.Synapse):
             from .plasticity import stdp_core
             dw, tp, tq = stdp_core(pre_spike, post_spike, states["trace_pre"], states["trace_post"], params, dt)
             
-            # Homeostatic constraint (Axis 14)
+            # Homeostatic constraint (Axis 16: Must be weight-dependent)
             actual_rate = params.get("actual_rate", 5.0)
             target_rate = params.get("target_rate", 5.0)
-            dw_homeo = params.get("eta_homeo", 0.001) * (target_rate - actual_rate)
+            dw_homeo = params.get("eta_homeo", 0.001) * (target_rate - actual_rate) * states["w"]
             
             nw = states["w"] + params["stdp_delta"] * ca * dw + dw_homeo
             return jnp.clip(nw, 0.0, params["w_max"]), tp, tq
