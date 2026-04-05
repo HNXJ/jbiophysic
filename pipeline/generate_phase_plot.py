@@ -3,40 +3,44 @@ import matplotlib.pyplot as plt
 import numpy as np
 import json
 
-def plot_phase_diagram(data_path="output/phase_data.json"):
+def plot_publication_phase_diagram(data_path="output/phase_data.json"):
     """
     Axis 13 Visual Visualization:
-    Generating the PV/SST oscillatory phase landscape.
+    Generating the PV/SST oscillatory phase landscape (Figure 5).
     """
     with open(data_path, "r") as f:
         data = json.load(f)
     
-    g_pv = np.array(data["g_pv"])
-    g_sst = np.array(data["g_sst"])
-    ratio = np.array(data["gamma_beta_ratio"]) or np.random.rand(len(g_pv), len(g_sst))
+    a_pv = np.array(data["a_pv"])
+    a_sst = np.array(data["a_sst"])
     
-    # Madelane Golden Dark Aesthetic (#CFB87C / #9400D3)
+    metrics = ["gamma", "beta", "omission_beta"]
+    titles = ["Panel A: Gamma Power (FF/Precision)", 
+              "Panel B: Beta Power (FB/Feedback)",
+              "Panel C: Omission-Beta Increase"]
+    
     plt.style.use('dark_background')
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
     
-    im = ax.imshow(ratio, extent=[0.1, 2.0, 0.1, 2.0], 
-                  origin='lower', cmap='plasma', aspect='auto')
+    for i, (metric, title) in enumerate(zip(metrics, titles)):
+        im = axes[i].imshow(data[metric], extent=[0.0, 2.0, 0.0, 2.0], 
+                            origin='lower', cmap='magma', aspect='auto')
+        
+        axes[i].set_xlabel(r"PV Scaling ($\alpha_{PV}$)", fontsize=10, color='#CFB87C')
+        axes[i].set_ylabel(r"SST Scaling ($\alpha_{SST}$)", fontsize=10, color='#CFB87C')
+        axes[i].set_title(title, fontsize=12, fontweight='bold', color='#CFB87C')
+        
+        cbar = fig.colorbar(im, ax=axes[i])
+        cbar.ax.tick_params(labelsize=8)
+        
+        # Highlight the "Balanced Regime" in Panel C
+        if metric == "omission_beta":
+            axes[i].scatter([1.0], [1.0], color='#00FF00', s=100, marker='*', label="Balanced")
+            axes[i].legend(fontsize=8)
     
-    ax.set_xlabel(r"PV Conductance Scaling ($G_{PV}$)", fontsize=12, color='#CFB87C')
-    ax.set_ylabel(r"SST Conductance Scaling ($G_{SST}$)", fontsize=12, color='#CFB87C')
-    ax.set_title("Oscillatory Phase Diagram: Gamma-to-Beta Transition", 
-                fontsize=14, fontweight='bold', color='#CFB87C')
-    
-    cbar = fig.colorbar(im)
-    cbar.set_label(r"$\Gamma/\beta$ Power Ratio", rotation=270, labelpad=20, color='#CFB87C')
-    
-    # Highlight Bifurcation Line (Mock)
-    X = np.linspace(0.1, 2.0, 100)
-    plt.plot(X, X, '--', color='#9400D3', alpha=0.5, label="Bifurcation Line")
-    plt.legend()
-    
-    plt.savefig("output/phase_diagram.png", dpi=300, bbox_inches='tight')
-    print("✅ Phase Diagram Figure generated at output/phase_diagram.png")
+    plt.tight_layout()
+    plt.savefig("output/phase_diagram_3panel.png", dpi=300, bbox_inches='tight')
+    print("✅ Figure 5 (3-Panel Phase Diagram) generated at output/phase_diagram_3panel.png")
 
 if __name__ == "__main__":
-    plot_phase_diagram()
+    plot_publication_phase_diagram()
