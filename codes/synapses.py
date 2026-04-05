@@ -31,14 +31,26 @@ class spiking_synapse(jx.connect.Synapse):
         ds = -states["s"] / params["tau_d"] + pre_spike * (1.0 - states["s"]) / params["tau_r"]
         new_s = states["s"] + dt * ds
         
-        if params["stdp_on"]:
-            ca = states["s"] * jnp.maximum(v_post, 0.0)
+        # Axis 14: NMDA Calcium Link & Homeostasis
+        # STDP is inherently local to the synapse via the params["stdp_on"] flag
+        def stdp_update():
+            # Ca influx gated by pre-synaptic s and post-synaptic depolarization (e.g., NMDA mg block removal)
+            ca = states["s"] * jnp.maximum(v_post, 0.0) 
             from .plasticity import stdp_core
             dw, tp, tq = stdp_core(pre_spike, post_spike, states["trace_pre"], states["trace_post"], params, dt)
-            new_w = states["w"] + params["stdp_delta"] * ca * dw
-            new_w = jnp.clip(new_w, 0.0, params["w_max"])
-        else:
-            new_w, tp, tq = states["w"], states["trace_pre"], states["trace_post"]
+            
+            # Homeostatic constraint (Axis 14)
+            actual_rate = params.get("actual_rate", 5.0)
+            target_rate = params.get("target_rate", 5.0)
+            dw_homeo = params.get("eta_homeo", 0.001) * (target_rate - actual_rate)
+            
+            nw = states["w"] + params["stdp_delta"] * ca * dw + dw_homeo
+            return jnp.clip(nw, 0.0, params["w_max"]), tp, tq
+
+        def no_stdp():
+            return states["w"], states["trace_pre"], states["trace_post"]
+
+        new_w, tp, tq = jax.lax.cond(params["stdp_on"], stdp_update, no_stdp)
 
         return {"s": new_s, "w": new_w, "trace_pre": tp, "trace_post": tq}
 

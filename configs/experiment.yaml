@@ -1,0 +1,38 @@
+# configs/experiment.yaml
+
+experiment:
+  name: "omission_oddball"
+  seed: 42
+  
+simulation:
+  dt: 0.1 # ms
+  T_total: 5000.0 # ms
+  T_trial: 500.0 # ms
+  n_areas: 11
+  
+populations:
+  n_pc: 200
+  n_pv: 40
+  n_sst: 40
+  n_vip: 20
+
+interneuron_scaling:
+  alpha_pv: 1.0
+  alpha_sst: 1.0
+  alpha_vip: 1.0
+
+optimization:
+  n_pop: 128
+  generations: 10
+  learning_rate: 0.01
+  loss_weights:
+    rate: 1.0
+    gamma: 0.5
+    beta: 0.5
+    ei: 0.2
+    stability: 2.0
+
+analysis:
+  fs: 1000.0 # Hz
+  cutoff_freq: 100.0 # Hz
+  windowing: "hann"

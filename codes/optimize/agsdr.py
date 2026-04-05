@@ -42,6 +42,8 @@ class AGSDR:
                 self.lambdas["ei"] * l_ei +
                 self.lambdas["stability"] * l_stab)
 
-    def update_weights(self, weights, grad, g_max=10.0):
-        drift = -self.eta * jnp.clip(grad, -1.0, 1.0)
+    def update_weights(self, weights, grad, g_clip=5.0, g_max=10.0):
+        # Axis 14: Physiological bounds-based clipping
+        drift = -self.eta * jnp.clip(grad, -g_clip, g_clip)
         return jnp.clip(weights + drift, 0.0, g_max)
+
