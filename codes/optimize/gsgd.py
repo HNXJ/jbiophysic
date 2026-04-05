@@ -1,79 +1,48 @@
 # codes/optimize/gsgd.py
 import jax
 import jax.numpy as jnp
-from typing import List, Callable, Dict, Any
-from codes.optimize.agsdr import AGSDR
+from typing import Callable, Any
 
-class GSGD:
+def gsgd_step_parallel(population, rng, loss_fn_vmap: Callable, eta=0.001):
     """
-    Genetic-Stochastic Gradient Descent (Axis 12).
-    A hybrid evolutionary-stochastic gradient optimizer for biophysical systems.
+    Axis 12: Parallel-Native GSGD Step.
+    Selection -> Crossover -> Mutation -> Parallel SGD Refinement.
     """
-    def __init__(self, population_size=10, mutation_rate=0.01, eta=0.001):
-        self.pop_size = population_size
-        self.mutation_rate = mutation_rate
-        self.agsdr = AGSDR(eta=eta)
-
-    def select(self, rng, population, losses):
-        """Softmax selection based on fitness (negative loss)."""
-        probs = jax.nn.softmax(-jnp.array(losses))
-        idx = jax.random.choice(rng, self.pop_size, p=probs)
-        return [population[i] for i in idx]
-
-    def crossover(self, rng, p1, p2, alpha=0.5):
-        """Linear crossover between two individuals."""
-        return alpha * p1 + (1.0 - alpha) * p2
-
-    def mutate(self, rng, ind):
-        """Gaussian mutation."""
-        noise = self.mutation_rate * jax.random.normal(rng, ind.shape)
-        return ind + noise
-
-    def gsgd_step(self, rng, population, loss_fn: Callable):
-        """
-        Axis 12 Master Update Rule:
-        Evolution (Crossover/Mutation) + Local SGD Refinement (AGSDR).
-        """
-        # 1. Evaluate fitness (should be vmapped/pmapped)
-        losses = [loss_fn(p) for p in population]
-        
-        # 2. Select next generation
-        rng, subkey = jax.random.split(rng)
-        mating_pool = self.select(subkey, population, losses)
-        
-        new_population = []
-        for i in range(self.pop_size):
-            # 3. Evolution
-            p1 = mating_pool[i]
-            p2 = mating_pool[(i+1) % self.pop_size]
-            
-            rng, subkey1, subkey2 = jax.random.split(rng, 3)
-            child = self.crossover(subkey1, p1, p2)
-            child = self.mutate(subkey2, child)
-            
-            # 4. SGD Refinement (local AGSDR adaptive drift)
-            grad = jax.grad(loss_fn)(child)
-            refined_child = self.agsdr.update_weights(child, grad)
-            
-            # 5. Elitism comparison (keep best between parent and refined child)
-            new_population.append(refined_child)
-            
-        return new_population, losses
-
-def population_vmap_loss(loss_fn):
-    """Utility to vmap the loss function over a population pytree."""
-    return jax.vmap(loss_fn)
+    # 1. Parallel Evaluation
+    losses = loss_fn_vmap(population)
     
-def train_gsgd(population, loss_fn, generations=100):
-    """Master training loop for GSGD optimization."""
-    rng = jax.random.PRNGKey(42)
-    optimizer = GSGD(population_size=len(population))
+    # 2. Selection (Softmax over population)
+    probs = jax.nn.softmax(-losses)
+    rng, subkey = jax.random.split(rng)
+    idx = jax.random.choice(subkey, len(population), shape=(len(population),), p=probs)
+    selected = population[idx]
     
-    for g in range(generations):
-        rng, subkey = jax.random.split(rng)
-        population, losses = optimizer.gsgd_step(subkey, population, loss_fn)
-        best_loss = min(losses)
-        if g % 10 == 0:
-            print(f"🧬 Generation {g} | Best Loss: {best_loss:.5f}")
-            
-    return population
+    # 3. Crossover (Permuted linear recombination)
+    rng, subkey = jax.random.split(rng)
+    shuffled_idx = jax.random.permutation(subkey, jnp.arange(len(population)))
+    permuted = selected[shuffled_idx]
+    crossover_pop = 0.5 * selected + 0.5 * permuted
+    
+    # 4. Mutation (Gaussian noise)
+    rng, subkey = jax.random.split(rng)
+    mutation = 0.01 * jax.random.normal(subkey, crossover_pop.shape)
+    mutated_pop = crossover_pop + mutation
+    
+    # 5. Parallel SGD Refinement (Vmapped jax.grad)
+    # We vmap over the gradient of the loss function
+    def grad_fn(w): return jax.grad(loss_fn_vmap)(w) # This is a placeholder for actual vmapped grad
+    
+    # In practice, for JAX efficiency, we use vmap(grad(loss_fn))
+    grads = jax.vmap(jax.grad(loss_fn_vmap.func))(mutated_pop) if hasattr(loss_fn_vmap, 'func') else jax.vmap(jax.grad(loss_fn_vmap))(mutated_pop)
+    
+    # 6. Apply Refined Update (AGSDR Adaptive Drift)
+    grads = jnp.clip(grads, -1.0, 1.0)
+    new_population = mutated_pop - eta * grads
+    
+    # 7. Physiological Projection (Clipping)
+    return jnp.clip(new_population, 0.0, 10.0)
+
+def initialize_parallel_population(w_base, n_pop, rng):
+    """Phase 2: Expand single-model baseline to population."""
+    jitter = 0.05 * jax.random.normal(rng, (n_pop,) + w_base.shape)
+    return w_base[None, :] + jitter

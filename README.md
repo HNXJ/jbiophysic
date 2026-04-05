@@ -1,112 +1,96 @@
 # 🧬 jbiophys
 
-**A Differentiable Biophysical Framework for Multi-Area Cortical Dynamics, Predictive Coding, and Oscillatory Neuroscience**
+### A Differentiable Framework for Multi-Area Cortical Dynamics, Predictive Coding, and Synaptic Optimization
 
 ---
 
 ## 📖 Overview
 
-**jbiophys** is a computational neuroscience framework for simulating and analyzing **multi-area cortical dynamics** using biologically grounded mechanisms, including:
+**jbiophys** is a computational neuroscience framework for simulating, optimizing, and analyzing **multi-area cortical dynamics** using biologically grounded mechanisms and differentiable simulation.
 
-* Conductance-based synapses (AMPA, NMDA, GABA-A/B)
-* Cell-type specific microcircuits (Pyramidal, PV, SST, VIP, etc.)
-* Predictive coding architectures across cortical hierarchies (V1 → PFC)
-* Neuromodulatory control (Dopamine, Acetylcholine)
-* Synaptic plasticity (STDP and extensions)
+The framework integrates:
 
-The system is designed to support **end-to-end scientific workflows**:
+* Conductance-based neural dynamics (AMPA, NMDA, GABA)
+* Cell-type specific microcircuits (Pyramidal, PV, SST, VIP)
+* Hierarchical cortical organization (V1 → PFC)
+* Predictive coding architectures
+* Oscillatory dynamics (gamma: feedforward, beta: feedback)
+* Synaptic plasticity and optimization (GSDR / AGSDR / GSGD)
+
+It provides a unified pipeline for:
 
 ```text
-simulation → LFP analysis → figure generation → manuscript
+simulation → optimization → LFP analysis → figures → manuscript
 ```
 
 ---
 
-## 🧠 Scientific Motivation
+## 🧠 Scientific Scope
 
-Cortical computation is shaped by:
+This framework is designed to study:
 
-* Hierarchical predictive processing
-* Oscillatory coordination (gamma: feedforward, beta: feedback)
-* Sparse, distributed coding
-* Neuromodulatory regulation of gain and precision
-
-This repository provides a unified framework to:
-
-* Simulate these processes from first principles
-* Reproduce electrophysiological findings (e.g., omission paradigms)
-* Generate publication-ready analyses and figures
+* Predictive processing in cortical hierarchies
+* Oscillatory coordination across brain regions
+* Excitation–Inhibition balance and stability
+* Emergence of beta/gamma dynamics
+* Neural responses to structured perturbations (e.g., omission paradigms)
 
 ---
 
-## ⚙️ Core Features
+## ⚙️ Core Components
 
 ### 1. Multi-Area Cortical Hierarchy
-* Hierarchical organization (V1 → V2 → V4 → MT → … → PFC)
-* Bidirectional connectivity (feedforward / feedback)
-* Area-specific timescales
+* Hierarchical structure spanning sensory (V1) to prefrontal (PFC) cortex.
+* Bidirectional connectivity: Feedforward (gamma-mediated) and Feedback (beta-mediated).
 
 ### 2. Mechanism-Based Modeling
 All dynamics are defined through composable mechanisms:
-* Ion channels (Hodgkin–Huxley style)
-* Synapses (conductance-based)
-* Neuromodulators (parameter modulation)
-* Plasticity rules (STDP, extensions)
+* Ion channels (Hodgkin–Huxley formalism)
+* Synapses (conductance-based AMPA, NMDA, GABA-A/B kinetics)
+* Neuromodulators (Dopamine, Acetylcholine)
+* Plasticity rules (STDP and extensions)
 
 ### 3. Oscillatory Dynamics
-* **Gamma (~30–80 Hz)**: Feedforward processing
-* **Beta (~13–30 Hz)**: Feedback / prediction
-* Emergent from E/I balance (PV, SST circuits)
+The framework captures:
+* **Gamma-band (~30–80 Hz)**: Feedforward signaling.
+* **Beta-band (~13–30 Hz)**: Feedback / predictive coordination.
+* Emergent from E/I balance (PV, SST circuits).
 
-### 4. LFP Analysis Pipeline (15-step)
-Includes standard spectral decomposition, coherence matrices, and cluster-based statistical comparisons.
+### 4. LFP Analysis Pipeline
+A standardized multi-step pipeline providing TFR, spectral bands, coherence, and Granger causality.
 
 ---
 
-## 🧪 Learning & Optimization
+## 🧪 Synaptic Optimization Framework
 
-### 🔁 STDP (Synaptic Plasticity)
-* Synapse-specific gating (`stdp_on`) and scaling (`stdp_delta`).
+### 🔁 GSDR — Genetic Synaptic Drift Rule
+A population-based optimization framework for exploring synaptic parameter space through mutation, crossover, and selection.
 
-### 🧠 AGSDR (Adaptive Gradient Synaptic Drift Regularization)
-* A pre-optimization framework used to stabilize network dynamics and enforce biologically plausible firing regimes before experimental simulation.
+### 🧠 AGSDR — Adaptive Gradient Synaptic Drift Regularization
+A gradient-based optimization layer enforcing physiological constraints (rate, E/I balance, stability) via:
+$w_{t+1} = \text{clip}(w_t - \eta \cdot \text{clip}(\nabla L))$
 
-### ⚡ GSDR / GSGD (Planned)
-* General synaptic drift regularization framework and SGD-based implementation for scalable optimization.
+### ⚡ GSGD — Genetic–Stochastic Gradient Descent
+A hybrid optimization framework combining global genetic search (GSDR) with local stochastic gradient refinement (SGD) and AGSDR constraints.
+
+---
+
+## 🧠 Experimental Paradigm: Omission Task
+Supports sequence learning (S1 → S2 → S3), oddball (S1 → S2 → S4), and omission (S1 → S2 → ∅).
 
 ---
 
 ## 🚀 Usage
 
-### Run full experiment
+Run the full experimental pipeline:
 ```bash
 python codes/scripts/run_full_experiment.py
 ```
 
-### Outputs
-```text
-output/
-  lfp_signals.npy
-  lfp_results.json
-
-figures/
-  (poster-style panels)
-
-manuscript/
-  main.pdf
-```
-
 ---
 
-## 🔬 Future Directions
-* Calcium-dependent plasticity (NMDA-driven)
-* Large-scale multi-session fitting (AGSDR)
-* GPU/TPU/Apple Silicon optimization
-
----
-
-## 📌 Design Philosophy
-* **Mechanism-first** (not model-first)
-* **Analysis-integrated simulation**
-* **Reproducible by construction**
-* **Agent-compatible pipelines**
+## 🔬 Design Principles
+* Mechanism-first modeling
+* Biologically grounded constraints
+* Differentiable simulation (JAX-native)
+* Scalable optimization (Multi-device GSGD ready)
