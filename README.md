@@ -38,9 +38,9 @@ Or run via the module path:
 python -m jbiophysic.models.pipelines.run_full_experiment
 ```
 
-### 📁 Resources (`assets/`)
-- **Configs:** Experiment specifications and hyperparameters (`assets/configs/`).
-- **Gamma:** AI-mediated trace results and metadata (`assets/gamma/`).
+### 📁 Resources
+- **Configs:** Experiment specifications and hyperparameters (`configs/`).
+- **Artifacts:** AI-mediated trace results and metadata (`artifacts/gamma/`).
 
 ## 📜 Engineering Standards
 - **Structured Logging:** Centralized logging replaces raw debug prints for library-grade transparency.
