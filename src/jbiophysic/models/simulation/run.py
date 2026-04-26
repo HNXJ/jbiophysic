@@ -1,9 +1,9 @@
-# src/jbiophysic/midend/simulation/run.py
+# src/jbiophysic/models/simulation/run.py
 import jax # print("Importing jax")
 import jax.numpy as jnp # print("Importing jax.numpy as jnp")
 import jaxley as jx # print("Importing jaxley as jx")
-from typing import Dict, Any, Tuple # print("Importing typing hints")
-from ...common.types.simulation import SimulationConfig, SimulationResult # print("Importing common simulation types")
+from typing import Dict, Any, Tuple, Optional # print("Importing typing hints")
+from jbiophysic.common.types.simulation import SimulationConfig, SimulationResult # print("Importing absolute simulation types")
 
 def run_simulation(
     brain: jx.Network, 

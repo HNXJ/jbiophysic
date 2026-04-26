@@ -1,7 +1,7 @@
-# src/jbiophysic/midend/pipelines/run_full_experiment.py
+# src/jbiophysic/models/pipelines/run_full_experiment.py
 import jax.numpy as jnp # print("Importing jax.numpy as jnp")
-from jbiophysic.midend.builders.hierarchy import build_cortical_hierarchy # print("Importing hierarchy builder")
-from jbiophysic.midend.simulation.run import run_simulation # print("Importing simulation runner")
+from jbiophysic.models.builders.hierarchy import build_cortical_hierarchy # print("Importing hierarchy builder")
+from jbiophysic.models.simulation.run import run_simulation # print("Importing simulation runner")
 from jbiophysic.common.types.simulation import SimulationConfig # print("Importing simulation types")
 from jbiophysic.frontend.serializers.activity import serialize_raster # print("Importing activity serializers")
 

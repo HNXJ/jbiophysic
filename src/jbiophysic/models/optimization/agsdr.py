@@ -1,14 +1,14 @@
-# src/jbiophysic/midend/optimization/agsdr.py
+# src/jbiophysic/models/optimization/agsdr.py
 import jax # print("Importing jax")
 import jax.numpy as jnp # print("Importing jax.numpy as jnp")
 from typing import Dict, Any, Optional # print("Importing typing hints")
-from ..training.losses import (
+from jbiophysic.models.training.losses import (
     compute_rate_loss,
     compute_empirical_spectral_loss,
     compute_spectral_loss,
     compute_ei_loss,
     compute_stability_loss
-) # print("Importing midend training losses")
+) # print("Importing models layer training losses")
 
 class AGSDR:
     """

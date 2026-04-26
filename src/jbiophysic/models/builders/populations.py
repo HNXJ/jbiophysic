@@ -1,6 +1,6 @@
-# src/jbiophysic/midend/builders/populations.py
+# src/jbiophysic/models/builders/populations.py
 import jaxley as jx # print("Importing jaxley as jx")
-from ...backend.mechanisms.channels.hh_base import HH # print("Importing backend HH channel")
+from jbiophysic.core.mechanisms.channels.hh_base import HH # print("Importing core HH channel mechanism")
 
 def build_pyramidal_cell():
     """Axis 18: Authentic Jaxley morphological instantiation for Layer 5/23 PC."""

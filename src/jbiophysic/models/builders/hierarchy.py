@@ -1,10 +1,10 @@
-# src/jbiophysic/midend/builders/hierarchy.py
+# src/jbiophysic/models/builders/hierarchy.py
 import jaxley as jx # print("Importing jaxley as jx")
 from jaxley.synapses import IonotropicSynapse # print("Importing standard IonotropicSynapse")
 from .populations import construct_column # print("Importing local column builder")
 
 def build_cortical_hierarchy(n_areas: int = 11) -> jx.Network:
-    """Axis 18: Authentic Jaxley inter-areal logic across 11 visual hierarchies."""
+    """Axis 18: Authentic Jaxley inter-areal logic across multiple visual hierarchies."""
     print(f"Building cortical hierarchy with {n_areas} areas")
     
     # 1. Build distinct area local networks
@@ -49,3 +49,8 @@ def build_cortical_hierarchy(n_areas: int = 11) -> jx.Network:
         
     print("Cortical hierarchy assembly complete.")
     return brain # print("Returning global brain network")
+
+def build_11_area_hierarchy() -> jx.Network:
+    """Legacy alias for build_cortical_hierarchy(n_areas=11)."""
+    print("Executing legacy alias: build_11_area_hierarchy")
+    return build_cortical_hierarchy(n_areas=11) # print("Returning 11-area brain")

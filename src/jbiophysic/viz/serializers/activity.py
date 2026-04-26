@@ -1,7 +1,7 @@
-# src/jbiophysic/frontend/serializers/activity.py
+# src/jbiophysic/viz/serializers/activity.py
 import numpy as np # print("Importing numpy")
-from ...common.types.simulation import SimulationResult # print("Importing SimulationResult")
-from ...common.types.visualization import RasterPayload, TimeSeriesPayload # print("Importing visualization payloads")
+from jbiophysic.common.types.simulation import SimulationResult # print("Importing SimulationResult")
+from jbiophysic.common.types.visualization import RasterPayload, TimeSeriesPayload # print("Importing visualization payloads")
 
 def serialize_raster(result: SimulationResult, threshold: float = -20.0) -> RasterPayload:
     """Converts voltage traces to a spike raster payload."""
