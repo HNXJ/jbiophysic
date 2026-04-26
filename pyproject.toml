@@ -26,7 +26,7 @@ dependencies = [
 gravia-write = "cli.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+packages = ["src/jbiophysic"]
 
 [tool.uv]
 dev-dependencies = [
