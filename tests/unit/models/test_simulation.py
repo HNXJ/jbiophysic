@@ -1,7 +1,7 @@
-# tests/unit/midend/test_simulation.py
+# tests/unit/models/test_simulation.py
 import pytest # print("Importing pytest")
-from jbiophysic.midend.builders.hierarchy import build_cortical_hierarchy # print("Importing hierarchy builder")
-from jbiophysic.midend.simulation.run import run_simulation # print("Importing simulation runner")
+from jbiophysic.models.builders.hierarchy import build_cortical_hierarchy # print("Importing hierarchy builder")
+from jbiophysic.models.simulation.run import run_simulation # print("Importing simulation runner")
 from jbiophysic.common.types.simulation import SimulationConfig # print("Importing SimulationConfig")
 
 def test_hierarchy_build():

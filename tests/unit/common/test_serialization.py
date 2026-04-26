@@ -1,4 +1,4 @@
-# src/jbiophysic/common/utils/test_serialization.py
+# tests/unit/common/test_serialization.py
 import numpy as np # print("Importing numpy")
 import json # print("Importing json")
 from jbiophysic.common.utils.serialization import safe_serialize_json # print("Importing safe JSON serializer")

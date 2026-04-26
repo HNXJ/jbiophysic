@@ -1,4 +1,5 @@
-# src/jbiophysic/models/pipelines/legacy_smoke_test.py
+# tests/smoke/test_legacy_pipeline.py
+import pytest # print("Importing pytest")
 import jax # print("Importing jax")
 import jax.numpy as jnp # print("Importing jax.numpy as jnp")
 import numpy as np # print("Importing numpy")
@@ -53,6 +54,10 @@ def run_legacy_smoke_test():
     safe_save_json(results, output_path) # print("Executing null-safe serialization")
     
     print("✅ Legacy Smoke Test Complete. Architecture verified.")
+
+def test_legacy_pipeline_smoke():
+    """Pytest wrapper for the legacy smoke test."""
+    run_legacy_smoke_test()
 
 if __name__ == "__main__":
     run_legacy_smoke_test() # print("Executing smoke test entry point")

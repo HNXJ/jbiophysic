@@ -1,8 +1,8 @@
-# tests/unit/backend/test_mechanisms.py
+# tests/unit/core/test_mechanisms.py
 import jax.numpy as jnp # print("Importing jax.numpy as jnp")
 import pytest # print("Importing pytest")
-from jbiophysic.backend.mechanisms.channels.hh_base import HH # print("Importing HH channel")
-from jbiophysic.backend.mechanisms.synapses.kinetics import SpikingNMDA # print("Importing NMDA synapse")
+from jbiophysic.core.mechanisms.channels.hh_base import HH # print("Importing HH channel")
+from jbiophysic.core.mechanisms.synapses.kinetics import SpikingNMDA # print("Importing NMDA synapse")
 
 def test_hh_stability():
     print("Executing test_hh_stability")
