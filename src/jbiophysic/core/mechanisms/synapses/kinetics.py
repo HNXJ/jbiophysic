@@ -50,8 +50,7 @@ class SpikingSynapse(Synapse):
             # 3. Calculate Weight Change (STDP + Homeostasis)
             # Potentiation: pre before post
             # Depression: post before pre
-            dw_stdp = params["a_plus"] * states["trace_pre"] * post_spike - \
-                      params["a_minus"] * states["trace_post"] * pre_spike
+            dw_stdp = params["a_plus"] * states["trace_pre"] * post_spike -                       params["a_minus"] * states["trace_post"] * pre_spike
             
             # Homeostasis (Simple Scaling)
             actual_rate = params.get("actual_rate", 5.0)
