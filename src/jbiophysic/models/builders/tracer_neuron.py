@@ -1,4 +1,8 @@
 # src/jbiophysic/models/builders/tracer_neuron.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import equinox as eqx
 import jax.numpy as jnp
 from typing import Dict, Any
@@ -14,7 +18,7 @@ class TracerLIF(eqx.Module):
     r_m: float
 
     def __init__(self, tau_m=20.0, v_rest=-70.0, v_thresh=-50.0, r_m=1.0):
-        print(f"Initializing TracerLIF: tau={tau_m}, v_rest={v_rest}")
+        logger.info(f"Initializing TracerLIF: tau={tau_m}, v_rest={v_rest}")
         self.tau_m = tau_m
         self.v_rest = v_rest
         self.v_thresh = v_thresh

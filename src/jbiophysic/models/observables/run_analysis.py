@@ -1,4 +1,8 @@
 # src/jbiophysic/models/observables/run_analysis.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import jax.numpy as jnp
 import numpy as np
 import scipy.signal
@@ -11,7 +15,7 @@ def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply
     """
     Axis 14: High-performance LFP pipeline with windowing and JAX FFT.
     """
-    print(f"Computing spectral features for LFP (fs={fs}, window={apply_window})")
+    logger.info(f"Computing spectral features for LFP (fs={fs}, window={apply_window})")
     params = {"fs": fs, "window": apply_window}
     
     cache_key = generate_data_hash(lfp_signals, params)
@@ -19,7 +23,7 @@ def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply
     cache_path = os.path.join(cache_dir, f"{cache_key}.json")
     
     if use_cache and os.path.exists(cache_path):
-        print("⚡ Loading LFP analysis from cache...")
+        logger.info("⚡ Loading LFP analysis from cache...")
         with open(cache_path, "r") as f:
             res = json.load(f)
         return res
@@ -29,20 +33,20 @@ def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply
     
     # Axis 16: Hann Windowing
     if apply_window:
-        print("Applying Hann window to signals")
+        logger.info("Applying Hann window to signals")
         window = scipy.signal.windows.hann(n_steps)
         if len(lfp_signals.shape) > 1:
             window = window[None, :]
         lfp_signals = lfp_signals * window
 
     # Axis 16: FFT and PSD
-    print("Executing JAX FFT")
+    logger.info("Executing JAX FFT")
     freqs = jnp.fft.rfftfreq(n_steps, d=1/fs)
     fft_mag = jnp.abs(jnp.fft.rfft(jnp.array(lfp_signals), axis=-1))
     psd = (fft_mag ** 2) / n_steps
     
     # Power bands
-    print("Extracting gamma and beta bands")
+    logger.info("Extracting gamma and beta bands")
     gamma_pwr = jnp.mean(psd[..., (freqs >= 30) & (freqs <= 80)], axis=-1)
     beta_pwr = jnp.mean(psd[..., (freqs >= 13) & (freqs <= 30)], axis=-1)
     
@@ -57,7 +61,7 @@ def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply
     }
     
     if use_cache:
-        print(f"Caching results to {cache_path}")
+        logger.info(f"Caching results to {cache_path}")
         os.makedirs(cache_dir, exist_ok=True)
         safe_save_json(results, cache_path)
             

@@ -1,4 +1,8 @@
 # src/jbiophysic/models/pipelines/rate_model_pipeline.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import jax
 import jax.numpy as jnp
 import diffrax
@@ -6,7 +10,7 @@ from jbiophysic.models.builders.rate_models import EIRateModel
 from jbiophysic.common.utils.serialization import safe_save_json
 
 def run_rate_model_simulation():
-    print("🚀 Running E/I Rate Model Pipeline: Equinox + Diffrax")
+    logger.info("🚀 Running E/I Rate Model Pipeline: Equinox + Diffrax")
     
     # 1. Initialize model and state
     model = EIRateModel(gain=2.0)
@@ -18,13 +22,13 @@ def run_rate_model_simulation():
     dt0 = 0.1
     
     # 3. Solver configuration
-    print("Configuring Diffrax solver")
+    logger.info("Configuring Diffrax solver")
     term = diffrax.ODETerm(model)
     solver = diffrax.Tsit5()
     saveat = diffrax.SaveAt(ts=jnp.linspace(t0, t1, 201))
     
     # 4. Execute simulation
-    print("Executing JAX-compiled simulation...")
+    logger.info("Executing JAX-compiled simulation...")
     sol = diffrax.diffeqsolve(
         term, 
         solver, 
@@ -47,7 +51,7 @@ def run_rate_model_simulation():
     output_path = "pipeline/rate_model_results.json"
     safe_save_json(results, output_path)
     
-    print(f"✅ Simulation complete. Steady state E: {sol.ys[-1, 0]:.4f}")
+    logger.info(f"✅ Simulation complete. Steady state E: {sol.ys[-1, 0]:.4f}")
     return sol
 
 if __name__ == "__main__":

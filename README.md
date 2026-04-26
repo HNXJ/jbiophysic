@@ -38,6 +38,10 @@ Invoke the manuscript generation engine:
 gravia-write --build
 ```
 
+### 📁 Resources (`assets/`)
+- **Configs:** Experiment specifications and hyperparameters (`assets/configs/`).
+- **Gamma:** AI-mediated trace results and metadata (`assets/gamma/`).
+
 ## 📜 Engineering Standards
 - **Structured Logging:** Centralized logging replaces raw debug prints for library-grade transparency.
 - **PyTree Discipline:** All models are `equinox.Module` subclasses, ensuring safe JAX transformations.

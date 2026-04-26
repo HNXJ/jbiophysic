@@ -1,10 +1,14 @@
 # src/jbiophysic/models/builders/populations.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import jaxley as jx
 from jbiophysic.core.mechanisms.channels.hh_base import HH
 
 def build_pyramidal_cell():
     """Axis 18: Authentic Jaxley morphological instantiation for Layer 5/23 PC."""
-    print("Building Pyramidal Cell morphology")
+    logger.info("Building Pyramidal Cell morphology")
     comp = jx.Compartment()
     branch1 = jx.Compartment()
     branch2 = jx.Compartment()
@@ -23,7 +27,7 @@ def build_pyramidal_cell():
 
 def build_interneuron(cell_type="PV"):
     """Axis 18: Specific interneuron morphologies."""
-    print(f"Building interneuron: {cell_type}")
+    logger.info(f"Building interneuron: {cell_type}")
     cell = jx.Cell([jx.Compartment()])
     cell.insert(HH())
     
@@ -38,7 +42,7 @@ def build_interneuron(cell_type="PV"):
 
 def construct_column():
     """Assembles a local cortical column from explicit Jaxley Cell objects."""
-    print("Constructing full cortical column")
+    logger.info("Constructing full cortical column")
     n_pc = 200
     n_pv, n_sst, n_vip = 40, 40, 20
     

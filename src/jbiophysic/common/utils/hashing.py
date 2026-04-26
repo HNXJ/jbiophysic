@@ -1,4 +1,8 @@
 # src/jbiophysic/common/utils/hashing.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import hashlib
 import json
 import numpy as np
@@ -6,7 +10,7 @@ from typing import Any
 
 def generate_data_hash(data: Any, params: Any) -> str:
     """Axis 16: Lightweight SHA256 Caching to avoid redundant processing."""
-    print("Generating data hash for caching")
+    logger.info("Generating data hash for caching")
     
     # Fast shape + stats hashing rather than raw byte hashing for large arrays
     if isinstance(data, (np.ndarray, list)):

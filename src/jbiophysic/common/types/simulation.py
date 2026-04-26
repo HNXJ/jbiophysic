@@ -1,4 +1,8 @@
 # src/jbiophysic/common/types/simulation.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
 import jax.numpy as jnp

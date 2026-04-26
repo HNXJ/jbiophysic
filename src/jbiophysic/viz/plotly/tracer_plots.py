@@ -1,10 +1,14 @@
 # src/jbiophysic/viz/plotly/tracer_plots.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import plotly.graph_objects as go
 import numpy as np
 
 def plot_tracer_voltage(times: np.ndarray, voltages: np.ndarray):
     """Generates a Plotly figure for the tracer bullet voltage trace."""
-    print("Generating Tracer Bullet Plotly figure")
+    logger.info("Generating Tracer Bullet Plotly figure")
     
     fig = go.Figure()
     
@@ -26,5 +30,5 @@ def plot_tracer_voltage(times: np.ndarray, voltages: np.ndarray):
         font=dict(color='#CFB87C')
     )
     
-    print("Tracer plot generation complete.")
+    logger.info("Tracer plot generation complete.")
     return fig

@@ -2,6 +2,10 @@
 """
 Models tier: Orchestration of biophysical hierarchies, simulation pipelines, and training loops.
 """
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 from .builders.hierarchy import build_cortical_hierarchy, build_11_area_hierarchy
 from .builders.populations import construct_column
 from .simulation.run import run_simulation

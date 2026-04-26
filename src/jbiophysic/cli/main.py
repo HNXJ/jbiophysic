@@ -1,20 +1,23 @@
 # src/jbiophysic/cli/main.py
 import argparse
-from .gravia_write import gravia_write, get_manuscript_paths
+from .gravia_write import gravia_write
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 def main():
-    print("Initializing jbiophysic CLI")
+    logger.info("Initializing jbiophysic CLI")
     parser = argparse.ArgumentParser(description="Gravia Write - Manuscript Generative Engine")
     parser.add_argument("--build", action="store_true", help="Build the full manuscript.")
-    parser.add_argument("--trace", type=str, default="gamma/trace.json", help="Path to gamma trace results.")
+    parser.add_argument("--trace", type=str, default="assets/gamma/trace.json", help="Path to gamma trace results.")
     
     args = parser.parse_args()
     
     if args.build:
-        print("🧬 Engaging Gravia Writer...")
+        logger.info("Engaging Gravia Writer...")
         gravia_write()
     else:
-        print("No command specified. Displaying help.")
+        logger.info("No command specified. Displaying help.")
         parser.print_help()
 
 if __name__ == "__main__":

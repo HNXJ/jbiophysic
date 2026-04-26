@@ -1,4 +1,8 @@
 # src/jbiophysic/models/builders/rate_models.py
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 import equinox as eqx
 import jax
 import jax.numpy as jnp
@@ -21,7 +25,7 @@ class EIRateModel(eqx.Module):
         tau_e=10.0, tau_i=20.0, 
         gain=1.0
     ):
-        print(f"Initializing EIRateModel with gain={gain}")
+        logger.info(f"Initializing EIRateModel with gain={gain}")
         self.w_ee = w_ee
         self.w_ei = w_ei
         self.w_ie = w_ie

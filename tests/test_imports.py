@@ -1,34 +1,32 @@
 # tests/test_imports.py
 import pytest
-import sys
-import os
-
-# Ensure flat root is testable
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def test_cli_importability():
-    """Assert CLI module can be instantiated."""
-    try:
-        from cli.gravia_write import get_manuscript_paths
-        paths = get_manuscript_paths()
-        assert "results_md" in paths
-    except ImportError as e:
-        pytest.fail(f"CLI Import failed: {e}")
+    """Validates that the CLI entry point and utilities are accessible."""
+    from jbiophysic.cli.gravia_write import get_manuscript_paths
+    paths = get_manuscript_paths()
+    assert "results_md" in paths
 
-def test_codes_importability():
-    """Assert Biophysical models are syntactically valid."""
-    try:
-        from codes.hierarchy import build_cortical_hierarchy
-        from codes.neurons import construct_column
-    except ImportError as e:
-        if "jaxley" not in str(e): # Ignore expected local env missing library
-            pytest.fail(f"Codes internal structure import failed: {e}")
+def test_core_importability():
+    """Validates that the biophysical core mechanisms and math are accessible."""
+    from jbiophysic.core import HH, SpikingNMDA, predictive_step
+    assert HH is not None
+    assert SpikingNMDA is not None
 
-def test_pipeline_importability():
-    """Assert pipeline orchestrations resolve endpoints."""
-    try:
-        from pipeline.load_data import load_pharmacology_profile
-        pharma = load_pharmacology_profile("ketamine")
-        assert pharma["occupancy"] == 0.5
-    except ImportError as e:
-        pytest.fail(f"Pipeline Import failed: {e}")
+def test_models_importability():
+    """Validates that the orchestration tier (builders and simulation) is accessible."""
+    from jbiophysic.models import build_cortical_hierarchy, run_simulation
+    assert build_cortical_hierarchy is not None
+    assert run_simulation is not None
+
+def test_viz_importability():
+    """Validates that the visualization serializers are accessible."""
+    from jbiophysic.viz import serialize_raster
+    assert serialize_raster is not None
+
+def test_common_importability():
+    """Validates that common utilities like logging and serialization are accessible."""
+    from jbiophysic.common.utils.logging import get_logger
+    from jbiophysic.common.utils.serialization import safe_serialize_json
+    assert get_logger is not None
+    assert safe_serialize_json is not None
