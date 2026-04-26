@@ -9,8 +9,8 @@ class HH(Channel):
     Implemented as a pure Jaxley channel mechanism.
     """
     def __init__(self, name: str = "HH"):
-        super().__init__(name=name)
         self.current_is_in_mA_per_cm2 = True
+        super().__init__(name=name)
         self.channel_params = {
             "gna": 0.12, "gk": 0.036, "gl": 0.0003,
             "ena": 50.0, "ek": -77.0, "el": -54.3
@@ -39,4 +39,4 @@ class HH(Channel):
         ina = params["gna"] * (states["m"]**3) * states["h"] * (v - params["ena"])
         ik = params["gk"] * (states["n"]**4) * (v - params["ek"])
         il = params["gl"] * (v - params["el"])
-        return ina + ik + il
+        return (ina + ik + il) / 1000.0

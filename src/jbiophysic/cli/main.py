@@ -1,7 +1,7 @@
 # src/jbiophysic/cli/main.py
 import argparse
 from jbiophysic.common.utils.logging import get_logger
-from jbiophysic.models.pipelines.run_full_experiment import run_experiment
+from jbiophysic.models.pipelines.run_full_experiment import run_pipeline
 
 logger = get_logger(__name__)
 
@@ -14,7 +14,7 @@ def main():
     
     if args.run:
         logger.info("Starting Full Scientific Experiment Pipeline...")
-        run_experiment()
+        run_pipeline()
     else:
         logger.info("No command specified. Displaying help.")
         parser.print_help()

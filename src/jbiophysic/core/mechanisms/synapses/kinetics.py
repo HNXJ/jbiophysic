@@ -15,7 +15,7 @@ class SpikingSynapse(Synapse):
     - Conductance normalization & Homeostasis.
     """
     def __init__(self, pre, post, name: str, **kwargs):
-        super().__init__(pre, post, name=name)
+        super().__init__(name=name)
         
         self.synapse_params = {
             "g": 0.1, "e": 0.0, "tau_r": 2.0, "tau_d": 100.0,
