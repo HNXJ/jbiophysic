@@ -11,8 +11,12 @@ def serialize_raster(result: SimulationResult, threshold: float = -20.0) -> Rast
     logger.info(f"Serializing raster with threshold {threshold}mV")
     v = np.array(result.v_trace)
     
-    # Simple threshold crossing detection
-    spikes = v > threshold
+    # Detect upward threshold crossings: (v[t] > threshold) AND (v[t-1] <= threshold)
+    # Pad with False at the start to maintain shape
+    spikes_shifted = np.roll(v, 1, axis=1)
+    spikes_shifted[:, 0] = threshold + 1.0 # Ensure t=0 doesn't trigger if already above
+    
+    spikes = (v > threshold) & (spikes_shifted <= threshold)
     neuron_indices, time_indices = np.where(spikes)
     
     meta = result.metadata or {}

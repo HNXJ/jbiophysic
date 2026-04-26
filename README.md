@@ -49,9 +49,14 @@ python -m jbiophysic.models.pipelines.run_full_experiment
 - **Root Hygiene:** Strict modularity; all implementation logic resides within `src/jbiophysic/`.
 
 ---
-<<<<<<< HEAD
 
-## 🔬 Who this package is for
+### 🛠 Project Status
+
+`jbiophysic` is currently in active development. We distinguish three tiers of stability:
+
+1.  **Stable Production Path (Jaxley-based):** The primary workflow for multi-compartment biophysical simulations, hierarchy construction, and activity analysis. This is the recommended path for biophysical research.
+2.  **Experimental Pipelines (JAX/Equinox):** Differentiable toy-model pipelines (e.g., standard point-neuron networks) used for prototyping new optimization strategies or predictive coding primitives.
+3.  **Planned Architecture:** Integration of a unified `Network` object abstraction and deeper coupling of neuromodulation with the Jaxley simulation engine.
 
 ### Neurobiologist-friendly overview
 
@@ -59,7 +64,7 @@ python -m jbiophysic.models.pipelines.run_full_experiment
 
 At a high level, the package lets you define excitatory and inhibitory populations, assemble them into local cortical columns or multi-area hierarchies, simulate membrane activity, extract spike rasters and voltage traces, and compare model activity against biologically meaningful targets such as firing rate, oscillatory band power, and excitation-inhibition balance.
 
-The current codebase already includes:
+The current stable codebase already includes:
 - excitatory pyramidal-like cells and inhibitory interneuron subclasses,
 - local column assembly with E / PV / SST / VIP populations,
 - multi-area cortical hierarchy builders,

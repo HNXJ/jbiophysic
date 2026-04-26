@@ -16,7 +16,9 @@ def stdp_core(
     new_trace_pre = trace_pre + dt * (-trace_pre / params["tau_pre"] + pre_spike)
     new_trace_post = trace_post + dt * (-trace_post / params["tau_post"] + post_spike)
     
-    # Weight change: Pre before post -> Potentiation; Post before pre -> Depression
-    dw = params["a_plus"] * pre_spike * trace_post - params["a_minus"] * post_spike * trace_pre
+    # Weight change: Pre before post -> Potentiation (a_plus); Post before pre -> Depression (a_minus)
+    # LTP: post-spike triggered by pre-trace
+    # LTD: pre-spike triggered by post-trace
+    dw = params["a_plus"] * post_spike * trace_pre - params["a_minus"] * pre_spike * trace_post
     
     return dw, new_trace_pre, new_trace_post

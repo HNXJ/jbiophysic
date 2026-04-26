@@ -12,18 +12,26 @@ def generate_data_hash(data: Any, params: Any) -> str:
     """Axis 16: Lightweight SHA256 Caching to avoid redundant processing."""
     logger.info("Generating data hash for caching")
     
-    # Fast shape + stats hashing rather than raw byte hashing for large arrays
+    # For scientific reproducibility, we must hash the raw content digest.
+    # Summary statistics (mean/var) are prone to collisions.
     if isinstance(data, (np.ndarray, list)):
         data_arr = np.asarray(data)
-        stats = f"mean:{np.mean(data_arr):.5f}_var:{np.var(data_arr):.5f}"
-        shape_info = str(data_arr.shape)
+        data_content = data_arr.tobytes()
+        shape_info = str(data_arr.shape).encode('utf-8')
     else:
-        stats = str(hash(data))
-        shape_info = "generic"
+        data_content = str(data).encode('utf-8')
+        shape_info = b"generic"
         
-    param_bytes = json.dumps(params, sort_keys=True).encode('utf-8')
+    # Serialize params for consistent hashing
+    try:
+        param_bytes = json.dumps(params, sort_keys=True).encode('utf-8')
+    except (TypeError, ValueError):
+        param_bytes = str(params).encode('utf-8')
     
-    combined_str = (shape_info + stats).encode('utf-8') + param_bytes
-    res = hashlib.sha256(combined_str).hexdigest()
+    hasher = hashlib.sha256()
+    hasher.update(shape_info)
+    hasher.update(data_content)
+    hasher.update(param_bytes)
+    res = hasher.hexdigest()
     
     return res

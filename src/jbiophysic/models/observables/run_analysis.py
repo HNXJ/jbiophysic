@@ -50,14 +50,13 @@ def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply
     gamma_pwr = jnp.mean(psd[..., (freqs >= 30) & (freqs <= 80)], axis=-1)
     beta_pwr = jnp.mean(psd[..., (freqs >= 13) & (freqs <= 30)], axis=-1)
     
-    peak_idx = jnp.argmax(fft_mag, axis=-1)
-    if len(peak_idx.shape) > 0:
-        peak_idx = peak_idx[0]
+    peak_indices = jnp.argmax(fft_mag, axis=-1)
+    peak_frequencies = freqs[peak_indices]
     
     results = {
         "gamma_power": np.array(gamma_pwr).tolist(),
         "beta_power": np.array(beta_pwr).tolist(),
-        "peak_freq": float(freqs[peak_idx]),
+        "peak_freq": np.array(peak_frequencies).tolist(),
     }
     
     if use_cache:

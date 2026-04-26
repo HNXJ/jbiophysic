@@ -19,28 +19,27 @@ def run_simulation(
     logger.info(f"Running simulation for T={config.t_max}ms with dt={config.dt}ms")
     
     # 1. Apply stimuli (Placeholder logic)
-    time_steps = int(config.t_max / config.dt)
+    # time_steps = int(config.t_max / config.dt)
     
-    try:
-        logger.info("Starting Jaxley integration...")
-        # Jaxley.integrate returns (v_trace, currents, states)
-        # v_trace shape is typically (n_compartments, n_time_steps)
-        v_trace, _, state = jx.integrate(
-            brain, 
-            t_max=config.t_max, 
-            dt=config.dt
-        )
-        logger.info("Integration successful.")
-    except Exception as e:
-        logger.error(f"CRITICAL: Jaxley integration failed: {str(e)}")
-        # Fallback must match the [neurons, time] orientation
-        v_trace = jnp.zeros((len(brain.cells), time_steps))
-        state = None
+    logger.info("Starting Jaxley integration...")
+    # Jaxley.integrate returns (v_trace, currents, states)
+    # Recording currents is essential for biophysical analysis (LFP, E/I balance).
+    v_trace, currents, state = jx.integrate(
+        brain, 
+        t_max=config.t_max, 
+        dt=config.dt
+    )
+    logger.info("Integration successful.")
         
     res = SimulationResult(
         v_trace=v_trace,
+        currents=currents,
         state=state,
-        metadata={"t_max": config.t_max, "dt": config.dt}
+        metadata={
+            "t_max": config.t_max, 
+            "dt": config.dt,
+            "seed": config.seed
+        }
     )
     
     return res
