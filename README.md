@@ -28,14 +28,14 @@ Install the package in development mode:
 pip install -e ".[dev,viz]"
 ```
 
-Execute a full scientific experiment pipeline:
+Execute a full scientific experiment pipeline via the CLI:
 ```bash
-python -m jbiophysic.models.pipelines.run_full_experiment
+jbiophysic --run
 ```
 
-Invoke the manuscript generation engine:
+Or run via the module path:
 ```bash
-gravia-write --build
+python -m jbiophysic.models.pipelines.run_full_experiment
 ```
 
 ### 📁 Resources (`assets/`)

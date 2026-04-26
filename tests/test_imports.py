@@ -2,10 +2,9 @@
 import pytest
 
 def test_cli_importability():
-    """Validates that the CLI entry point and utilities are accessible."""
-    from jbiophysic.cli.gravia_write import get_manuscript_paths
-    paths = get_manuscript_paths()
-    assert "results_md" in paths
+    """Validates that the CLI entry point is accessible."""
+    from jbiophysic.cli.main import main
+    assert main is not None
 
 def test_core_importability():
     """Validates that the biophysical core mechanisms and math are accessible."""

@@ -30,9 +30,15 @@ viz = [
     "matplotlib",
     "dash"
 ]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "black"
+]
 
 [project.scripts]
-gravia-write = "jbiophysic.cli.main:main"
+jbiophysic = "jbiophysic.cli.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/jbiophysic"]
