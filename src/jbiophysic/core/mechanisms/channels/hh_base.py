@@ -9,6 +9,7 @@ class HH(jx.channels.Channel):
     """
     def __init__(self, name: str = "HH"):
         super().__init__(name=name)
+        self.current_is_in_mA_per_cm2 = True
         self.channel_params = {
             "gna": 0.12, "gk": 0.036, "gl": 0.0003,
             "ena": 50.0, "ek": -77.0, "el": -54.3

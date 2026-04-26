@@ -6,7 +6,7 @@ import jaxley as jx
 def spike_fn(v, threshold=-50.0):
     return (v > threshold).astype(jnp.float32)
 
-class SpikingSynapse(jx.connect.Synapse):
+class SpikingSynapse(jx.synapses.Synapse):
     """
     Research-Grade Synapse (Axis 1 & 3):
     - Final Form kinetics (NMDA/GABA).
