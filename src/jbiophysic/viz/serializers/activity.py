@@ -2,17 +2,21 @@
 import numpy as np
 from jbiophysic.common.types.simulation import SimulationResult
 from jbiophysic.common.types.visualization import RasterPayload, TimeSeriesPayload
+from jbiophysic.common.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 def serialize_raster(result: SimulationResult, threshold: float = -20.0) -> RasterPayload:
     """Converts voltage traces to a spike raster payload."""
-    print(f"Serializing raster with threshold {threshold}mV")
+    logger.info(f"Serializing raster with threshold {threshold}mV")
     v = np.array(result.v_trace)
     
     # Simple threshold crossing detection
     spikes = v > threshold
     neuron_indices, time_indices = np.where(spikes)
     
-    dt = result.metadata.get("dt", 0.025)
+    meta = result.metadata or {}
+    dt = meta.get("dt", 0.025)
     spike_times = (time_indices * dt).tolist()
     
     payload = RasterPayload(
@@ -27,9 +31,11 @@ def serialize_raster(result: SimulationResult, threshold: float = -20.0) -> Rast
 
 def serialize_voltage_traces(result: SimulationResult, neuron_indices: list[int]) -> TimeSeriesPayload:
     """Extracts specific voltage traces for visualization."""
-    print(f"Serializing voltage traces for neurons {neuron_indices}")
+    logger.info(f"Serializing voltage traces for neurons {neuron_indices}")
     v = np.array(result.v_trace)
-    dt = result.metadata.get("dt", 0.025)
+    
+    meta = result.metadata or {}
+    dt = meta.get("dt", 0.025)
     
     time = (np.arange(v.shape[1]) * dt).tolist()
     values = v[neuron_indices, :].tolist()

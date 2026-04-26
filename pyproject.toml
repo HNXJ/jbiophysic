@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "jbiophysics"
+name = "jbiophysic"
 version = "0.2.0"
 description = "Research-grade biophysical simulation and analysis platform (Axis 1-10)."
 readme = "README.md"
@@ -20,7 +20,8 @@ dependencies = [
     "diffrax",
     "numpy",
     "scipy",
-    "pandas"
+    "pandas",
+    "PyYAML"
 ]
 
 [project.optional-dependencies]
@@ -39,6 +40,12 @@ packages = ["src/jbiophysic"]
 [tool.uv]
 dev-dependencies = [
     "pytest",
+    "pytest-cov",
     "ruff",
     "black"
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]

@@ -1,44 +1,48 @@
-# Gamma: jbiophysic
-Research-grade biophysical simulation and analysis platform (Axis 1-10).
+# 🧠 jbiophysic
+Research-grade biophysical simulation and analysis platform. (Axis 1-18)
 
 ## 🧬 Architecture: 3-Tier Layering
-The repository has been refactored into a pip-installable package (`jbiophysics`) with strict boundary enforcement.
+The repository follows a professional 3-tier architecture, implemented as a unified, pip-installable package (`jbiophysic`) with strict internal boundary enforcement.
 
 ### 1. Core Layer (`src/jbiophysic/core/`)
-**Domain:** Pure Computation & Biophysical Kernels.
-- **Math:** JAX-native differentiable math and predictive coding primitives.
-- **Mechanisms:** Ion channel kinetics (HH), synapse ODEs, and STDP plasticity.
-- **Solvers:** Integration with `diffrax` and custom JAX-compiled loops.
+**Domain:** Computational Kernels & Biophysical Primitives.
+- **Math:** Precision-weighted predictive coding and JAX-native differentiable math.
+- **Mechanisms:** Ion channel kinetics (HH), synaptic ODEs, and calcium-modulated STDP.
+- **Performance:** Hot paths are stripped of side-effects for optimal JIT compilation.
 
 ### 2. Models Layer (`src/jbiophysic/models/`)
-**Domain:** Orchestration & Simulation Pipelines.
-- **Builders:** Cell populations and inter-areal hierarchy construction via `Equinox` PyTrees.
-- **Pipelines:** High-level experiment orchestration (e.g., Omission, Oddball).
-- **Optimization:** GSGD and AGSDR biophysical tuning.
+**Domain:** Orchestration & Scientific Pipelines.
+- **Builders:** Morphologically detailed cell populations and multi-area cortical hierarchies.
+- **Simulation:** Orchestrated execution via `Equinox` modules and `Diffrax` solvers.
+- **Optimization:** GSGD and AGSDR engines for biophysical parameter tuning.
 
 ### 3. Viz Layer (`src/jbiophysic/viz/`)
-**Domain:** Visual Analytics & Frontend Payloads.
-- **Serializers:** Decoupled payload generation for web-agnostic visualization.
-- **Plotly:** Professional-grade scientific plotting (Madelane Golden Dark theme).
-- **Scientific Protocol:** Strict JSON `null` handling for NaNs/Infs to ensure data integrity.
+**Domain:** Visual Analytics & Data Persistence.
+- **Serializers:** Decoupled payload generation for cross-platform visualization.
+- **Scientific Protocol:** Strict JSON `null` protocol for `NaN/Inf` data integrity.
+- **Aesthetic:** High-fidelity scientific plotting with a Madelane Golden Dark theme.
 
 ## 🛠 Installation & Usage
-Install in editable mode for research development:
+Install the package in development mode:
 ```bash
 pip install -e ".[dev,viz]"
 ```
 
-Execute the manuscript generation CLI:
-```bash
-gravia-write --build
-```
-
-Run a full experiment pipeline:
+Execute a full scientific experiment pipeline:
 ```bash
 python -m jbiophysic.models.pipelines.run_full_experiment
 ```
 
-## 📜 Scientific Standards
-- **Extreme Verbosity:** All execution traces are required to provide line-by-line transparency.
-- **JAX Discipline:** All models are registered as `eqx.Module` to prevent JIT recompilation bloat.
-- **Root Hygiene:** No new files allowed in the root. Use `src/` for code and `local/` for planning.
+Invoke the manuscript generation engine:
+```bash
+gravia-write --build
+```
+
+## 📜 Engineering Standards
+- **Structured Logging:** Centralized logging replaces raw debug prints for library-grade transparency.
+- **PyTree Discipline:** All models are `equinox.Module` subclasses, ensuring safe JAX transformations.
+- **Tiered Testing:** Comprehensive validation across `core`, `models`, and `viz` tiers.
+- **Root Hygiene:** Strict modularity; all implementation logic resides within `src/jbiophysic/`.
+
+---
+*Madelane Golden Dark (#CFB87C / #9400D3)*
