@@ -18,10 +18,10 @@ def build_pyramidal_cell():
     # Insert specific ionic conductances
     cell.insert(HH())
     
-    # Scale conductances
-    cell.branch(0).set("gl_HH", 0.0003)
-    cell.branch(1).set("gl_HH", 0.0001)
-    cell.branch(2).set("gl_HH", 0.0001)
+    # Scale leak conductances per branch (keys match HH.channel_params)
+    cell.branch(0).set("gl", 0.0003)
+    cell.branch(1).set("gl", 0.0001)
+    cell.branch(2).set("gl", 0.0001)
     
     return cell
 
@@ -32,11 +32,11 @@ def build_interneuron(cell_type="PV"):
     cell.insert(HH())
     
     if cell_type == "PV":
-        cell.set("gk_HH", 0.036 * 1.5)
+        cell.set("gk", 0.036 * 1.5)
     elif cell_type == "SST":
-        cell.set("gl_HH", 0.0001)
+        cell.set("gl", 0.0001)
     elif cell_type == "VIP":
-        cell.set("gl_HH", 0.0002)
+        cell.set("gl", 0.0002)
         
     return cell
 
