@@ -2,11 +2,12 @@
 import jax
 import jax.numpy as jnp
 import jaxley as jx
+from jaxley.synapses import Synapse
 
 def spike_fn(v, threshold=-50.0):
     return (v > threshold).astype(jnp.float32)
 
-class SpikingSynapse(jx.synapses.Synapse):
+class SpikingSynapse(Synapse):
     """
     Research-Grade Synapse (Axis 1 & 3):
     - Final Form kinetics (NMDA/GABA).

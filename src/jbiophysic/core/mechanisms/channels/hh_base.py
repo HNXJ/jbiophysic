@@ -1,8 +1,9 @@
 # src/jbiophysic/core/mechanisms/channels/hh_base.py
 import jax.numpy as jnp
 import jaxley as jx
+from jaxley.channels import Channel
 
-class HH(jx.channels.Channel):
+class HH(Channel):
     """
     Standard Hodgkin-Huxley (1952) kinetics.
     Implemented as a pure Jaxley channel mechanism.
