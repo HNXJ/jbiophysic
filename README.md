@@ -265,7 +265,7 @@ In practical terms, the typical visual workflow is:
 
 ---
 
-## 🚀 Current status and near-term roadmap
+##  Current status and near-term roadmap
 
 The codebase already supports the main ingredients needed for a biologically grounded cortical workflow:
 
@@ -277,8 +277,6 @@ The codebase already supports the main ingredients needed for a biologically gro
 * spectral analysis,
 * optimization utilities.
 
-The next ergonomic milestone is to expose these capabilities through a single user-facing object interface such as:
-
 ```python
 # planned ergonomic interface
 N = network(E=200, pv=40, sst=40, vip=20)
@@ -287,10 +285,3 @@ N.train(...)
 N.visualize(...)
 ```
 
-That API would make the package substantially more accessible to both neurobiologists and computational neuroscientists while preserving the current layered implementation underneath.
-
----
-*Madelane Golden Dark (#CFB87C / #9400D3)*
-=======
-*Madelane Golden Dark (#CFB87C / #9400D3)*
->>>>>>> 15ccfba58cae698bcd1ca946e48c5dbbfc4c31bd
