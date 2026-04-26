@@ -5,11 +5,11 @@ build-backend = "hatchling.build"
 [project]
 name = "jbiophysic"
 version = "0.2.0"
-description = "Research-grade biophysical simulation and analysis platform (Axis 1-10)."
+description = "A JAX-native biophysical simulation and analysis platform designed for computational neuroscientists and biologists."
 readme = "README.md"
 requires-python = ">=3.9"
 authors = [
-    { name = "Hamed Nejat", email = "hamed@example.com" }
+    { name = "Hamed Nejat" }
 ]
 dependencies = [
     "jax",
