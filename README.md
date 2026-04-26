@@ -49,6 +49,7 @@ python -m jbiophysic.models.pipelines.run_full_experiment
 - **Root Hygiene:** Strict modularity; all implementation logic resides within `src/jbiophysic/`.
 
 ---
+<<<<<<< HEAD
 
 ## 🔬 Who this package is for
 
@@ -290,3 +291,6 @@ That API would make the package substantially more accessible to both neurobiolo
 
 ---
 *Madelane Golden Dark (#CFB87C / #9400D3)*
+=======
+*Madelane Golden Dark (#CFB87C / #9400D3)*
+>>>>>>> 15ccfba58cae698bcd1ca946e48c5dbbfc4c31bd
