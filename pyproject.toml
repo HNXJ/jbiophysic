@@ -15,15 +15,23 @@ dependencies = [
     "jax",
     "jaxlib",
     "jaxley",
+    "equinox",
+    "optax",
+    "diffrax",
     "numpy",
     "scipy",
-    "matplotlib",
-    "plotly",
     "pandas"
 ]
 
+[project.optional-dependencies]
+viz = [
+    "plotly",
+    "matplotlib",
+    "dash"
+]
+
 [project.scripts]
-gravia-write = "cli.main:main"
+gravia-write = "jbiophysic.cli.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/jbiophysic"]
