@@ -83,3 +83,28 @@ class SpikingNMDA(SpikingSynapse):
 class SpikingGABAa(SpikingSynapse):
     def __init__(self, pre, post, name="GABAa"):
         super().__init__(pre, post, name=name, is_nmda=0.0, tau_r=1.0, tau_d=6.0, e=-70.0)
+
+class SpikingGABAb(SpikingSynapse):
+    """
+    Slow GABAb-mediated inhibition.
+    DynaSim parity: 'iGABAb.mech'.
+    """
+    def __init__(self, pre, post, name="GABAb"):
+        super().__init__(pre, post, name=name, is_nmda=0.0, tau_r=50.0, tau_d=200.0, e=-90.0)
+
+class GapJunction(Synapse):
+    """
+    Electrical Gap Junction.
+    DynaSim parity: 'iGJ.mech'.
+    Current: I = g * (v_post - v_pre)
+    """
+    def __init__(self, pre, post, name="GapJunction"):
+        super().__init__(name=name)
+        self.synapse_params = {"g": 0.1}
+        self.synapse_states = {}
+
+    def update_states(self, states, dt, v_pre, v_post, params):
+        return {}
+
+    def compute_current(self, states, v_pre, v_post, params):
+        return params["g"] * (v_post - v_pre)
