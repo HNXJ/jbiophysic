@@ -5,12 +5,23 @@ import equinox as eqx
 
 class Izhikevich(eqx.Module):
     """
-    Izhikevich Point Neuron Model.
+    Izhikevich Point Neuron Model (Axis 5).
     DynaSim parity: 'Izh.pop'.
-    Equations: 
-      dv/dt = 0.04*v^2 + 5*v + 140 - u + I
-      du/dt = a*(b*v - u)
-    Reset: if v >= 30: v = c, u = u + d
+    
+    ### Equations: 
+    - dv/dt = 0.04*v^2 + 5*v + 140 - u + I
+    - du/dt = a*(b*v - u)
+    
+    ### Reset Logic: 
+    - if v >= 30: v = c, u = u + d
+    
+    ### Useful Notes
+    - **Canonical Params**:
+        - Regular Spiking (RS): a=0.02, b=0.2, c=-65, d=8
+        - Chattering (CH): a=0.02, b=0.2, c=-50, d=2
+        - Fast Spiking (FS): a=0.1, b=0.2, c=-65, d=2
+    - **Differentiability**: Uses `jax.lax.select` to allow gradient-based 
+      optimization of (a, b, c, d) parameters.
     """
     a: float = 0.02
     b: float = 0.2
@@ -35,9 +46,16 @@ class FitzHughNagumo(eqx.Module):
     """
     FitzHugh-Nagumo (FHN) Model.
     DynaSim parity: 'FHN.pop'.
-    Equations:
-      dv/dt = v - v^3/3 - w + I
-      dw/dt = (v + a - b*w) / tau
+    
+    ### Equations:
+    - dv/dt = v - v^3/3 - w + I
+    - dw/dt = (v + a - b*w) / tau
+    
+    ### Useful Notes
+    - **Phase Plane**: This model is excellent for teaching oscillatory 
+      dynamics. The cubic nullcline for 'v' creates the excitability threshold.
+    - **Optimization**: Often used as a low-dimensional surrogate to 
+      understand the bifurcation structure of the full HH model.
     """
     a: float = 0.7
     b: float = 0.8

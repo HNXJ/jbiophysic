@@ -5,7 +5,21 @@ from jaxley.channels import Channel
 class IA(Channel):
     """
     Transient A-type Potassium current (Axis 11).
-    Commonly used in DynaSim for frequency-current (f-I) relationship modulation.
+    DynaSim parity: 'iA.mech'.
+    
+    ### Biophysical Function
+    Regulates the delay-to-first-spike and inter-spike intervals. In hierarchical 
+    predictive coding models, IA is critical for maintaining temporal precision 
+    in feedforward sensory populations by preventing premature firing.
+    
+    ### Useful Notes
+    - **Sensitivity**: Highly sensitive to hyperpolarization; a deeper resting 
+      potential increases the available 'h' pool, leading to a stronger 
+      transient upon depolarization.
+    - **Integration**: Uses Rush-Larsen for the 'm' and 'h' gates to ensure 
+      numerical stability during rapid transitions.
+    - **Scaling**: Conductance (gka) should be scaled with soma surface area 
+      to maintain constant current density.
     """
     def __init__(self, name: str = "IA"):
         self.current_is_in_mA_per_cm2 = True
@@ -34,7 +48,18 @@ class IA(Channel):
 class Ih(Channel):
     """
     Hyperpolarization-activated HCN current.
-    DynaSim standard for resonance and oscillatory dynamics.
+    DynaSim parity: 'iH.mech'.
+    
+    ### Biophysical Function
+    Contributes to membrane resonance and rhythmogenesis. Essential for pacemaking 
+    in thalamic and hippocampal models. In the "Omission" hierarchy, iH mediates 
+    the "rebound" excitatory response following the release from top-down inhibition.
+    
+    ### Useful Notes
+    - **Reversal Potential**: Fixed at -43mV (mixed cation), causing inward 
+      current when the cell is hyperpolarized.
+    - **Temporal Profile**: Very slow activation (tau_m in hundreds of ms). 
+      Simulations must run for >1000ms to observe full resonant effects.
     """
     def __init__(self, name: str = "Ih"):
         self.current_is_in_mA_per_cm2 = True
@@ -56,7 +81,18 @@ class Ih(Channel):
 class IM(Channel):
     """
     Slow Muscarinic M-type Potassium current.
-    DynaSim standard for spike-frequency adaptation.
+    DynaSim parity: 'iM.mech'.
+    
+    ### Biophysical Function
+    Implements slow spike-frequency adaptation (SFA). As the cell fires, 
+    IM slowly activates and hyperpolarizes the membrane, increasing the 
+    inter-spike interval (ISI).
+    
+    ### Useful Notes
+    - **Modulation**: Target for Acetylcholine (ACh) modulation. In 'training' 
+      modes, ACh typically reduces gkm to enable higher-frequency learning.
+    - **Optimization**: Frequently optimized via AGSDR to match empirical 
+      bursting statistics.
     """
     def __init__(self, name: str = "IM"):
         self.current_is_in_mA_per_cm2 = True
@@ -127,7 +163,14 @@ class ICaT(Channel):
 class IKDR(Channel):
     """
     Delayed Rectifier Potassium current (DynaSim iKDR).
-    Provides faster repolarization than standard HH Potassium.
+    
+    ### Biophysical Function
+    Faster repolarization than standard Hodgkin-Huxley Potassium. Used in 
+    highly active interneuron models (e.g. PV+ fast-spiking).
+    
+    ### Useful Notes
+    - **Contrast**: Standard HH iK has a 4th-power gate; iKDR typically uses 
+      higher conductance to achieve "narrow" spikes.
     """
     def __init__(self, name: str = "IKDR"):
         self.current_is_in_mA_per_cm2 = True
@@ -148,7 +191,18 @@ class IKDR(Channel):
 class IAR(Channel):
     """
     Anomalous Rectifier (Inwardly rectifying current, iAR).
-    DynaSim parity: used for stabilizing resting potential in hippocampal models.
+    DynaSim parity: 'iAR.mech'.
+    
+    ### Biophysical Function
+    Stabilizes the resting membrane potential near Ek. It allows large 
+    inward currents when the membrane is hyperpolarized but "rectifies" 
+    (shuts off) during depolarization.
+    
+    ### Useful Notes
+    - **Resting Stability**: Critical for maintaining the "Down state" in 
+      up-down state cortical models.
+    - **Parameter Tuning**: erev should be kept near the target resting 
+      potential for maximum stability.
     """
     def __init__(self, name: str = "IAR"):
         self.current_is_in_mA_per_cm2 = True
@@ -170,7 +224,15 @@ class CaDynamics(Channel):
     """
     Intracellular Calcium concentration dynamics.
     DynaSim parity: 'CaBuffer.mech'.
-    Updates [Ca]i based on Calcium currents and exponential decay.
+    
+    ### Biophysical Function
+    Updates the internal Calcium concentration [Ca]i. This is not a current 
+    itself but a state manager that other channels (like ICan) depend on.
+    
+    ### Useful Notes
+    - **State**: The 'cai' state is usually in mM or uM. Standard rest is 0.0001.
+    - **Coupling**: In multi-compartment models, this represents the thin 
+      shell beneath the membrane.
     """
     def __init__(self, name: str = "CaDynamics"):
         self.current_is_in_mA_per_cm2 = True
@@ -198,7 +260,15 @@ class ICan(Channel):
     """
     Calcium-activated Non-selective cation current (iCan).
     DynaSim parity: 'iCan.mech'.
-    Depends on internal [Ca]i.
+    
+    ### Biophysical Function
+    Activated by internal [Ca]i levels. Provides a slow depolarizing 
+    current that can lead to persistent activity and plateaus.
+    
+    ### Useful Notes
+    - **Modality**: Often used to model "after-depolarization" (ADP) following 
+      a burst of spikes.
+    - **Half-activation**: Controlled by the 'kd' parameter (default 0.001).
     """
     def __init__(self, name: str = "ICan"):
         self.current_is_in_mA_per_cm2 = True
