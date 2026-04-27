@@ -1,8 +1,6 @@
 # src/jbiophysic/models/simulation/run.py
-import jax
-import jax.numpy as jnp
 import jaxley as jx
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Optional
 from jbiophysic.common.types.simulation import SimulationConfig, SimulationResult
 from jbiophysic.common.utils.logging import get_logger
 
@@ -14,16 +12,13 @@ def run_simulation(
     params: Optional[Dict[str, Any]] = None
 ) -> SimulationResult:
     """
-    Axis 18: Canonical models simulation runner.
+    Simulation runner for cortical models.
+    Integration errors are intentionally surfaced to prevent silent failures.
     """
     logger.info(f"Running simulation for T={config.t_max}ms with dt={config.dt}ms")
     
-    # 1. Apply stimuli (Placeholder logic)
-    # time_steps = int(config.t_max / config.dt)
-    
-    logger.info("Starting Jaxley integration...")
-    # Jaxley.integrate returns (v_trace, currents, states)
-    # Recording currents is essential for biophysical analysis (LFP, E/I balance).
+    # We rely on Jaxley's internal error handling.
+    # No silent zero-trace fallbacks are implemented here.
     v_trace, currents, state = jx.integrate(
         brain, 
         t_max=config.t_max, 
@@ -31,7 +26,7 @@ def run_simulation(
     )
     logger.info("Integration successful.")
         
-    res = SimulationResult(
+    return SimulationResult(
         v_trace=v_trace,
         currents=currents,
         state=state,
@@ -41,5 +36,3 @@ def run_simulation(
             "seed": config.seed
         }
     )
-    
-    return res
