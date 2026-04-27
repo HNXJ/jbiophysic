@@ -7,7 +7,7 @@ import jaxley as jx
 from jbiophysic.core.mechanisms.channels.hh_base import HH
 
 def build_pyramidal_cell():
-    """Axis 18: Authentic Jaxley morphological instantiation for Layer 5/23 PC."""
+    """Morphological instantiation for Layer 5/23 PC using Jaxley."""
     logger.info("Building Pyramidal Cell morphology")
     # In Jaxley 0.5.0+, Cell takes a list of Branch objects.
     # Each Branch contains one or more Compartments.

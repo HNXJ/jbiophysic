@@ -18,11 +18,15 @@ class HH(Channel):
         self.channel_states = {"m": 0.05, "h": 0.6, "n": 0.32}
 
     def update_states(self, states, dt, v, params):
+        # Helper for L'Hôpital safe rate evaluation
+        def safe_rate(v_offset, scale, divisor_scale):
+            # Singularity handling: jnp.where evaluates both branches, so safe_v prevents NaNs.
+            safe_v = jnp.where(jnp.abs(v_offset) < 1e-6, 1.0, v_offset)
+            val = scale * v_offset / (1.0 - jnp.exp(-safe_v / divisor_scale))
+            return jnp.where(jnp.abs(v_offset) < 1e-6, scale * divisor_scale, val)
+
         # alpha_m singularity at v = -40.0
-        v_m = v + 40.0
-        # Safe-division pattern for JAX: evaluate both branches but avoid NaNs in inactive ones.
-        safe_v_m = jnp.where(jnp.abs(v_m) < 1e-6, 1.0, v_m)
-        alpha_m = jnp.where(jnp.abs(v_m) < 1e-6, 1.0, 0.1 * v_m / (1.0 - jnp.exp(-safe_v_m / 10.0)))
+        alpha_m = safe_rate(v + 40.0, 0.1, 10.0)
         beta_m = 4.0 * jnp.exp(-(v + 65.0) / 18.0)
         
         # alpha_h and beta_h
@@ -30,16 +34,15 @@ class HH(Channel):
         beta_h = 1.0 / (1.0 + jnp.exp(-(v + 35.0) / 10.0))
         
         # alpha_n singularity at v = -55.0
-        v_n = v + 55.0
-        safe_v_n = jnp.where(jnp.abs(v_n) < 1e-6, 1.0, v_n)
-        alpha_n = jnp.where(jnp.abs(v_n) < 1e-6, 0.1, 0.01 * v_n / (1.0 - jnp.exp(-safe_v_n / 10.0)))
+        alpha_n = safe_rate(v + 55.0, 0.01, 10.0)
         beta_n = 0.125 * jnp.exp(-(v + 65.0) / 80.0)
 
         # Rush-Larsen integration: x(t+dt) = inf + (x(t) - inf) * exp(-dt/tau)
         def rl_step(x, alpha, beta):
             tau = 1.0 / (alpha + beta)
             inf = alpha * tau
-            return inf + (x - inf) * jnp.exp(-dt / tau)
+            new_x = inf + (x - inf) * jnp.exp(-dt / tau)
+            return jnp.clip(new_x, 0.0, 1.0) # Physiological clamping
 
         new_m = rl_step(states["m"], alpha_m, beta_m)
         new_h = rl_step(states["h"], alpha_h, beta_h)

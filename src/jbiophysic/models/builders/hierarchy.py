@@ -7,7 +7,7 @@ from jbiophysic.common.utils.logging import get_logger
 logger = get_logger(__name__)
 
 def build_cortical_hierarchy(n_areas: int = 11) -> jx.Network:
-    """Axis 18: Authentic Jaxley inter-areal logic across multiple visual hierarchies."""
+    """Inter-areal connectivity across multiple visual areas."""
     logger.info(f"Building cortical hierarchy with {n_areas} areas")
     
     # 1. Build distinct area local networks

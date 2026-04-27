@@ -13,10 +13,10 @@ def spike_fn(v, threshold=-50.0, k=5.0):
 
 class SpikingSynapse(Synapse):
     """
-    Research-Grade Synapse:
-    - Final Form kinetics (NMDA/GABA).
-    - Calcium-modulated STDP.
-    - Conductance normalization & Homeostasis.
+    Experimental synapse with multi-component kinetics and plasticity hooks:
+    - Multi-exponential kinetics (AMPA/NMDA/GABA).
+    - Calcium-modulated STDP hooks.
+    - Basic conductance homeostasis.
     """
     def __init__(self, pre, post, name: str, **kwargs):
         super().__init__(name=name)
@@ -36,34 +36,40 @@ class SpikingSynapse(Synapse):
         }
 
     def update_states(self, states, dt, v_pre, v_post, params):
+        # Axis 14: Force broadcasting of scalar states to input shape
+        s_broad = jnp.broadcast_to(states["s"], v_pre.shape)
+        w_broad = jnp.broadcast_to(states["w"], v_pre.shape)
+        tp_broad = jnp.broadcast_to(states["trace_pre"], v_pre.shape)
+        tq_broad = jnp.broadcast_to(states["trace_post"], v_pre.shape)
+        
         pre_spike = spike_fn(v_pre)
         post_spike = spike_fn(v_post)
         
         # 1. Synaptic activation (double exponential)
-        ds = -states["s"] / params["tau_d"] + pre_spike * (1.0 - states["s"]) / params["tau_r"]
-        new_s = states["s"] + dt * ds
+        ds = -s_broad / params["tau_d"] + pre_spike * (1.0 - s_broad) / params["tau_r"]
+        new_s = s_broad + dt * ds
         
         # 2. STDP trace updates
-        dtp = -states["trace_pre"] / params["tau_pre"] + pre_spike
-        dtq = -states["trace_post"] / params["tau_post"] + post_spike
-        ntp = states["trace_pre"] + dt * dtp
-        ntq = states["trace_post"] + dt * dtq
+        dtp = -tp_broad / params["tau_pre"] + pre_spike
+        dtq = -tq_broad / params["tau_post"] + post_spike
+        ntp = tp_broad + dt * dtp
+        ntq = tq_broad + dt * dtq
 
         # 3. Weight change (STDP + homeostasis)
         # Pre-before-post (LTP) - consistent with plasticity.py sign
-        dw_stdp = (params["a_plus"] * states["trace_pre"] * post_spike -
-                   params["a_minus"] * states["trace_post"] * pre_spike)
+        dw_stdp = (params["a_plus"] * tp_broad * post_spike -
+                   params["a_minus"] * tq_broad * pre_spike)
         
         actual_rate = params["actual_rate"]
-        dw_homeo = params["eta_homeo"] * (params["target_rate"] - actual_rate) * states["w"]
+        dw_homeo = params["eta_homeo"] * (params["target_rate"] - actual_rate) * w_broad
         
-        candidate_w = jnp.clip(states["w"] + dw_stdp + dw_homeo, 0.0, params["w_max"])
+        candidate_w = jnp.clip(w_broad + dw_stdp + dw_homeo, 0.0, params["w_max"])
 
         # Gate: if stdp_on == 0, keep original weight and traces
         stdp_flag = params["stdp_on"] > 0.5
-        new_w = jnp.where(stdp_flag, candidate_w, states["w"])
-        new_tp = jnp.where(stdp_flag, ntp, states["trace_pre"])
-        new_tq = jnp.where(stdp_flag, ntq, states["trace_post"])
+        new_w = jnp.where(stdp_flag, candidate_w, w_broad)
+        new_tp = jnp.where(stdp_flag, ntp, tp_broad)
+        new_tq = jnp.where(stdp_flag, ntq, tq_broad)
         
         return {"s": new_s, "w": new_w, "trace_pre": new_tp, "trace_post": new_tq}
 
