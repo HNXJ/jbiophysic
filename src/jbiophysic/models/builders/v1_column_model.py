@@ -22,7 +22,7 @@ def build_v1_column_jaxley(params: Dict[str, float]) -> jx.Network:
     
     # 2. PV Modulation (using built-in HH prefix)
     base_gk = 0.036 * 1.5
-    net.cell("PV").set("HH_gK", base_gk * pv_gain)
+    net.PV.set("HH_gK", base_gk * pv_gain)
     
     # 3. Connectivity
     # Use sparse_connect for population-level wiring
@@ -30,11 +30,11 @@ def build_v1_column_jaxley(params: Dict[str, float]) -> jx.Network:
     syn_i = InhSynapse()
     
     # PC -> PV (Exc)
-    jx.sparse_connect(net.cell("PC"), net.cell("PV"), syn_e, p=0.1)
+    jx.sparse_connect(net.PC, net.PV, syn_e, p=0.1)
     # PV -> PC (Inh)
-    jx.sparse_connect(net.cell("PV"), net.cell("PC"), syn_i, p=0.15)
+    jx.sparse_connect(net.PV, net.PC, syn_i, p=0.15)
     # PV -> PV (Inh)
-    jx.sparse_connect(net.cell("PV"), net.cell("PV"), syn_i, p=0.1)
+    jx.sparse_connect(net.PV, net.PV, syn_i, p=0.1)
     
     # 4. Set weights and reversal potentials
     net.set("ExcSynapse_gS", pc_to_pv_w)
@@ -44,9 +44,9 @@ def build_v1_column_jaxley(params: Dict[str, float]) -> jx.Network:
     
     # 5. Stimulus Setup (0-100 baseline, 100-300 evoked)
     current = jx.step_current(i_delay=100.0, i_dur=200.0, i_amp=drive_amp, delta_t=0.025, t_max=300.0)
-    net.cell("PC").branch(0).loc(0.5).stimulate(current)
+    net.PC.branch(0).loc(0.5).stimulate(current)
     
     # 6. Recording (population mean for LFP proxy)
-    net.cell("PC").record("v")
+    net.PC.record("v")
     
     return net
