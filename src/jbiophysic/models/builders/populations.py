@@ -19,7 +19,7 @@ def build_pyramidal_cell():
 
 def build_interneuron(cell_type="PV"):
     """Interneuron morphologies (PV/SST/VIP)."""
-    cell = jx.Cell(jx.Branch(ncomp=1))
+    cell = jx.Cell([jx.Branch(ncomp=1)], parents=[-1])
     cell.insert(HH())
     if cell_type == "PV":
         cell.set("gk", 0.036 * 1.5)
