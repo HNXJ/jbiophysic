@@ -1,23 +1,29 @@
 # src/jbiophysic/core/mechanisms/channels/hh_base.py
 import jax.numpy as jnp
 import jaxley as jx
-from jaxley.channels import Channel
+from jaxley.channels import HH as JaxleyHH
 
-class HH(Channel):
+class HH(JaxleyHH):
     """
     Standard Hodgkin-Huxley (1952) kinetics.
     Implemented with Rush-Larsen integration and L'Hôpital-safe rate functions.
+    Inherits from jaxley.channels.HH to maintain compatibility with Jaxley 0.13.0
+    internal scan sorting requirements.
     """
     def __init__(self, name: str = "HH"):
         self.current_is_in_mA_per_cm2 = True
+        # MANDATORY: Must use the built-in HH initialization to satisfy Jaxley's internal scan sorting
         super().__init__(name=name)
+        
+        # Override the defaults with the jbiophysic specific constants
         self.channel_params = {
-            "gna": 0.12, "gk": 0.036, "gl": 0.0003,
-            "ena": 50.0, "ek": -77.0, "el": -54.3
+            f"{name}_gNa": 0.12, f"{name}_gK": 0.036, f"{name}_gLeak": 0.0003,
+            f"{name}_eNa": 50.0, f"{name}_eK": -77.0, f"{name}_eLeak": -54.3
         }
-        self.channel_states = {"m": 0.05, "h": 0.6, "n": 0.32}
+        self.channel_states = {f"{name}_m": 0.05, f"{name}_h": 0.6, f"{name}_n": 0.32}
 
     def update_states(self, states, dt, v, params):
+        name = self._name
         # Helper for L'Hôpital safe rate evaluation
         def safe_rate(v_offset, scale, divisor_scale):
             # Singularity handling: jnp.where evaluates both branches, so safe_v prevents NaNs.
@@ -44,15 +50,16 @@ class HH(Channel):
             new_x = inf + (x - inf) * jnp.exp(-dt / tau)
             return jnp.clip(new_x, 0.0, 1.0) # Physiological clamping
 
-        new_m = rl_step(states["m"], alpha_m, beta_m)
-        new_h = rl_step(states["h"], alpha_h, beta_h)
-        new_n = rl_step(states["n"], alpha_n, beta_n)
+        new_m = rl_step(states[f"{name}_m"], alpha_m, beta_m)
+        new_h = rl_step(states[f"{name}_h"], alpha_h, beta_h)
+        new_n = rl_step(states[f"{name}_n"], alpha_n, beta_n)
 
-        return {"m": new_m, "h": new_h, "n": new_n}
+        return {f"{name}_m": new_m, f"{name}_h": new_h, f"{name}_n": new_n}
 
     def compute_current(self, states, v, params):
+        name = self._name
         # S/cm2 * mV = mA/cm2. No division by 1000 needed.
-        ina = params["gna"] * (states["m"]**3) * states["h"] * (v - params["ena"])
-        ik = params["gk"] * (states["n"]**4) * (v - params["ek"])
-        il = params["gl"] * (v - params["el"])
+        ina = params[f"{name}_gNa"] * (states[f"{name}_m"]**3) * states[f"{name}_h"] * (v - params[f"{name}_eNa"])
+        ik = params[f"{name}_gK"] * (states[f"{name}_n"]**4) * (v - params[f"{name}_eK"])
+        il = params[f"{name}_gLeak"] * (v - params[f"{name}_eLeak"])
         return ina + ik + il

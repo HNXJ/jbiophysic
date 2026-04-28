@@ -1,6 +1,6 @@
 # src/jbiophysic/models/builders/populations.py
 import jaxley as jx
-from jbiophysic.core.mechanisms.channels.hh_base import HH
+from jaxley.channels import HH
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -12,21 +12,21 @@ def build_pyramidal_cell():
     basal = jx.Branch(ncomp=1)
     cell = jx.Cell([soma, apical, basal], parents=[-1, 0, 0])
     cell.insert(HH())
-    cell.branch(0).set("gl", 0.0003)
-    cell.branch(1).set("gl", 0.0001)
-    cell.branch(2).set("gl", 0.0001)
+    cell.branch(0).set("HH_gLeak", 0.0003)
+    cell.branch(1).set("HH_gLeak", 0.0001)
+    cell.branch(2).set("HH_gLeak", 0.0001)
     return cell
 
 def build_interneuron(cell_type="PV"):
     """Interneuron morphologies (PV/SST/VIP)."""
-    cell = jx.Cell(jx.Branch(ncomp=1))
+    cell = jx.Cell([jx.Branch(ncomp=1)], parents=[-1])
     cell.insert(HH())
     if cell_type == "PV":
-        cell.set("gk", 0.036 * 1.5)
+        cell.set("HH_gK", 0.036 * 1.5)
     elif cell_type == "SST":
-        cell.set("gl", 0.0001)
+        cell.set("HH_gLeak", 0.0001)
     elif cell_type == "VIP":
-        cell.set("gl", 0.0002)
+        cell.set("HH_gLeak", 0.0002)
     return cell
 
 def construct_column():
@@ -46,10 +46,10 @@ def construct_column():
     
     # Axis 18: Mandatory population labeling for hierarchy selectors
     # This enables usage like network.cell("PC") in inter-areal logic.
-    column_net.add_type("PC", list(range(0, n_pc)))
-    column_net.add_type("PV", list(range(n_pc, n_pc + n_pv)))
-    column_net.add_type("SST", list(range(n_pc + n_pv, n_pc + n_pv + n_sst)))
-    column_net.add_type("VIP", list(range(n_pc + n_pv + n_sst, n_pc + n_pv + n_sst + n_vip)))
+    column_net.cell(list(range(0, n_pc))).add_to_group("PC")
+    column_net.cell(list(range(n_pc, n_pc + n_pv))).add_to_group("PV")
+    column_net.cell(list(range(n_pc + n_pv, n_pc + n_pv + n_sst))).add_to_group("SST")
+    column_net.cell(list(range(n_pc + n_pv + n_sst, n_pc + n_pv + n_sst + n_vip))).add_to_group("VIP")
     
     logger.info(f"Column built with {len(all_cells)} cells across 4 populations.")
     return column_net
