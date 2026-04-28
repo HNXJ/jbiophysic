@@ -46,10 +46,10 @@ def construct_column():
     
     # Axis 18: Mandatory population labeling for hierarchy selectors
     # This enables usage like network.cell("PC") in inter-areal logic.
-    column_net.add_type("PC", list(range(0, n_pc)))
-    column_net.add_type("PV", list(range(n_pc, n_pc + n_pv)))
-    column_net.add_type("SST", list(range(n_pc + n_pv, n_pc + n_pv + n_sst)))
-    column_net.add_type("VIP", list(range(n_pc + n_pv + n_sst, n_pc + n_pv + n_sst + n_vip)))
+    column_net.cell(list(range(0, n_pc))).add_to_group("PC")
+    column_net.cell(list(range(n_pc, n_pc + n_pv))).add_to_group("PV")
+    column_net.cell(list(range(n_pc + n_pv, n_pc + n_pv + n_sst))).add_to_group("SST")
+    column_net.cell(list(range(n_pc + n_pv + n_sst, n_pc + n_pv + n_sst + n_vip))).add_to_group("VIP")
     
     logger.info(f"Column built with {len(all_cells)} cells across 4 populations.")
     return column_net
