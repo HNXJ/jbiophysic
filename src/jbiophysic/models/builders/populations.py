@@ -3,6 +3,8 @@ import jaxley as jx
 from jaxley.channels import HH
 from jbiophysic.common.utils.logging import get_logger
 
+logger = get_logger(__name__)
+
 def build_pyramidal_cell():
     """Morphological instantiation for Layer 5/23 PC using Jaxley."""
     soma = jx.Branch(ncomp=1)
