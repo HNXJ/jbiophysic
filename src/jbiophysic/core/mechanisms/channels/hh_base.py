@@ -1,22 +1,26 @@
 # src/jbiophysic/core/mechanisms/channels/hh_base.py
 import jax.numpy as jnp
 import jaxley as jx
-from jaxley.channels import Channel
+from jaxley.channels import HH as JaxleyHH
 
-class HH(Channel):
+class HH(JaxleyHH):
     """
     Standard Hodgkin-Huxley (1952) kinetics.
     Implemented with Rush-Larsen integration and L'Hôpital-safe rate functions.
+    Inherits from jaxley.channels.HH to maintain compatibility with Jaxley 0.13.0
+    internal scan sorting requirements.
     """
     def __init__(self, name: str = "HH"):
         self.current_is_in_mA_per_cm2 = True
+        # MANDATORY: Must use the built-in HH initialization to satisfy Jaxley's internal scan sorting
         super().__init__(name=name)
+        
+        # Override the defaults with the jbiophysic specific constants
         self.channel_params = {
             f"{name}_gNa": 0.12, f"{name}_gK": 0.036, f"{name}_gLeak": 0.0003,
             f"{name}_eNa": 50.0, f"{name}_eK": -77.0, f"{name}_eLeak": -54.3
         }
         self.channel_states = {f"{name}_m": 0.05, f"{name}_h": 0.6, f"{name}_n": 0.32}
-        self.channel_constants = {}
 
     def update_states(self, states, dt, v, params):
         name = self._name
