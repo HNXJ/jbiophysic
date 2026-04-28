@@ -1,9 +1,7 @@
 # src/jbiophysic/models/builders/populations.py
 import jaxley as jx
-from jbiophysic.core.mechanisms.channels.hh_base import HH
+from jaxley.channels import HH
 from jbiophysic.common.utils.logging import get_logger
-
-logger = get_logger(__name__)
 
 def build_pyramidal_cell():
     """Morphological instantiation for Layer 5/23 PC using Jaxley."""
@@ -12,9 +10,9 @@ def build_pyramidal_cell():
     basal = jx.Branch(ncomp=1)
     cell = jx.Cell([soma, apical, basal], parents=[-1, 0, 0])
     cell.insert(HH())
-    cell.branch(0).set("gl", 0.0003)
-    cell.branch(1).set("gl", 0.0001)
-    cell.branch(2).set("gl", 0.0001)
+    cell.branch(0).set("HH_gLeak", 0.0003)
+    cell.branch(1).set("HH_gLeak", 0.0001)
+    cell.branch(2).set("HH_gLeak", 0.0001)
     return cell
 
 def build_interneuron(cell_type="PV"):
@@ -22,11 +20,11 @@ def build_interneuron(cell_type="PV"):
     cell = jx.Cell([jx.Branch(ncomp=1)], parents=[-1])
     cell.insert(HH())
     if cell_type == "PV":
-        cell.set("gk", 0.036 * 1.5)
+        cell.set("HH_gK", 0.036 * 1.5)
     elif cell_type == "SST":
-        cell.set("gl", 0.0001)
+        cell.set("HH_gLeak", 0.0001)
     elif cell_type == "VIP":
-        cell.set("gl", 0.0002)
+        cell.set("HH_gLeak", 0.0002)
     return cell
 
 def construct_column():
