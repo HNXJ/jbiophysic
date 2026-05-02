@@ -40,16 +40,8 @@ def construct_column():
     sst_cells = [build_interneuron("SST") for _ in range(n_sst)]
     vip_cells = [build_interneuron("VIP") for _ in range(n_vip)]
     
-    # Combine into a single macroscopic network
+    # Combine into a single macroscopic list of cells
     all_cells = pc_cells + pv_cells + sst_cells + vip_cells
-    column_net = jx.Network(all_cells)
-    
-    # Axis 18: Mandatory population labeling for hierarchy selectors
-    # This enables usage like network.cell("PC") in inter-areal logic.
-    column_net.cell(list(range(0, n_pc))).add_to_group("PC")
-    column_net.cell(list(range(n_pc, n_pc + n_pv))).add_to_group("PV")
-    column_net.cell(list(range(n_pc + n_pv, n_pc + n_pv + n_sst))).add_to_group("SST")
-    column_net.cell(list(range(n_pc + n_pv + n_sst, n_pc + n_pv + n_sst + n_vip))).add_to_group("VIP")
     
     logger.info(f"Column built with {len(all_cells)} cells across 4 populations.")
-    return column_net
+    return all_cells
