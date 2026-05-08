@@ -1,4 +1,5 @@
 from typing import Any
+
 try:
     from scipy import signal as sp_signal
 except ImportError:

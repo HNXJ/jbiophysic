@@ -1,8 +1,9 @@
 # tests/core/test_properties.py
 import jax.numpy as jnp
-import pytest
+
 from jbiophysic.core.mechanisms.channels.hh_base import HH
 from jbiophysic.core.mechanisms.synapses.kinetics import SpikingNMDA
+
 
 def test_hh_singularities():
     """Checks HH rate functions at exact singular voltages (-40, -55)."""

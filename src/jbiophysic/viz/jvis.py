@@ -1,5 +1,7 @@
 from typing import Any
+
 import numpy as np
+
 try:
     import matplotlib.pyplot as plt
     from scipy import signal as sp_signal
@@ -7,7 +9,6 @@ except ImportError:
     plt = None
     sp_signal = None
 
-from jbiophysic.circuits.base import SimulationResult
 
 class JVis:
     """Unified visualization wrapper for simulation results."""

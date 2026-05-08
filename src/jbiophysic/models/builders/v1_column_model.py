@@ -1,12 +1,14 @@
+
 import jaxley as jx
 from jaxley.synapses import IonotropicSynapse
+
 from jbiophysic.models.builders.populations import construct_column
-from typing import Dict, Any
+
 
 class ExcSynapse(IonotropicSynapse): pass
 class InhSynapse(IonotropicSynapse): pass
 
-def build_v1_column_jaxley(params: Dict[str, float]) -> jx.Network:
+def build_v1_column_jaxley(params: dict[str, float]) -> jx.Network:
     """
     Instantiates PC, PV, SST, VIP populations using the shared builder.
     Configures a PING-style gamma network using built-in HH mechanisms.

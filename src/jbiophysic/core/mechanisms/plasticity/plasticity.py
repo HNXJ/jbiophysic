@@ -1,6 +1,4 @@
 # src/jbiophysic/core/mechanisms/plasticity/plasticity.py
-import jax.numpy as jnp
-from typing import Dict, Any, Tuple
 
 def stdp_core(
     dt: float, 
@@ -8,8 +6,8 @@ def stdp_core(
     post_spike: float, 
     trace_pre: float, 
     trace_post: float, 
-    params: Dict[str, float]
-) -> Tuple[float, float, float]:
+    params: dict[str, float]
+) -> tuple[float, float, float]:
     """
     Axis 14: Pure JAX STDP kernel for synaptic weight updates.
     """

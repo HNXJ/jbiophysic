@@ -1,8 +1,8 @@
 # src/jbiophysic/models/simulation/batch.py
-import jax
+
 import jax.numpy as jnp
 import jaxley as jx
-from typing import Dict, Any, List, Optional
+
 from jbiophysic.common.types.simulation import SimulationConfig, SimulationResult
 from jbiophysic.common.utils.logging import get_logger
 
@@ -11,8 +11,8 @@ logger = get_logger(__name__)
 def run_batch_simulation(
     brain: jx.Network,
     config: SimulationConfig,
-    param_grid: Dict[str, jnp.ndarray]
-) -> List[SimulationResult]:
+    param_grid: dict[str, jnp.ndarray]
+) -> list[SimulationResult]:
     """
     Executes multiple simulations in parallel using JAX vmap.
     Achieves functional parity with DynaSim's 'batch' simulation mode.

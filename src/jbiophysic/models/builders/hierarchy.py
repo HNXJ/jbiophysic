@@ -1,8 +1,8 @@
 # src/jbiophysic/models/builders/hierarchy.py
 from __future__ import annotations
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
-from typing import Iterator
 
 from jbiophysic.common.utils.logging import get_logger
 
@@ -23,7 +23,7 @@ class _SimpleRecordings:
 
 @dataclass
 class _SimpleCellSelector:
-    network: "SimpleNetwork"
+    network: SimpleNetwork
     indices: list[int]
 
     def add_to_group(self, name: str):

@@ -1,8 +1,13 @@
 # tests/unit/viz/test_serializers.py
-import numpy as np # print("Importing numpy")
-import pytest # print("Importing pytest")
-from jbiophysic.common.types.simulation import SimulationResult # print("Importing SimulationResult")
-from jbiophysic.viz.serializers.activity import serialize_raster # print("Importing raster serializer")
+import numpy as np  # print("Importing numpy")
+
+from jbiophysic.common.types.simulation import (
+    SimulationResult,  # print("Importing SimulationResult")
+)
+from jbiophysic.viz.serializers.activity import (
+    serialize_raster,  # print("Importing raster serializer")
+)
+
 
 def test_raster_serialization():
     print("Executing test_raster_serialization")

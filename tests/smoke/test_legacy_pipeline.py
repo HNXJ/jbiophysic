@@ -1,15 +1,16 @@
 # tests/smoke/test_legacy_pipeline.py
-import pytest
+import os
+
 import jax
 import jax.numpy as jnp
 import numpy as np
-import os
-from jbiophysic.models.optimization.agsdr import AGSDR
-from jbiophysic.models.optimization.gsgd import initialize_parallel_population, gsgd_step_parallel
+
+from jbiophysic.common.utils.serialization import safe_save_json
+from jbiophysic.core.math.predictive import predictive_step
 from jbiophysic.core.mechanisms.modulators.modulation import apply_modulation
 from jbiophysic.models.builders.hierarchy import build_11_area_hierarchy
-from jbiophysic.core.math.predictive import predictive_step
-from jbiophysic.common.utils.serialization import safe_save_json
+from jbiophysic.models.optimization.gsgd import gsgd_step_parallel, initialize_parallel_population
+
 
 def run_legacy_smoke_test(output_dir: str):
     """Axis 11: Calibration -> Training -> Testing (Modular Smoke Test)."""

@@ -1,6 +1,7 @@
 # src/jbiophysic/core/mechanisms/synapses/kinetics.py
 import jax
 import jax.numpy as jnp
+
 try:
     from jaxley.synapses import Synapse
 except ModuleNotFoundError:  # pragma: no cover - exercised when jaxley is absent

@@ -1,8 +1,9 @@
 # tests/core/test_mechanisms.py
 import jax.numpy as jnp
-import pytest
+
 from jbiophysic.core.mechanisms.channels.hh_base import HH
 from jbiophysic.core.mechanisms.synapses.kinetics import SpikingNMDA
+
 
 def test_hh_stability():
     """Validates HH gating variable bounds and current finiteness."""

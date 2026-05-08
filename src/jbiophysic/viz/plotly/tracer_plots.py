@@ -3,8 +3,9 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-import plotly.graph_objects as go
 import numpy as np
+import plotly.graph_objects as go
+
 
 def plot_tracer_voltage(times: np.ndarray, voltages: np.ndarray):
     """Generates a Plotly figure for the tracer bullet voltage trace."""

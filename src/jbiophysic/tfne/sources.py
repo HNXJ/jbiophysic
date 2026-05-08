@@ -51,8 +51,8 @@ def project_sparse_currents(
         raise ValueError("radii_m must have shape (N,)")
 
     q = jnp.zeros(grid.shape, dtype=currents_A.dtype)
-    for I, pos, radius in zip(currents_A, positions_m, radii_m, strict=True):
-        q = q + source_from_current(grid, I, pos, float(radius))
+    for current_val, pos, radius in zip(currents_A, positions_m, radii_m, strict=True):
+        q = q + source_from_current(grid, current_val, pos, float(radius))
     return q
 
 

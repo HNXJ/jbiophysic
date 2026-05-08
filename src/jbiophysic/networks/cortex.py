@@ -19,10 +19,11 @@ projection rule is source-cell based: E sources use AMPA and inhibitory sources 
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
 import json
+from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Iterable, Literal, Mapping, Sequence
+from typing import Any, Literal
 
 import numpy as np
 

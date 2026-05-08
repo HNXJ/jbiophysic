@@ -1,9 +1,10 @@
 # tests/models/test_simulation.py
-import pytest
 import jax.numpy as jnp
+
+from jbiophysic.common.types.simulation import SimulationConfig
 from jbiophysic.models.builders.hierarchy import build_cortical_hierarchy
 from jbiophysic.models.simulation.run import run_simulation
-from jbiophysic.common.types.simulation import SimulationConfig
+
 
 def test_hierarchy_build():
     """Verifies area-to-cell scaling in the hierarchical cortical builder."""

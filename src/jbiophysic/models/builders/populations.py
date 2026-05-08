@@ -1,6 +1,7 @@
 # src/jbiophysic/models/builders/populations.py
 import jaxley as jx
 from jaxley.channels import HH
+
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)

@@ -3,19 +3,22 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
+
 import equinox as eqx
-import jax
 import jax.numpy as jnp
-from typing import Dict, Any
+
 
 class EIRateModel(eqx.Module):
     """
     Standard 2-node Exc/Inh Rate Model (Axis 5).
     Registered as an Equinox PyTree.
     """
-    w_ee: float; w_ei: float
-    w_ie: float; w_ii: float
-    tau_e: float; tau_i: float
+    w_ee: float
+    w_ei: float
+    w_ie: float
+    w_ii: float
+    tau_e: float
+    tau_i: float
     gain: float
 
     def __init__(

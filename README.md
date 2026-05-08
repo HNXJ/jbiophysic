@@ -1,45 +1,50 @@
 # jbiophysic
 
-`jbiophysic` is an experimental JAX/Jaxley codebase for building simple cortical cell
-populations, assembling multi-area hierarchy models, and running biophysical simulations.
-It is a research prototype focusing on exploratory modeling rather than a production-ready
-simulator.
+Experimental computational neuroscience framework for:
 
-## Implemented today
+- Izhikevich and HH-style neuron models
+- laminar E/PV/SST/VIP cortical circuits
+- multi-area low/mid/high cortical hierarchy simulations
+- global oddball and omission task scaffolds
+- TFNE forward-field CSD/LFP modeling
+- optimization and plasticity experiments
 
-- Jaxley-oriented simulation architecture and JAX-native mathematical kernels.
-- Biophysical mechanisms: HH-style kinetics, Izhikevich point neurons, and synaptic scaffolds.
-- TFNE package namespace under `src/jbiophysic/tfne` for current density, CSD, source
-  mollification, gauge fixing, passive tensors, and smoke-testable Poisson-style operators.
-- Optimizer scaffolds for SDR, GSDR, AGSDR, and GSGD with explicit bounds/manifests.
-- Analysis helpers for spike counts, Fano factor, spectra, synchrony, and LFP/CSD summaries.
+## Safety/status
 
-## TFNE doctrine
+This is exploratory research infrastructure, not a validated biological simulator. Optimizer success is not biological proof.
 
-TFNE is treated here as a homogenized, biophysically constrained, bidomain tensor-admittivity
-framework for CSD/LFP forward modeling. It is not a validated biological truth model, not a
-replacement for Hodgkin-Huxley/Jaxley, and not evidence that a good optimizer fit proves a
-biological mechanism.
+## Install
 
-Implementation must live under `src/jbiophysic/`. The TFNE namespace is therefore
-`jbiophysic.tfne`, not a top-level `tfne_jax` package.
-
-## Installation
+Minimal:
 
 ```bash
-pip install -e ".[dev,viz]"
+pip install -e .
 ```
 
-For narrow smoke testing without installing optional visualization dependencies:
+Development:
 
 ```bash
-PYTHONPATH=src pytest -q tests
+pip install -e ".[dev]"
 ```
 
-## Engineering standards
+Full scientific/tutorial stack:
 
-- JAX-compatible kernels are side-effect free.
-- State, PRNG keys, and parameter trees are explicit.
-- Numerical guards reject NaN/Inf states and preserve source conservation.
-- Passive tensors use SPD parameterizations.
-- Biological claims remain evidence-calibrated and separate from optimizer success.
+```bash
+pip install -e ".[jax,jaxley,viz,tutorials,dev]"
+```
+
+## Quick smoke
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src python3 -m pytest -q
+```
+
+## Tutorials
+
+- `tutorials/00_neuronal_equations_book.ipynb`
+- `tutorials/01_izhikevich_hh_single_neurons.ipynb`
+- `tutorials/02_tfne_forward_fields.ipynb`
+- `tutorials/03_tfne_izhikevich_hybrid.ipynb`
+- `tutorials/04_laminar_oddball_three_area_cortex.ipynb`
+
+HTML exports live in `tutorials/html/`.

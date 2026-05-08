@@ -1,5 +1,4 @@
 # tests/test_imports.py
-import pytest
 
 def test_cli_importability():
     """Validates that the CLI entry point is accessible."""
@@ -8,7 +7,7 @@ def test_cli_importability():
 
 def test_core_importability():
     """Validates that the biophysical core mechanisms and math are accessible."""
-    from jbiophysic.core import HH, SpikingNMDA, predictive_step
+    from jbiophysic.core import HH, SpikingNMDA
     assert HH is not None
     assert SpikingNMDA is not None
 

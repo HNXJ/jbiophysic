@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+
 @dataclass(frozen=True)
 class Condition:
     """A condition describes a simulation scenario (e.g., stimulus, duration)."""

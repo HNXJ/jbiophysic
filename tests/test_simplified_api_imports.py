@@ -1,13 +1,12 @@
-import pytest
 
 def test_simplified_imports():
-    from jbiophysic.neurons import IzhikevichParams
-    from jbiophysic.conditions import Condition
-    from jbiophysic.objectives import Objective
     from jbiophysic import ops
-    from jbiophysic.viz import jvis, JVis, serialize_raster
+    from jbiophysic.conditions import Condition
     from jbiophysic.fields import make_regular_grid
     from jbiophysic.models import build_cortical_hierarchy, run_simulation
+    from jbiophysic.neurons import IzhikevichParams
+    from jbiophysic.objectives import Objective
+    from jbiophysic.viz import jvis
     
     assert IzhikevichParams is not None
     assert Condition is not None

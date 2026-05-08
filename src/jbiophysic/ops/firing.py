@@ -1,5 +1,6 @@
 import jax.numpy as jnp
 
+
 def per_neuron_firing_rate(spikes: jnp.ndarray, dt_ms: float) -> jnp.ndarray:
     """Compute the mean firing rate (Hz) for each neuron.
     

@@ -1,7 +1,6 @@
 def test_public_import_smoke():
     import jbiophysic
-    from jbiophysic import tfne
-    from jbiophysic import optim
+    from jbiophysic import optim, tfne
 
     assert jbiophysic.__name__ == "jbiophysic"
     assert hasattr(tfne, "make_regular_grid")

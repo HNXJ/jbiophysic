@@ -2,6 +2,7 @@
 import logging
 import sys
 
+
 def get_logger(name: str) -> logging.Logger:
     """
     Axis 0: Centralized logger for the jbiophysic package.

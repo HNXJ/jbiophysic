@@ -1,9 +1,9 @@
-import pytest
 import jax.numpy as jnp
+
+from jbiophysic import ops
 from jbiophysic.conditions import Condition
 from jbiophysic.objectives import Objective
-from jbiophysic.circuits import Circuit, SimulationResult
-from jbiophysic import ops
+
 
 def test_condition_metadata_isolation():
     c1 = Condition("stim", 100.0, 0.1, metadata={"a": 1})

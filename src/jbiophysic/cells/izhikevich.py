@@ -27,14 +27,16 @@ FAST_SPIKING = IzhikevichParams(a=0.1, b=0.2, c=-65.0, d=2.0)
 LOW_THRESHOLD_SPIKING = IzhikevichParams(a=0.02, b=0.25, c=-65.0, d=2.0)
 
 
-def izhikevich_step(v_mV: Array, u: Array, I: Array, params: IzhikevichParams, dt_ms: float) -> tuple[Array, Array, Array]:
+def izhikevich_step(
+    v_mV: Array, u: Array, current_in: Array, params: IzhikevichParams, dt_ms: float
+) -> tuple[Array, Array, Array]:
     """Advance one Euler step and apply reset.
 
     Returns `(v_next_mV, u_next, spiked_bool)`.
     """
     if dt_ms <= 0:
         raise ValueError("dt_ms must be positive")
-    dv = 0.04 * v_mV**2 + 5.0 * v_mV + 140.0 - u + I
+    dv = 0.04 * v_mV**2 + 5.0 * v_mV + 140.0 - u + current_in
     du = params.a * (params.b * v_mV - u)
     v_next = v_mV + dt_ms * dv
     u_next = u + dt_ms * du

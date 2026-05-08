@@ -4,8 +4,10 @@ from jbiophysic.common.utils.logging import get_logger
 logger = get_logger(__name__)
 
 from dataclasses import dataclass
-from typing import Dict, Any, Optional
+from typing import Any
+
 import jax.numpy as jnp
+
 
 @dataclass
 class SimulationConfig:
@@ -16,7 +18,7 @@ class SimulationConfig:
 @dataclass
 class SimulationResult:
     v_trace: jnp.ndarray
-    currents: Optional[jnp.ndarray] = None
-    spikes: Optional[jnp.ndarray] = None
-    state: Optional[Any] = None
-    metadata: Optional[Dict[str, Any]] = None
+    currents: jnp.ndarray | None = None
+    spikes: jnp.ndarray | None = None
+    state: Any | None = None
+    metadata: dict[str, Any] | None = None

@@ -1,9 +1,9 @@
 import numpy as np
 
 from jbiophysic.analysis.fano import fano_factor
-from jbiophysic.analysis.spikes import firing_rate_hz, threshold_crossings
-from jbiophysic.analysis.spectra import band_power, beta_gamma_ratio, power_spectrum
 from jbiophysic.analysis.lfp import csd_layer_summary, lfp_rms
+from jbiophysic.analysis.spectra import band_power, beta_gamma_ratio, power_spectrum
+from jbiophysic.analysis.spikes import firing_rate_hz, threshold_crossings
 
 
 def test_spike_and_fano_statistics():

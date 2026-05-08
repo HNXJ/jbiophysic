@@ -3,29 +3,32 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
+from typing import Any
+
 import jax
 import jax.numpy as jnp
-from typing import Dict, Any, Optional
+
 from jbiophysic.models.training.losses import (
-    compute_rate_loss,
-    compute_empirical_spectral_loss,
-    compute_spectral_loss,
     compute_ei_loss,
-    compute_stability_loss
+    compute_empirical_spectral_loss,
+    compute_rate_loss,
+    compute_spectral_loss,
+    compute_stability_loss,
 )
+
 
 class AGSDR:
     """
     Adaptive Gradient Synaptic Drift Regularization (Axis 11/12).
     """
-    def __init__(self, eta: float = 0.001, lambdas: Optional[Dict[str, float]] = None):
+    def __init__(self, eta: float = 0.001, lambdas: dict[str, float] | None = None):
         logger.info(f"Initializing AGSDR with learning rate eta={eta}")
         self.eta = eta
         self.lambdas = lambdas or {
             "rate": 1.0, "gamma": 0.5, "beta": 0.5, "ei": 0.5, "stability": 0.2
         }
 
-    def compute_total_loss(self, state: Dict[str, Any], empirical_target: Optional[Dict[str, Any]] = None) -> float:
+    def compute_total_loss(self, state: dict[str, Any], empirical_target: dict[str, Any] | None = None) -> float:
         l_rate = compute_rate_loss(state["rates"])
         
         if empirical_target is not None:

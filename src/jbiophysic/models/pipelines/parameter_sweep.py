@@ -10,14 +10,17 @@ This script demonstrates the 'Worked Example' logic from Sherfey et al. (2018):
 """
 
 from jbiophysic.common.utils.logging import get_logger
+
 logger = get_logger(__name__)
 
 import jax.numpy as jnp
 import jaxley as jx
-from jbiophysic.core.mechanisms.channels.hh_base import HH
-from jbiophysic.core.mechanisms.channels.extra_currents import IA
-from jbiophysic.models.simulation.batch import run_batch_simulation
+
 from jbiophysic.common.types.simulation import SimulationConfig
+from jbiophysic.core.mechanisms.channels.extra_currents import IA
+from jbiophysic.core.mechanisms.channels.hh_base import HH
+from jbiophysic.models.simulation.batch import run_batch_simulation
+
 
 def run_ia_sweep():
     logger.info("🎬 Starting DynaSim-style Parameter Sweep: IA Conductance")

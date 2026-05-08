@@ -4,8 +4,10 @@ from jbiophysic.common.utils.logging import get_logger
 logger = get_logger(__name__)
 
 import json
-import numpy as np
 from typing import Any
+
+import numpy as np
+
 
 def sanitize_nans(obj: Any) -> Any:
     """Recursively converts NaN and Inf values to None for JSON compliance."""

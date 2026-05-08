@@ -1,5 +1,6 @@
-import pytest
 import jax.numpy as jnp
+import pytest
+
 
 @pytest.fixture(autouse=True)
 def jnp_clip_compatibility_shim():

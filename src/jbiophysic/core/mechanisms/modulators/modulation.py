@@ -1,8 +1,8 @@
 # src/jbiophysic/core/mechanisms/modulators/modulation.py
-import jax.numpy as jnp
-from typing import Dict, Any, Tuple
+from typing import Any
 
-def get_experimental_schedule(phase: str) -> Dict[str, Any]:
+
+def get_experimental_schedule(phase: str) -> dict[str, Any]:
     """
     Axis 11: Retrieves experimental schedule for phase (calibration, training, testing).
     """
@@ -13,7 +13,7 @@ def get_experimental_schedule(phase: str) -> Dict[str, Any]:
     }
     return schedules.get(phase, schedules["calibration"])
 
-def compute_functional_modulation(da: float, ach: float) -> Dict[str, float]:
+def compute_functional_modulation(da: float, ach: float) -> dict[str, float]:
     """
     Axis 11: Computes functional modulation gains for DA and ACh levels.
     """
@@ -25,7 +25,7 @@ def compute_functional_modulation(da: float, ach: float) -> Dict[str, float]:
         "fb_gain": 1.0 - (ach * 0.5)
     }
 
-def apply_modulation(state: Any, phase: str) -> Tuple[Dict[str, float], bool]:
+def apply_modulation(state: Any, phase: str) -> tuple[dict[str, float], bool]:
     """
     Applies phase-specific modulation to the system state.
     """

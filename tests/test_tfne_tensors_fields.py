@@ -2,7 +2,11 @@ import jax.numpy as jnp
 
 from jbiophysic.tfne.csd import current_density, elliptic_operator, extracellular_csd
 from jbiophysic.tfne.fields import initialize_potentials, make_regular_grid, mean_zero_gauge
-from jbiophysic.tfne.tensors import gamma_from_cholesky_params, isotropic_gamma, tensor_eigenvalue_diagnostics
+from jbiophysic.tfne.tensors import (
+    gamma_from_cholesky_params,
+    isotropic_gamma,
+    tensor_eigenvalue_diagnostics,
+)
 from jbiophysic.tfne.validation import assert_no_nan_inf, assert_passive_spd
 
 

@@ -2,6 +2,7 @@
 import jax.numpy as jnp
 from jaxley.channels import Channel
 
+
 class IA(Channel):
     """
     Transient A-type Potassium current (Axis 11).

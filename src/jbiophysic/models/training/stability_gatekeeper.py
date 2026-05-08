@@ -1,7 +1,9 @@
-import jax.numpy as jnp
-from typing import Dict, Any
+from typing import Any
 
-def evaluate_stability(v_trace: jnp.ndarray, dt: float) -> Dict[str, Any]:
+import jax.numpy as jnp
+
+
+def evaluate_stability(v_trace: jnp.ndarray, dt: float) -> dict[str, Any]:
     """
     Analyzes simulated voltage traces for numerical stability.
     Returns a dict with 'passed' boolean and reason if failed.

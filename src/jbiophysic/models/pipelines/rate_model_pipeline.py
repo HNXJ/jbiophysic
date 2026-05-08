@@ -3,11 +3,12 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-import jax
-import jax.numpy as jnp
 import diffrax
-from jbiophysic.models.builders.rate_models import EIRateModel
+import jax.numpy as jnp
+
 from jbiophysic.common.utils.serialization import safe_save_json
+from jbiophysic.models.builders.rate_models import EIRateModel
+
 
 def run_rate_model_simulation():
     logger.info("🚀 Running E/I Rate Model Pipeline: Equinox + Diffrax")

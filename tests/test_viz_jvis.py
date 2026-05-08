@@ -1,6 +1,8 @@
-import pytest
 import numpy as np
-from jbiophysic.viz import jvis, JVis
+import pytest
+
+from jbiophysic.viz import jvis
+
 try:
     import matplotlib.pyplot as plt
     MATPLOTLIB_AVAILABLE = True

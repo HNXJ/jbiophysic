@@ -1,5 +1,6 @@
 # src/jbiophysic/viz/serializers/activity.py
 import numpy as np
+
 from jbiophysic.common.types.simulation import SimulationResult
 from jbiophysic.common.types.visualization import RasterPayload, TimeSeriesPayload
 from jbiophysic.common.utils.logging import get_logger

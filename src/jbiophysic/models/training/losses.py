@@ -5,6 +5,7 @@ logger = get_logger(__name__)
 
 import jax.numpy as jnp
 
+
 def compute_rate_loss(rates, target=5.0):
     diff = rates - target
     res = jnp.mean(diff**2)

@@ -1,7 +1,7 @@
 # src/jbiophysic/models/builders/reduced_models.py
-import jax
-import jax.numpy as jnp
 import equinox as eqx
+import jax
+
 
 class Izhikevich(eqx.Module):
     """
@@ -28,8 +28,8 @@ class Izhikevich(eqx.Module):
     c: float = -65.0
     d: float = 6.0
     
-    def __call__(self, v, u, I, dt):
-        dv = 0.04 * v**2 + 5 * v + 140 - u + I
+    def __call__(self, v, u, current_in, dt):
+        dv = 0.04 * v**2 + 5 * v + 140 - u + current_in
         du = self.a * (self.b * v - u)
         
         v_next = v + dv * dt
@@ -61,8 +61,8 @@ class FitzHughNagumo(eqx.Module):
     b: float = 0.8
     tau: float = 12.5
     
-    def __call__(self, v, w, I, dt):
-        dv = v - (v**3) / 3.0 - w + I
+    def __call__(self, v, w, current_in, dt):
+        dv = v - (v**3) / 3.0 - w + current_in
         dw = (v + self.a - self.b * w) / self.tau
         
         return v + dv * dt, w + dw * dt

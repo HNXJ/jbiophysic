@@ -1,11 +1,13 @@
+from typing import Any
+
 import jax.numpy as jnp
+import jaxley as jx
 import numpy as np
-from typing import Dict, Any
+from scipy.signal import welch
+
+from jbiophysic.common.utils.logging import get_logger
 from jbiophysic.models.builders.v1_column_model import build_v1_column_jaxley
 from jbiophysic.models.training.stability_gatekeeper import evaluate_stability
-from jbiophysic.common.utils.logging import get_logger
-import jaxley as jx
-from scipy.signal import welch
 
 logger = get_logger(__name__)
 
@@ -38,7 +40,7 @@ def compute_gamma_ratio(v_trace: jnp.ndarray, fs: float, onset_idx: int) -> floa
     
     return ratio
 
-def run_v1_gamma_bridge_payload(payload_dict: dict) -> Dict[str, Any]:
+def run_v1_gamma_bridge_payload(payload_dict: dict) -> dict[str, Any]:
     """
     1. Build network with payload params using built-in HH.
     2. Integrate (Baseline + Evoked).

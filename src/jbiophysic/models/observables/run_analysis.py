@@ -3,13 +3,16 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
+import json
+import os
+
 import jax.numpy as jnp
 import numpy as np
 import scipy.signal
-import os
-import json
+
 from jbiophysic.common.utils.hashing import generate_data_hash
 from jbiophysic.common.utils.serialization import safe_save_json
+
 
 def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply_window: bool = True, use_cache: bool = True):
     """
@@ -24,7 +27,7 @@ def compute_spectral_features(lfp_signals: np.ndarray, fs: float = 1000.0, apply
     
     if use_cache and os.path.exists(cache_path):
         logger.info("⚡ Loading LFP analysis from cache...")
-        with open(cache_path, "r") as f:
+        with open(cache_path) as f:
             res = json.load(f)
         return res
             

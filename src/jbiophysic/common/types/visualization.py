@@ -4,17 +4,18 @@ from jbiophysic.common.utils.logging import get_logger
 logger = get_logger(__name__)
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from typing import Any
+
 
 @dataclass
 class NodeView:
     node_id: str
     area: str
     population: str
-    xyz: List[float]
+    xyz: list[float]
     color: str = "#CFB87C"
     size: float = 1.0
-    meta: Dict[str, Any] = field(default_factory=dict)
+    meta: dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class EdgeView:
@@ -23,26 +24,26 @@ class EdgeView:
     weight: float
     sign: str = "+"
     pathway: str = "feedforward"
-    meta: Dict[str, Any] = field(default_factory=dict)
+    meta: dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class NetworkScenePayload:
-    nodes: List[NodeView]
-    edges: List[EdgeView]
-    frames: Optional[List[Dict[str, Any]]] = None
-    layout_meta: Dict[str, Any] = field(default_factory=dict)
+    nodes: list[NodeView]
+    edges: list[EdgeView]
+    frames: list[dict[str, Any]] | None = None
+    layout_meta: dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class RasterPayload:
-    spike_times: List[float]
-    neuron_ids: List[int]
+    spike_times: list[float]
+    neuron_ids: list[int]
     t_start: float
     t_end: float
-    meta: Dict[str, Any] = field(default_factory=dict)
+    meta: dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class TimeSeriesPayload:
-    time: List[float]
-    values: List[List[float]]
-    labels: List[str]
-    meta: Dict[str, Any] = field(default_factory=dict)
+    time: list[float]
+    values: list[list[float]]
+    labels: list[str]
+    meta: dict[str, Any] = field(default_factory=dict)

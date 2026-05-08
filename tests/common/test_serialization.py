@@ -1,7 +1,9 @@
 # tests/common/test_serialization.py
+
 import numpy as np
-import json
+
 from jbiophysic.common.utils.serialization import safe_serialize_json
+
 
 def test_nan_to_null_conversion():
     print("🧪 Testing NaN to null JSON conversion")

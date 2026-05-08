@@ -3,9 +3,12 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
+from collections.abc import Callable
+from typing import Any
+
 import jax
 import jax.numpy as jnp
-from typing import Callable, Any
+
 
 def gsgd_step_parallel(population: jnp.ndarray, rng: Any, loss_fn_single: Callable, eta: float = 0.001, sigma_t: float = 0.01) -> jnp.ndarray:
     """

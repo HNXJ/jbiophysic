@@ -3,9 +3,9 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
+
 import equinox as eqx
-import jax.numpy as jnp
-from typing import Dict, Any
+
 
 class TracerLIF(eqx.Module):
     """

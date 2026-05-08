@@ -1,6 +1,7 @@
 """Optional visualization adapters."""
 from jbiophysic.viz.serializers.activity import serialize_raster
-from .jvis import JVis, jvis, raster, psd, spectrogram, traces, lfp, summary
+
+from .jvis import JVis, jvis, lfp, psd, raster, spectrogram, summary, traces
 
 __all__ = [
     "serialize_raster",

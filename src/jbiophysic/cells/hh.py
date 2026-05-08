@@ -89,7 +89,7 @@ def hh_step(
 def simulate_hh(
     current_uA_cm2: Array,
     *,
-    params: HHParams = HHParams(),
+    params: HHParams | None = None,
     dt_ms: float = 0.01,
     V0_mV: float = -65.0,
 ) -> tuple[Array, Array]:
@@ -99,6 +99,8 @@ def simulate_hh(
     This eager loop is intentional for fast smoke tests; production JAX pipelines can wrap
     `hh_step` in `lax.scan` once solver tolerances and stiffness policy are fixed.
     """
+    if params is None:
+        params = HHParams()
     current_uA_cm2 = jnp.asarray(current_uA_cm2)
     if current_uA_cm2.ndim != 1:
         raise ValueError("current_uA_cm2 must be one-dimensional")

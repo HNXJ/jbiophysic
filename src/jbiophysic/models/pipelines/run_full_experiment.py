@@ -3,11 +3,11 @@ from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-import jax.numpy as jnp
+from jbiophysic.common.types.simulation import SimulationConfig
 from jbiophysic.models.builders.hierarchy import build_cortical_hierarchy
 from jbiophysic.models.simulation.run import run_simulation
-from jbiophysic.common.types.simulation import SimulationConfig
 from jbiophysic.viz.serializers.activity import serialize_raster
+
 
 def run_pipeline():
     logger.info("🧪 Starting Full Scientific Experiment Pipeline")

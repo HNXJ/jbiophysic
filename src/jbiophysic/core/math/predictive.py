@@ -1,5 +1,4 @@
 # src/jbiophysic/core/math/predictive.py
-import jax.numpy as jnp
 
 def predictive_step(error: float, prediction: float, precision: float) -> float:
     """

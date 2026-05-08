@@ -43,5 +43,5 @@ def test_gsgd_and_pipeline_smoke():
     theta_next, loss = gsgd_step(loss_fn, jnp.array([0.0, 2.0]), 0.1)
     assert float(loss) == 2.0
     assert theta_next.shape == (2,)
-    out = run_izhikevich_constant_current(T_ms=50.0, dt_ms=0.5, I=10.0)
+    out = run_izhikevich_constant_current(T_ms=50.0, dt_ms=0.5, current_in=10.0)
     assert out["n_spikes"] >= 1

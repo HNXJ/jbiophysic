@@ -1,7 +1,7 @@
 # src/jbiophysic/models/simulation/run.py
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any
 
 import jax.numpy as jnp
 
@@ -28,7 +28,7 @@ def _fallback_trace(brain: Any, config: SimulationConfig) -> jnp.ndarray:
 def run_simulation(
     brain: Any,
     config: SimulationConfig,
-    params: Optional[Dict[str, Any]] = None,
+    params: dict[str, Any] | None = None,
 ) -> SimulationResult:
     """Run a short cortical-model simulation.
 
