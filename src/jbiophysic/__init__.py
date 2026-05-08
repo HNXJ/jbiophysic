@@ -5,6 +5,7 @@ from .cells.hh import HHParams, simulate_hh
 from .tfne.fields import TFNEGrid, make_regular_grid
 from .tfne.sources import gaussian_mollifier, project_sparse_currents, conservation_error
 from .tfne.tensors import gamma_from_cholesky_params, tensor_eigenvalue_diagnostics
+from .networks.cortex import CortexNetworkSpec, make_cortex_network, make_cortex_network_json
 
 __all__ = [
     "IzhikevichParams",
@@ -18,4 +19,5 @@ __all__ = [
     "conservation_error",
     "gamma_from_cholesky_params",
     "tensor_eigenvalue_diagnostics",
+    "CortexNetworkSpec",
 ]

@@ -1,8 +1,13 @@
 # src/jbiophysic/core/mechanisms/synapses/kinetics.py
 import jax
 import jax.numpy as jnp
-import jaxley as jx
-from jaxley.synapses import Synapse
+try:
+    from jaxley.synapses import Synapse
+except ModuleNotFoundError:  # pragma: no cover - exercised when jaxley is absent
+    class Synapse:
+        def __init__(self, name: str = "Synapse"):
+            self.name = name
+            self._name = name
 
 def spike_fn(v, threshold=-50.0, k=5.0):
     """Differentiable surrogate spike function."""
