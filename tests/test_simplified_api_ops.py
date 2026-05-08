@@ -27,8 +27,13 @@ def test_ops_firing_rate():
     assert jnp.allclose(rates[0], 10.0)
     assert rates[1] == 0.0
     
-    assert jnp.allclose(ops.firing_rate(spikes, dt_ms), 5.0)
-    assert jnp.allclose(ops.max_single_neuron_rate(spikes, dt_ms), 10.0)
+    rate = ops.firing_rate(spikes, dt_ms)
+    assert hasattr(rate, "shape") or "jax" in type(rate).__module__.lower()
+    assert jnp.allclose(rate, 5.0)
+    
+    max_rate = ops.max_single_neuron_rate(spikes, dt_ms)
+    assert hasattr(max_rate, "shape") or "jax" in type(max_rate).__module__.lower()
+    assert jnp.allclose(max_rate, 10.0)
 
 def test_ops_fano_factor():
     counts = jnp.array([10, 12, 8, 10, 10])
