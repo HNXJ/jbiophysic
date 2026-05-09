@@ -13,7 +13,7 @@ import jax.numpy as jnp
 class SimulationConfig:
     dt: float = 0.025
     t_max: float = 500.0
-    seed: int = 42
+    seed: int = 123
 
 @dataclass
 class SimulationResult:

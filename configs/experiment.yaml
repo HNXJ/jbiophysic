@@ -2,7 +2,7 @@
 
 experiment:
   name: "omission_oddball"
-  seed: 42
+  seed: 123
   
 simulation:
   dt: 0.1 # ms

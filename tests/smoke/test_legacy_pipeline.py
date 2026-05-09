@@ -22,7 +22,7 @@ def run_legacy_smoke_test(output_dir: str):
     # 2. AGSDR / GSGD Calibration
     print("🧪 Executing Optimization Smoke Slice...")
     w_base = jnp.zeros((100,))
-    rng = jax.random.PRNGKey(42)
+    rng = jax.random.PRNGKey(123)
     
     population = initialize_parallel_population(w_base, n_pop=16, rng=rng)
     
