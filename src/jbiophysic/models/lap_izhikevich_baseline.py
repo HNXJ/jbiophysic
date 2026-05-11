@@ -12,15 +12,18 @@ import csv
 import hashlib
 import json
 import math
-from collections import defaultdict
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from typing import NamedTuple
 
 import numpy as np
 
-from jbiophysic.data.lap import EXPECTED_MARKERS, LAPCountRow, extract_lap_layer_counts, summarize_lap_counts
+from jbiophysic.data.lap import (
+    LAPCountRow,
+    extract_lap_layer_counts,
+    summarize_lap_counts,
+)
 
 try:  # Avoid making JAX a hard dependency for this NumPy baseline scaffold.
     from jbiophysic.cells.izhikevich import (  # type: ignore
@@ -230,10 +233,14 @@ def _sample_layer_positions(
     return np.asarray(points, dtype=float)
 
 
-def _layer_bounds_by_area(allocations: Sequence[Mapping[str, object]]) -> dict[str, dict[int, tuple[float, float]]]:
+def _layer_bounds_by_area(
+    allocations: Sequence[Mapping[str, object]],
+) -> dict[str, dict[int, tuple[float, float]]]:
     bounds: dict[str, dict[int, tuple[float, float]]] = {}
     for area in sorted({str(row["area"]) for row in allocations}):
-        layer_indices = sorted({int(row["layer_index"]) for row in allocations if str(row["area"]) == area})
+        layer_indices = sorted(
+            {int(row["layer_index"]) for row in allocations if str(row["area"]) == area}
+        )
         n_layers = len(layer_indices)
         area_bounds: dict[int, tuple[float, float]] = {}
         for rank, layer_index in enumerate(layer_indices):
@@ -262,7 +269,9 @@ def build_lap_population(cfg: LAPBaselineConfig) -> LAPPopulation:
     existing: list[np.ndarray] = []
 
     next_id = 0
-    area_to_x = {area: (i - (len(areas) - 1) / 2.0) * cfg.area_spacing_m for i, area in enumerate(areas)}
+    area_to_x = {
+        area: (i - (len(areas) - 1) / 2.0) * cfg.area_spacing_m for i, area in enumerate(areas)
+    }
 
     for area in areas:
         for row in [r for r in allocations if str(r["area"]) == area]:
@@ -451,7 +460,10 @@ def summarize_lap_baseline(
     duration_s = cfg.t_ms / 1000.0
     for marker in sorted(set(map(str, pop.marker))):
         mask = pop.marker == marker
-        rates_by_marker[marker] = float(np.sum(spike_counts[mask]) / max(np.sum(mask) * duration_s, 1e-12))
+        n_marker = np.sum(mask)
+        rates_by_marker[marker] = float(
+            np.sum(spike_counts[mask]) / max(n_marker * duration_s, 1e-12)
+        )
 
     return {
         "truth_status": "truth_safe_unverified",
@@ -463,8 +475,13 @@ def summarize_lap_baseline(
         "n_areas": int(len(set(map(str, pop.area)))) ,
         "neurons_per_area": int(cfg.neurons_per_area),
         "total_neurons": int(len(pop.neuron_id)),
-        "counts_by_area": {area: int(np.sum(pop.area == area)) for area in sorted(set(map(str, pop.area)))},
-        "counts_by_marker": {marker: int(np.sum(pop.marker == marker)) for marker in sorted(set(map(str, pop.marker)))},
+        "counts_by_area": {
+            area: int(np.sum(pop.area == area)) for area in sorted(set(map(str, pop.area)))
+        },
+        "counts_by_marker": {
+            marker: int(np.sum(pop.marker == marker))
+            for marker in sorted(set(map(str, pop.marker)))
+        },
         "counts_by_area_layer_marker": _nested_counts(pop),
         "spike_floor": {
             "silent_neuron_count": int(np.sum(spike_counts == 0)),
@@ -488,7 +505,9 @@ def summarize_lap_baseline(
         "inputs_enabled": {
             "sensory": bool(np.asarray(result.get("sensory_input_enabled", False)).item()),
             "omission": bool(np.asarray(result.get("omission_input_enabled", False)).item()),
-            "top_down_prediction": bool(np.asarray(result.get("top_down_prediction_enabled", False)).item()),
+            "top_down_prediction": bool(
+                np.asarray(result.get("top_down_prediction_enabled", False)).item()
+            ),
         },
         "marker_to_model_mapping": dict(MARKER_TO_MODEL_CELL_TYPE),
     }
@@ -539,15 +558,32 @@ def _write_neurons_csv(path: Path, pop: LAPPopulation) -> None:
             )
 
 
-def _write_rates_csv(path: Path, pop: LAPPopulation, spikes: np.ndarray, cfg: LAPBaselineConfig) -> None:
+def _write_rates_csv(
+    path: Path, pop: LAPPopulation, spikes: np.ndarray, cfg: LAPBaselineConfig
+) -> None:
     duration_s = cfg.t_ms / 1000.0
     fields = ["area", "layer", "marker", "cell_type", "n_neurons", "spike_count", "rate_hz"]
     with path.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fields)
         writer.writeheader()
-        keys = sorted(set(zip(map(str, pop.area), map(str, pop.layer), map(str, pop.marker), map(str, pop.cell_type), strict=False)))
+        keys = sorted(
+            set(
+                zip(
+                    map(str, pop.area),
+                    map(str, pop.layer),
+                    map(str, pop.marker),
+                    map(str, pop.cell_type),
+                    strict=False,
+                )
+            )
+        )
         for area, layer, marker, cell_type in keys:
-            mask = (pop.area == area) & (pop.layer == layer) & (pop.marker == marker) & (pop.cell_type == cell_type)
+            mask = (
+                (pop.area == area)
+                & (pop.layer == layer)
+                & (pop.marker == marker)
+                & (pop.cell_type == cell_type)
+            )
             n = int(np.sum(mask))
             spike_count = int(np.sum(spikes[:, mask]))
             writer.writerow(
@@ -582,9 +618,18 @@ def write_lap_baseline_outputs(
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     _write_neurons_csv(out / "neurons.csv", pop)
-    np.savez_compressed(out / "spikes_and_voltage.npz", spikes=result["spikes"], voltage_mV=result["voltage_mV"])
+    np.savez_compressed(
+        out / "spikes_and_voltage.npz",
+        spikes=result["spikes"],
+        voltage_mV=result["voltage_mV"],
+    )
     np.savez_compressed(out / "weights_post_pre.npz", weights_post_pre=np.asarray(weights))
-    _write_rates_csv(out / "population_rates_by_area_layer_marker.csv", pop, np.asarray(result["spikes"]), cfg)
+    _write_rates_csv(
+        out / "population_rates_by_area_layer_marker.csv",
+        pop,
+        np.asarray(result["spikes"]),
+        cfg,
+    )
     summary = summarize_lap_baseline(pop, result, cfg)
     with (out / "summary.json").open("w") as f:
         json.dump(summary, f, indent=2)

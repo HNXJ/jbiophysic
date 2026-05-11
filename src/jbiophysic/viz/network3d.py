@@ -11,14 +11,13 @@ renders them as an interactive Plotly HTML-compatible 3-D figure.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import math
 import numpy as np
-
 
 _COLOR_BY_CELL_TYPE = {
     "E": "#C8A000",
@@ -141,7 +140,9 @@ def _positions_to_xyz_m(positions: Any) -> np.ndarray:
     return arr.astype(float, copy=True)
 
 
-def _coerce_sequence_column(records: Sequence[Mapping[str, Any]], key: str, default: Any) -> np.ndarray:
+def _coerce_sequence_column(
+    records: Sequence[Mapping[str, Any]], key: str, default: Any
+) -> np.ndarray:
     return np.asarray([row.get(key, default) for row in records])
 
 
@@ -186,13 +187,13 @@ def _extract_networkx_like(network: Any) -> tuple[dict[str, Any], list[tuple[Any
 
 def _extract_population_object(pop: Any) -> dict[str, Any]:
     if all(hasattr(pop, attr) for attr in ("x_m", "y_m", "z_m")):
-        n = len(getattr(pop, "x_m"))
+        n = len(pop.x_m)
         out: dict[str, Any] = {
             "positions_m": np.column_stack(
                 [
-                    _as_array(getattr(pop, "x_m"), dtype=float),
-                    _as_array(getattr(pop, "y_m"), dtype=float),
-                    _as_array(getattr(pop, "z_m"), dtype=float),
+                    _as_array(pop.x_m, dtype=float),
+                    _as_array(pop.y_m, dtype=float),
+                    _as_array(pop.z_m, dtype=float),
                 ]
             )
         }
@@ -214,7 +215,10 @@ def _extract_population_object(pop: Any) -> dict[str, Any]:
         if data:
             return data
 
-    raise TypeError("Unsupported network object. Provide a mapping, records, Population object, or graph.")
+    raise TypeError(
+        "Unsupported network object. Provide a mapping, records, Population object, "
+        "or graph."
+    )
 
 
 def _coerce_network_to_table(
@@ -347,10 +351,11 @@ def _jitter_close_positions(
                 if dist < 1.0e-18:
                     direction = rng.normal(size=3)
                     norm = float(np.linalg.norm(direction))
-                    if norm < 1.0e-18:
-                        direction = np.asarray([1.0, 0.0, 0.0])
-                    else:
-                        direction = direction / norm
+                    direction = (
+                        np.asarray([1.0, 0.0, 0.0])
+                        if norm < 1.0e-18
+                        else direction / norm
+                    )
                 else:
                     direction = delta / dist
                 shift = 0.5 * (min_separation_m - dist + 1.0e-12) * direction
@@ -419,7 +424,10 @@ def _get_column_meta(network: Any, rows: Sequence[Mapping[str, Any]]) -> list[_C
         z1 = float(np.max(xyz[:, 2]))
         layers = _unique_ordered(row["layer"] for row in sub)
         if set(layers) >= {"superficial", "mid", "deep"}:
-            zs = {layer: [float(row["z_m"]) for row in sub if str(row["layer"]) == layer] for layer in layers}
+            zs = {
+                layer: [float(row["z_m"]) for row in sub if str(row["layer"]) == layer]
+                for layer in layers
+            }
             b1 = 0.5 * (max(zs["superficial"]) + min(zs["mid"]))
             b2 = 0.5 * (max(zs["mid"]) + min(zs["deep"]))
             boundaries = (z0, b1, b2, z1)
@@ -438,7 +446,9 @@ def _get_column_meta(network: Any, rows: Sequence[Mapping[str, Any]]) -> list[_C
     return metas
 
 
-def _add_column_wireframes(go: Any, fig: Any, metas: Sequence[_ColumnMeta], *, scale: float) -> None:
+def _add_column_wireframes(
+    go: Any, fig: Any, metas: Sequence[_ColumnMeta], *, scale: float
+) -> None:
     theta = np.linspace(0.0, 2.0 * np.pi, 96)
     for meta in metas:
         cx, cy = meta.center_m
@@ -544,7 +554,9 @@ def _as_pathway_endpoint(value: Any, *, scale: float) -> np.ndarray:
     return arr * scale
 
 
-def _add_pathways(go: Any, fig: Any, pathways: Sequence[Mapping[str, Any]], *, scale: float) -> None:
+def _add_pathways(
+    go: Any, fig: Any, pathways: Sequence[Mapping[str, Any]], *, scale: float
+) -> None:
     for pathway in pathways:
         name = str(pathway.get("name", pathway.get("pathway", "pathway")))
         start = _as_pathway_endpoint(pathway["start_m"], scale=scale)
@@ -789,8 +801,8 @@ def _sample_cylinder_no_overlap(
 
     if len(points) != n:
         raise RuntimeError(
-            f"Could not sample {n} non-overlapping points in cylinder after {max_attempts} attempts. "
-            "Reduce min_separation_m or increase radius/depth."
+            f"Could not sample {n} non-overlapping points in cylinder after "
+            f"{max_attempts} attempts. Reduce min_separation_m or increase radius/depth."
         )
     return np.asarray(points, dtype=float)
 
@@ -865,7 +877,9 @@ def build_laminar_population_anatomy(
     }
 
 
-def _network_from_rows(rows: Sequence[Mapping[str, Any]], *, column_meta: Sequence[Mapping[str, Any]]):
+def _network_from_rows(
+    rows: Sequence[Mapping[str, Any]], *, column_meta: Sequence[Mapping[str, Any]]
+):
     positions_m = np.asarray([[row["x_m"], row["y_m"], row["z_m"]] for row in rows], dtype=float)
     return {
         "positions_m": positions_m,
