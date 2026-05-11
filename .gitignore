@@ -4,7 +4,7 @@ __pycache__/
 .venv_311/
 .venv/
 *.pyc
-data/
+/data/
 misc/*.json
 misc/*.pkl
 misc/*.png
