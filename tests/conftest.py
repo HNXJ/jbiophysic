@@ -1,10 +1,19 @@
-import jax.numpy as jnp
 import pytest
+
+try:
+    import jax.numpy as jnp
+    HAS_JAX = True
+except ModuleNotFoundError:
+    HAS_JAX = False
 
 
 @pytest.fixture(autouse=True)
 def jnp_clip_compatibility_shim():
     """Shim for jnp.clip to support a_max keyword in older JAX versions."""
+    if not HAS_JAX:
+        yield
+        return
+
     original_clip = jnp.clip
 
     def safer_clip(a, *args, **kwargs):
