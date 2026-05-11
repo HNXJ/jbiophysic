@@ -8,7 +8,7 @@ from scipy.io import savemat
 from jbiophysic.data.lap import extract_lap_layer_counts
 from jbiophysic.models.lap_izhikevich_baseline import (
     LAPBaselineConfig,
-    allocate_integer_counts_from_lap,
+    LAPBaselineConfig,
     build_lap_population,
     build_sparse_baseline_weights,
     run_lap_spontaneous_baseline,
