@@ -255,6 +255,11 @@ def _coerce_network_to_table(
             if len(arr) != n:
                 raise ValueError(f"{key!r} length {len(arr)} does not match positions length {n}")
             return arr.astype(dtype) if dtype is not None else arr
+
+        default_arr = np.asarray(default)
+        if default_arr.ndim == 1 and len(default_arr) == n:
+            return default_arr.astype(dtype) if dtype is not None else default_arr
+
         return _repeat_default(default, n, dtype=dtype)
 
     neuron_id = column(node_id_key, np.arange(n), None)
