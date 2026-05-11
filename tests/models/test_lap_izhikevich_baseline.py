@@ -7,10 +7,10 @@ from scipy.io import savemat
 
 from jbiophysic.data.lap import extract_lap_layer_counts
 from jbiophysic.models.lap_izhikevich_baseline import (
-    LAPBaselineConfig,
-    LAPBaselineConfig,
+    allocate_integer_counts_from_lap,
     build_lap_population,
     build_sparse_baseline_weights,
+    LAPBaselineConfig,
     run_lap_spontaneous_baseline,
     summarize_lap_baseline,
 )
