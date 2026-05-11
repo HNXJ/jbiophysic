@@ -84,3 +84,64 @@ These are executable teaching artifacts and should not be treated as validated b
 - `tutorials/source_notebooks/tfne_izhikevich_net.colab.ipynb` — Original Colab notebook with google.colab imports and shell magics (%cd, !pip). For reference only; use portable tutorials for executable work.
 
 HTML exports of portable tutorials live in `tutorials/html/`.
+
+## Starter Examples
+
+### TFNE-Izhikevich laminar E/I scaffold
+
+**Executable starter simulation** for a three-layer cortical column with Izhikevich spiking neurons and TFNE extracellular field projection.
+
+**What it demonstrates:**
+- 100-neuron cylindrical cortical tube: 75 excitatory, 15 PV interneurons, 10 SST interneurons.
+- Laminar density architecture (superficial, mid, deep) with heterogeneous intrinsic properties.
+- Random all-to-all synaptic connectivity; inhibitory PV/SST, excitatory E.
+- Izhikevich native dynamics (current-like drive, not SI nA).
+- TFNE source-field projection: spike events → calibrated source amplitudes → extracellular potential via Poisson solver on cylindrical geometry.
+- Automated spike-floor calibration: every neuron forced to fire at least once.
+
+**Network composition:**
+- Superficial (300 μm): 30 E, 4 PV, 7 SST = 41 neurons
+- Mid (100 μm): 5 E, 5 PV, 0 SST = 10 neurons
+- Deep (600 μm): 40 E, 6 PV, 3 SST = 49 neurons
+
+**Geometry:**
+- Cylindrical tube: 0.1 mm radius, 1.0 mm depth.
+- TFNE grid: 25 μm resolution.
+- Source smoothing radius: 20 μm.
+
+**Run simulation:**
+```bash
+PYTHONPATH=src python examples/tfne_izhikevich_laminar_ei100.py --out outputs/tfne_izhikevich_laminar_ei100
+```
+
+**Generate figures** (requires matplotlib):
+```bash
+PYTHONPATH=src python examples/plot_tfne_izhikevich_laminar_ei100.py --out outputs/tfne_izhikevich_laminar_ei100
+```
+
+Produces:
+- `figures/raster.png` — Spike raster of sample neurons
+- `figures/population_rates.png` — Population firing rates by layer and cell type
+- `figures/field_snapshots.png` — Extracellular potential snapshots over time
+
+**Outputs** (in `outputs/tfne_izhikevich_laminar_ei100/`):
+- `summary.json` — metadata, counts, spike floor status, layer-wise statistics
+- `neuron_table.csv` — neuron anatomy and spike counts
+- `spikes_and_voltage.npz` — spike raster (10000 steps × 100 neurons) and voltage traces
+- `weights_post_pre.npz` — synaptic connectivity (100 × 100)
+- `population_rates_1ms.csv` — firing rates by layer and cell type, 1 ms bins
+- `tfne_grid.npz` — cylindrical grid geometry and active voxel mask
+- `tfne_field_snapshots.npz` — extracellular potential and source density snapshots at 10 ms intervals
+- `figures/` — publication-quality PNG plots (if figures script run)
+
+**Scientific status:**
+- **Exploratory scaffold only.** Not a validated biological simulator; does not claim biological truth.
+- **Truth-safe unverified.** Izhikevich input is native/current-like, not SI nanoamperes. Explicit calibration constants (30/45/25 pA per spike for E/PV/SST) are toy proxies, not biophysically grounded.
+- **TFNE solver is simplified:** Jacobi iteration on a regular Cartesian grid approximating cylindrical Poisson with Neumann boundary. Not a full TFNE library solver.
+- **Intended use:** First scaffold toward laminar field/spectral analyses and network dynamics visualization. Not Figure-8 replication or parameter-search ground truth.
+
+**Caveats:**
+- Autapses are removed; no gap junctions.
+- Synaptic time constants are fixed per cell type (E: 5 ms, PV: 8 ms, SST: 25 ms).
+- Conductivity is homogeneous (0.3 S/m); no myelinated axons or inhomogeneous tissue.
+- Field snapshots are sparse (10 ms stride); for finer spectral analysis, reduce `--field-stride-ms`.
