@@ -85,6 +85,78 @@
 
 ---
 
+### 8. TFNE-Izhikevich Bridge Calibration
+📍 **File:** `tfne-izhikevich-bridge-calibration/SKILL.md`
+
+**Use when:** Converting Izhikevich point-neuron outputs into TFNE source terms or mapping spikes to fields.
+
+**Gate:** Positive calibration scale used, unit declaration, finite value check, nonzero spiking smoke test.
+
+---
+
+### 9. TFNE Source-Field-Probe Contract
+📍 **File:** `tfne-source-field-probe-contract/SKILL.md`
+
+**Use when:** Editing TFNE projection, field solvers, CSD, or probe/readout code.
+
+**Gate:** Source conservation verified, gauge fixed, SPD tensors, solver residual reported, unit/geometry contract.
+
+---
+
+### 10. TFNE-Izhikevich Cortical Column Demo
+📍 **File:** `tfne-izhikevich-cortical-column-demo/SKILL.md`
+
+**Use when:** Creating or editing column-demo examples, laminar anatomy notebooks, or 3D visualizations.
+
+**Gate:** Colab compatibility, SI units, coordinate hygiene, per-area spike stats, Plotly visual conventions.
+
+---
+
+### 11. Colab Notebook Portability
+📍 **File:** `colab-notebook-portability/SKILL.md`
+
+**Use when:** Creating or editing tutorials in `tutorials/` or release notebooks intended for Google Colab.
+
+**Gate:** Standard first-cell clone/install pattern, no hardcoded paths, notebook JSON valid, titles present.
+
+---
+
+### 12. Plotly Circuit Anatomy Visualization
+📍 **File:** `plotly-circuit-anatomy-visualization/SKILL.md`
+
+**Use when:** Modifying `network3d.py`, anatomy examples, or Plotly views in notebooks.
+
+**Gate:** 3D rendering contract, coordinate preservation, pathway trace support, hover metadata.
+
+---
+
+### 13. TFNE Manifest and Artifact Hygiene
+📍 **File:** `tfne-manifest-artifact-hygiene/SKILL.md`
+
+**Use when:** Producing simulation artifacts (.npz, .csv, .json, .html) or notebook outputs.
+
+**Gate:** Outputs in `outputs/` or designated path, no data in git, manifest with hashes/version/seed.
+
+---
+
+### 14. TFNE Omission Model-Lite Gates
+📍 **File:** `tfne-omission-model-lite-gates/SKILL.md`
+
+**Use when:** Editing omission/oddball models, tutorials, or objectives.
+
+**Gate:** Condition matrix (baseline/unexpected/omission), 1.5s peri-event window, no bottom-up input in omission.
+
+---
+
+### 15. TFNE Release Candidate (RC) Audit
+📍 **File:** `tfne-release-rc-audit/SKILL.md`
+
+**Use when:** Before a release tag or after substantial code/notebook updates.
+
+**Gate:** CI success for current HEAD, version metadata check, tracking audit, ZIP generated from tag.
+
+---
+
 ## Quick Reference: Which Skill?
 
 | Situation | Skill |
@@ -96,6 +168,14 @@
 | Creating/updating/archiving notebooks | **5. Notebook Integrity** |
 | Adding Optax code or rewriting optimization | **6. Optax Adapter** |
 | Deleting files, modules, or dead code | **7. Legacy Cleanup** |
+| **Mapping Izhikevich spikes/currents to TFNE fields** | **8. Bridge Calibration** |
+| **Editing TFNE kernels, field solvers, or probe geometry** | **9. S-F-P Contract** |
+| **Building column-demo examples or laminar notebooks** | **10. Column Demo** |
+| **Ensuring notebooks work in Google Colab** | **11. Colab Portability** |
+| **Updating Plotly 3D circuit visualizations** | **12. Plotly Viz** |
+| **Managing simulation outputs and reproducibility manifests** | **13. Artifact Hygiene** |
+| **Modifying omission/oddball models or analysis windows** | **14. Omission Gates** |
+| **Performing a release audit or verifying CI refs** | **15. Release RC Audit** |
 
 ---
 
@@ -107,6 +187,11 @@
 4. **If any gate fails:** Do not commit; revise per skill's "Stop conditions"
 5. **Commit message:** Reference the skill (e.g., "feat(jax): update vmap pattern per jax-audit skill")
 6. **Final report:** Include skill's "Final report fields" in commit or PR description
+
+---
+
+## Operational Guidance Only
+These skills are **operational guides** for agents. They do not modify the scientific truth status of the repository or constitute biological proof.
 
 ---
 
