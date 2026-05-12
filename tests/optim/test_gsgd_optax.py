@@ -2,8 +2,6 @@
 
 import jax
 import jax.numpy as jnp
-import optax
-import pytest
 
 from jbiophysic.optim.gsgd import GSGD, gsgd_step
 

@@ -121,7 +121,8 @@ def GSDR(
         loss_ratio = value / (loss_opt + 1e-8)
         too_bad = loss_ratio > deselection_threshold
         is_plateau = consecutive_unchanged_epochs > plateau_threshold
-        should_reset = jnp.logical_or(jnp.logical_or(too_bad, is_plateau), jnp.logical_not(is_finite))
+        bad_or_plateau = jnp.logical_or(too_bad, is_plateau)
+        should_reset = jnp.logical_or(bad_or_plateau, jnp.logical_not(is_finite))
 
         # Inner optimizer update
         inner_updates, inner_state = inner_optimizer.update(
@@ -134,7 +135,8 @@ def GSDR(
         keys = jax.tree.unflatten(treedef, keys_flat)
 
         time_since_last_change = (state.step_count - last_optimal_change_step).astype(jnp.float32)
-        effective_lambda_d = state.lambda_d * (1.0 - jnp.exp(-time_since_last_change / tau_a_growth))
+        decay_factor = jnp.exp(-time_since_last_change / tau_a_growth)
+        effective_lambda_d = state.lambda_d * (1.0 - decay_factor)
 
         def _stochastic_update(p, k):
             noise = jax.random.normal(k, p.shape)

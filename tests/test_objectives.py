@@ -2,7 +2,6 @@
 
 import jax
 import jax.numpy as jnp
-import pytest
 
 from jbiophysic.objectives.synchrony import synchrony_kappa_objective
 

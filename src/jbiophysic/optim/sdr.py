@@ -60,8 +60,8 @@ def SDR(
         **extra_args: Any,
     ) -> tuple[optax.Updates, SDRState]:
         if key is None:
-            # Fallback for when key is not provided, though SDR technically requires it for stochasticity.
-            # We use a dummy key if none is provided to stay JIT-safe.
+            # Fallback for when key is not provided.
+            # SDR technically requires it for stochasticity; we use a dummy key to stay JIT-safe.
             key = jax.random.PRNGKey(0)
 
         # Split key for tree-shaped updates
