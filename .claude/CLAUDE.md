@@ -35,7 +35,7 @@ Every Claude Code report for jbiophysic must begin and end with:
 
 | Theme | Role | Status |
 |-------|------|--------|
-| JAX-compatible neuron/circuit sim | Core computation framework | JAX 0.10.0, CPU-safe, baseline 61/61 tests |
+| JAX-compatible neuron/circuit sim | Core computation framework | JAX 0.10.0, CPU-safe, baseline 96/96 tests |
 | Izhikevich emitters | Spiking neuron model | Preserve API; presets/docs/tests later |
 | Hodgkin-Huxley emitters | Biophysical neuron model | Preserve API; integrate with HH tests |
 | TFNE: Emitter → Source → Field → Probe | Forward-field CSD/LFP framework | Preserve architecture; add conservation/gauge tests later |
@@ -59,13 +59,14 @@ python --version  # Python 3.11.15
 
 **Installation command (verified):**
 ```bash
-python -m pip install -e '.[dev,jax,tutorials]'
+python -m pip install -e '.[dev,tutorials]'
 ```
+Note: JAX is now core (required); [jax] extra is no longer needed.
 
 **Test baseline:**
 ```bash
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src python -m pytest -q --tb=short
-# Result: 61 passed, 0 failed, 0 errors, 2 non-critical warnings (~13.6s)
+# Result: 96 passed, 0 failed, 0 errors, 2 non-critical warnings (~18s)
 ```
 
 **JAX/Optax imports (verified):**
@@ -87,8 +88,7 @@ import jbiophysic.tfne.solvers  # OK
 
 **pyproject.toml constraints:**
 - Python >=3.10 required
-- Core deps: numpy, scipy, pandas, PyYAML
-- JAX extra: jax, jaxlib, equinox, optax, diffrax (optional)
+- Core deps: numpy, scipy, pandas, PyYAML, jax, jaxlib, equinox, optax, diffrax
 - Tutorials extra: jupyter, nbformat, nbconvert, ipykernel, matplotlib (optional)
 - Dev extra: pytest, pytest-cov, ruff, black (optional)
 
