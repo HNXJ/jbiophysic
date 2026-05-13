@@ -7,23 +7,7 @@ Jaxley installed.
 
 from __future__ import annotations
 
-from jbiophysic.models.spectrolaminar_motif import (
-    SpectrolaminarMotifModel,
-    build_connectivity,
-    build_laminar_positions,
-    build_spectrolaminar_motif,
-    build_spectrolaminar_population,
-)
-
-__all__ = [
-    "build_cortical_hierarchy",
-    "run_simulation",
-    "SpectrolaminarMotifModel",
-    "build_spectrolaminar_population",
-    "build_laminar_positions",
-    "build_connectivity",
-    "build_spectrolaminar_motif",
-]
+__all__ = ["build_cortical_hierarchy", "run_simulation"]
 
 
 def build_cortical_hierarchy(*args, **kwargs):

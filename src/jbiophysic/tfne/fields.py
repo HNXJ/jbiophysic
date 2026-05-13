@@ -7,8 +7,7 @@ interpreting extracellular potentials.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Literal, NamedTuple
+from typing import NamedTuple
 
 import jax
 import jax.numpy as jnp
@@ -91,42 +90,3 @@ def assert_finite_tree(*arrays: Array) -> None:
     for arr in arrays:
         if not bool(jnp.all(jnp.isfinite(arr))):
             raise FloatingPointError("non-finite value detected")
-
-
-@dataclass(frozen=True)
-class FieldSolution:
-    """Solver output with physical-core provenance.
-
-    Captures field solution phi_e along with solver status, gauge, boundary conditions,
-    and residual metrics. Enables interpretability as computational evidence rather than
-    opaque numerical output.
-
-    Attributes
-    ----------
-    phi_e : Array
-        Extracellular potential field (SI volts). Gauge-dependent; apply mean_zero_gauge
-        or pin_gauge before interpreting.
-    residual_norm : float
-        Final residual norm ||Ax - b|| from solver. Non-negative.
-    n_iterations : int
-        Number of solver iterations completed.
-    converged : bool
-        True if solver converged below tolerance; False if stopped at max iterations.
-    gauge_applied : str
-        Gauge applied: "none", "mean_zero", or "pinned".
-    boundary_condition : str
-        Boundary condition assumed: "neumann_zero" (edge padding), "dirichlet", etc.
-    solver_name : str
-        Solver identifier: "jacobi_poisson_neumann_smoke", etc.
-    claim_level : str
-        Provenance claim: "computational" (solver outputs) or "smoke_test" (small-scale).
-    """
-
-    phi_e: Array
-    residual_norm: float
-    n_iterations: int
-    converged: bool
-    gauge_applied: str
-    boundary_condition: str = "neumann_zero"
-    solver_name: str = "jacobi_poisson_neumann_smoke"
-    claim_level: Literal["computational", "smoke_test"] = "smoke_test"

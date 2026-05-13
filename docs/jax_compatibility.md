@@ -10,7 +10,7 @@
 
 - **JAX version:** 0.10.0
 - **Environment:** Python 3.11.15, CPU device (single CpuDevice(id=0))
-- **Test status:** 96/96 passing, deterministic
+- **Test status:** 61/61 passing, deterministic
 - **PRNG status:** Explicit key discipline; same seed → same result
 
 ---

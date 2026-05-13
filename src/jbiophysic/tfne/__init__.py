@@ -8,7 +8,6 @@ from .csd import (
     gradient_neumann_zero,
 )
 from .fields import (
-    FieldSolution,
     TFNEGrid,
     assert_finite_tree,
     initialize_potentials,
@@ -27,7 +26,6 @@ from .sources import (
 from .tensors import gamma_from_cholesky_params, isotropic_gamma, tensor_eigenvalue_diagnostics
 
 __all__ = [
-    "FieldSolution",
     "TFNEGrid",
     "assert_finite_tree",
     "initialize_potentials",

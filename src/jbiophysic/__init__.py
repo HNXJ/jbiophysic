@@ -22,4 +22,8 @@ __all__ = [
     "CortexNetworkSpec",
     "make_cortex_network",
     "make_cortex_network_json",
+    "jtfne",
 ]
+
+# High-level notebook-facing TFNE workflow API.
+from . import jtfne

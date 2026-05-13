@@ -26,3 +26,25 @@ def jnp_clip_compatibility_shim():
     jnp.clip = safer_clip
     yield
     jnp.clip = original_clip
+
+
+def pytest_ignore_collect(collection_path, config):
+    """Skip optional Optax/JAX optimizer tests when optax is not installed.
+
+    The source package keeps Optax as an optional optimization dependency in this
+    archive. Core TFNE and jtfne smoke tests must remain runnable on CPU-only or
+    minimal Colab runtimes without failing during collection.
+    """
+    try:
+        import optax  # noqa: F401
+        has_optax = True
+    except ModuleNotFoundError:
+        has_optax = False
+    if has_optax:
+        return False
+    path_str = str(collection_path)
+    optax_paths = (
+        "tests/optim/",
+        "tests/test_optim_network_pipeline.py",
+    )
+    return any(marker in path_str for marker in optax_paths)

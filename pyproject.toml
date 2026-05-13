@@ -14,14 +14,16 @@ dependencies = [
   "scipy>=1.10",
   "pandas>=2.0",
   "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+jax = [
   "jax>=0.4",
   "jaxlib>=0.4",
   "equinox>=0.11",
   "optax>=0.2",
   "diffrax>=0.5",
 ]
-
-[project.optional-dependencies]
 jaxley = [
   "jaxley>=0.13",
 ]
@@ -57,13 +59,6 @@ packages = ["src/jbiophysic"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = ["--import-mode=importlib"]
-markers = [
-    "core: core functionality tests (no optional deps)",
-    "slow: slow or stochastic tests",
-    "jax: JAX/numerical computation tests",
-    "tfne: TFNE-specific tests",
-    "examples: example smoke tests",
-]
 
 [tool.black]
 line-length = 100

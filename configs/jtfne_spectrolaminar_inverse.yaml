@@ -1,0 +1,23 @@
+init:
+  mode: inverse
+  seed: 20260513
+  n_neuron_per_column: 200
+  truth_mode: truth_safe_unverified
+  claim_level: developmental_demo
+sim:
+  dt_ms: 0.1
+  t_ms: 1000.0
+  n_trials: 10
+  source_scale_A_per_native: 1.0e-13
+  conductivity_s_m: 0.30
+  jacobi_steps: 24
+  n_contacts: 16
+vis:
+  output_dir: outputs/jtfne_spectrolaminar_inverse
+  write_html: true
+  write_json: true
+  show: false
+opt:
+  eval_n_trials: 3
+  max_evals: 12
+  similarity_target: 75.0
