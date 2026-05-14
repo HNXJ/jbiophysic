@@ -13,17 +13,17 @@ Experimental computational neuroscience framework for:
 
 **Scope:** Exploratory research infrastructure for computational neuroscience. Not a validated biological simulator. Optimizer success is not biological proof.
 
-**Python:** Requires Python >=3.10. Baseline validated on Python 3.11.15 with 61/61 tests passing.
+**Python:** Requires Python >=3.10. Validated on Python 3.10 / 3.11 / 3.12 (GitHub Actions CI). Current suite: 106 passed, 8 skipped with full [jax,dev] install.
 
 **Dependencies:**
-- **Core:** numpy, scipy, pandas, PyYAML (minimal)
-- **JAX:** jax, jaxlib, equinox, optax, diffrax (optional, [jax] extra)
+- **Core:** numpy, scipy, pandas, PyYAML (minimal — no JAX required for install)
+- **JAX stack:** jax, jaxlib, equinox, optax, diffrax (required for all modeling/simulation; install via [jax] extra)
 - **Tutorials:** jupyter, nbformat, nbconvert, ipykernel, matplotlib (optional, [tutorials] extra)
 - **Development:** pytest, pytest-cov, ruff, black (optional, [dev] extra)
 
 **JAX & Optax Status:**
-- JAX (0.10.0): Core package uses 53 imports, 52 jax.numpy uses. CPU-safe baseline.
-- Optax (0.2.8): Available as optional [jax] extra; not required by core imports.
+- JAX (0.10.0): All neural/field modules require JAX. CPU-safe baseline; GPU-compatible via standard JAX device model.
+- Optax (0.2.8): Required by optimizer modules (AGSDR, GSDR, GSGD, SDR). Provided via [jax] extra. Core bounds/manifest helpers work without Optax.
 - pmap/pjit: Current fallback-to-vmap CPU behavior is preserved; modernization is optional future work.
 - PRNG: Explicit key discipline enforced; same seed → same result.
 
@@ -35,10 +35,10 @@ Minimal (core only):
 pip install -e .
 ```
 
-Development (tests):
+Development (tests — **requires [jax] for JAX-dependent tests**):
 
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[jax,dev]"
 ```
 
 JAX stack (neural modeling):
