@@ -1,0 +1,39 @@
+truth_mode: truth_safe_unverified
+claim_level: empirical_convergence_scaffold
+model: omission_model_lite
+seed: 0
+seeds: [0]
+n_neurons: 180
+dt_ms: 1.0
+duration_ms: 1500.0
+windows_ms:
+  baseline: [-500.0, 0.0]
+  event: [0.0, 500.0]
+  post: [500.0, 1000.0]
+condition_matrix:
+  baseline:
+    bottom_up: false
+    top_down: false
+  unexpected_sensory:
+    bottom_up: true
+    top_down: false
+  predicted_standard:
+    bottom_up: true
+    top_down: true
+  omission:
+    bottom_up: false
+    top_down: true
+  post_omission:
+    bottom_up: true
+    top_down: state_altered
+source_calibration_status: uncalibrated_spike_only
+field_mode: proxy_no_field_solve
+bands:
+  alpha_beta: [8.0, 30.0]
+  gamma: [35.0, 90.0]
+acceptance:
+  require_sparse_higher_order_omission_spiking: true
+  require_broad_low_frequency_modulation: true
+  require_post_omission_gain: true
+  require_no_global_synchrony_artifact: true
+  decision_for_smoke: REVISE_BEFORE_EMPIRICAL_CLAIM

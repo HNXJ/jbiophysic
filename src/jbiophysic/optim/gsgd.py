@@ -6,7 +6,11 @@ from typing import NamedTuple
 
 import jax
 import jax.numpy as jnp
-import optax
+
+try:
+    import optax
+except ModuleNotFoundError:  # pragma: no cover - core import without optional extras
+    optax = None  # type: ignore[assignment]
 
 
 class GSGDState(NamedTuple):
@@ -27,6 +31,8 @@ def GSGD(
         noise_scale: Scale of optional stochastic noise added to gradients.
         clipping_value: Optional value to clip updates.
     """
+    if optax is None:
+        raise ImportError("GSGD requires optional Optax; install with `pip install -e '.[jax]'`.")
 
     def init_fn(params: optax.Params) -> GSGDState:
         return GSGDState(step_count=jnp.array(0, dtype=jnp.int32))
@@ -62,7 +68,6 @@ def gsgd_step(
     if lr <= 0:
         raise ValueError("lr must be positive")
     loss, grad = jax.value_and_grad(loss_fn)(theta, *args, **kwargs)
-    tx = GSGD(learning_rate=lr)
-    state = tx.init(theta)
-    updates, _ = tx.update(grad, state, theta)
-    return optax.apply_updates(theta, updates), loss
+    grad = jnp.where(jnp.isfinite(grad), grad, jnp.zeros_like(grad))
+    theta_next = theta - lr * grad
+    return theta_next, loss

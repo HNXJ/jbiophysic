@@ -6,7 +6,11 @@ from typing import Any, NamedTuple
 
 import jax
 import jax.numpy as jnp
-import optax
+
+try:
+    import optax
+except ModuleNotFoundError:  # pragma: no cover - core import without optional extras
+    optax = None  # type: ignore[assignment]
 
 from .gsdr import GSDR, GSDRState
 
@@ -57,6 +61,8 @@ def AGSDR(
         alpha_schedule: Schedule for adapting alpha.
         clipping_value: Optional value to clip updates.
     """
+    if optax is None:
+        raise ImportError("AGSDR requires optional Optax; install with `pip install -e '.[jax]'`.")
     if alpha_schedule is None:
         alpha_schedule = AGSDRSchedule()
 

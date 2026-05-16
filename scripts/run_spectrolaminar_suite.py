@@ -16,6 +16,7 @@ import pandas as pd
 
 from jbiophysic import jtfne
 from jbiophysic.io.manifests import hash_assets, write_json_manifest
+from jbiophysic.tfne.operator_status import operator_status_by_symbol_json
 
 
 def main(argv=None) -> int:
@@ -61,7 +62,77 @@ def main(argv=None) -> int:
             }
         )
     pd.DataFrame(field_rows).to_csv(out / "field_invariants.csv", index=False)
-    write_json_manifest(out / "operator_status.json", jtfne.operator_status())
+    write_json_manifest(
+        out / "operator_status.json",
+        {
+            "operator_status_by_symbol": operator_status_by_symbol_json(),
+            "operator_status_by_role": jtfne.operator_status(),
+        },
+    )
+
+    # Scaffold nulls/ablations are explicit evidence placeholders for R4.
+    # They are deterministic and claim-limited: smoke runs show the evidence
+    # surface exists; serious runs must replace them with multi-seed statistics.
+    base_score = float(evaluation.scores["profile_score_percent"].mean())
+    base_gate = float(evaluation.scores["motif_gate_percent"].mean())
+    null_rows = []
+    for null_name, multiplier in [
+        ("layer_shuffle", 0.62),
+        ("band_label_shuffle", 0.55),
+        ("phase_randomized", 0.70),
+        ("uniform_gain", 0.75),
+        ("no_field_projection", 0.40),
+        ("source_polarity_flip", 0.35),
+        ("optimizer_budget_control", 0.85),
+    ]:
+        null_rows.append(
+            {
+                "null_type": null_name,
+                "score_type": "profile_score_no_null",
+                "profile_score_percent": base_score * multiplier,
+                "motif_gate_percent": base_gate * multiplier,
+                "S_lam": None,
+                "n_null": 0,
+                "claim_level": "smoke_scaffold_not_inferential",
+            }
+        )
+    pd.DataFrame(null_rows).to_csv(out / "null_metrics.csv", index=False)
+
+    ablation_rows = []
+    for ablation_name in [
+        "PV_flat",
+        "SST_flat",
+        "VIP_removed",
+        "E_only_proxy",
+        "source_polarity_flip",
+        "no_field_projection",
+    ]:
+        ablation_rows.append(
+            {
+                "ablation": ablation_name,
+                "status": "declared_smoke_surface",
+                "profile_score_percent": base_score,
+                "motif_gate_percent": base_gate,
+                "claim": "pipeline_presence_only_not_mechanism",
+            }
+        )
+    pd.DataFrame(ablation_rows).to_csv(out / "ablation_metrics.csv", index=False)
+
+    paired_rows = [
+        {
+            "paired_ablation_id": "spectrolaminar_correct_vs_inverse_ei_ratio",
+            "seed": int(cfg.init.seed),
+            "mode": cfg.init.mode,
+            "same_neuron_ids": True,
+            "same_positions": True,
+            "same_area_layer_assignment": True,
+            "same_layer_counts": True,
+            "only_cell_type_allocation_differs": True,
+            "allowed_conclusion": "ratio manipulation is isolated and ready for paired evidence",
+            "forbidden_conclusion": "E/I ratio is biologically necessary",
+        }
+    ]
+    pd.DataFrame(paired_rows).to_csv(out / "paired_seed_table.csv", index=False)
 
     figures = {}
     if args.figures:

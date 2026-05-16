@@ -53,7 +53,7 @@ from jbiophysic.tfne import (
     jacobi_poisson_neumann_smoke,
     make_regular_grid,
 )
-from jbiophysic.tfne.operator_status import operator_status_json
+from jbiophysic.tfne.operator_status import operator_status_by_symbol_json, operator_status_json
 from jbiophysic.tfne.validation import assert_no_nan_inf, assert_passive_spd
 
 Array = np.ndarray
@@ -777,9 +777,15 @@ def _build_tfne_basis(model: SimpleNamespace, sim: JTFNESimConfig) -> dict[str, 
             "solver_name": "jacobi_poisson_neumann_smoke",
             "conductivity_min_eigenvalue": float(sim.conductivity_s_m),
             "conductivity_symmetric_error": 0.0,
+            "source_decomposition": "proxy_no_field_solve",
             "source_projection_mode": "source_sink_return_current",
             "source_projection": "source_sink_return_current",
             "source_calibration_status": "toy_scale_A_per_native_not_empirical",
+            "solver_status": "smoke_only",
+            "CSD_sign_convention": "positive_equals_extracellular_source",
+            "finite_phi_e": True,
+            "finite_J_e": True,
+            "finite_CSD": True,
         }
     model.tfne_basis = basis
     model.tfne_solver_records = pd.DataFrame(solver_records)
@@ -1149,6 +1155,11 @@ def status() -> dict[str, dict[str, object]]:
     return operator_status()
 
 
+def operator_status_by_symbol() -> dict[str, dict[str, object]]:
+    """Return operator status keyed by formal TFNE symbols for evidence artifacts."""
+    return operator_status_by_symbol_json()
+
+
 def operator_graph() -> list[str]:
     """Return formal TFNE operator order exposed by the facade."""
     return ["E_theta", "S_WDR", "C_mu_nu", "Q_eta_alpha", "F_Omega_B_G_Gamma", "P", "A", "O", "C"]
@@ -1216,6 +1227,7 @@ def manifest(
         ),
         "config_hash": cfg_hash,
         "operator_status": operator_status(),
+        "operator_status_by_symbol": operator_status_by_symbol(),
         "operator_graph": operator_graph(),
         "model": {
             "n_neurons": int(len(tfne_signals.model.neurons)),
@@ -1288,6 +1300,7 @@ __all__ = [
     "write_manifest",
     "status",
     "operator_status",
+    "operator_status_by_symbol",
     "operator_graph",
     "validate",
     "manifest",

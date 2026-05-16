@@ -6,7 +6,11 @@ from typing import Any, NamedTuple
 
 import jax
 import jax.numpy as jnp
-import optax
+
+try:  # Optax is optional for the core package; pure SDR helpers remain importable.
+    import optax
+except ModuleNotFoundError:  # pragma: no cover - exercised by core import smoke tests
+    optax = None  # type: ignore[assignment]
 
 
 class SDRState(NamedTuple):
@@ -44,6 +48,8 @@ def SDR(
         stochastic_scale: The scale of the stochastic updates.
         clipping_value: Optional value to clip updates.
     """
+    if optax is None:
+        raise ImportError("SDR requires optional Optax; install with `pip install -e '.[jax]'`.")
 
     def init_fn(params: optax.Params) -> SDRState:
         return SDRState(
@@ -72,16 +78,16 @@ def SDR(
         def _update_leaf(g, m, p, k):
             # Handle non-finite grads
             g_safe = jnp.where(jnp.isfinite(g), g, 0.0)
-            
+
             # Stochastic delta rule: blend gradient with stochastic noise
             noise = jax.random.normal(k, g.shape) * stochastic_scale
             # We use the sign of the gradient as a descent direction
             d_descent = -jnp.sign(g_safe)
-            
+
             # Update is only applied where g is finite (or we use g_safe)
             # If g was non-finite, d_descent is 0.
             update = learning_rate * (d_descent + noise)
-            
+
             # If the original g was not finite, we might want to force update to 0
             # according to "omit them" requirement.
             update = jnp.where(jnp.isfinite(g), update, 0.0)

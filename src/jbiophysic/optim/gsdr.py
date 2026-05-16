@@ -6,7 +6,11 @@ from typing import Any, NamedTuple
 
 import jax
 import jax.numpy as jnp
-import optax
+
+try:
+    import optax
+except ModuleNotFoundError:  # pragma: no cover - core import without optional extras
+    optax = None  # type: ignore[assignment]
 
 from .sdr import supervised_delta_direction
 
@@ -64,6 +68,8 @@ def GSDR(
         tau_a_growth: Time constant for bounded lambda_d growth.
         clipping_value: Optional value to clip updates.
     """
+    if optax is None:
+        raise ImportError("GSDR requires optional Optax; install with `pip install -e '.[jax]'`.")
 
     def init_fn(params: optax.Params) -> GSDRState:
         return GSDRState(

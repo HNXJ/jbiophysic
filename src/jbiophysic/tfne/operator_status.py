@@ -15,6 +15,7 @@ OperatorState = Literal[
     "partial_repo_module",
     "prototype_api",
     "specified_future_module",
+    "not_implemented",
 ]
 
 
@@ -154,5 +155,33 @@ def get_operator_status() -> dict[str, OperatorStatus]:
 
 
 def operator_status_json() -> dict[str, dict[str, object]]:
-    """Return JSON-serializable operator status table."""
+    """Return JSON-serializable operator status table keyed by repo role."""
     return {k: v.to_dict() for k, v in get_operator_status().items()}
+
+
+def operator_status_by_symbol_json() -> dict[str, dict[str, object]]:
+    """Return JSON-serializable operator status table keyed by formal TFNE symbol.
+
+    Evidence artifacts use these keys because they correspond directly to the
+    manuscript/operator doctrine: E_theta, S_WDR, C_mu_nu, Q_eta_alpha,
+    F_field, P_probe, A_objective, O_optimizer, and C_constraints.
+    """
+    symbol_map = {
+        "E_theta": "emitter",
+        "S_WDR": "synapse",
+        "C_mu_nu": "chemical",
+        "Q_eta_alpha": "source_projection",
+        "F_field": "field",
+        "P_probe": "probe",
+        "A_objective": "analysis",
+        "O_optimizer": "optimizer",
+        "C_constraints": "constraints",
+    }
+    roles = operator_status_json()
+    out: dict[str, dict[str, object]] = {}
+    for symbol, role in symbol_map.items():
+        record = dict(roles[role])
+        record["role_key"] = role
+        record["operator_id"] = symbol
+        out[symbol] = record
+    return out
