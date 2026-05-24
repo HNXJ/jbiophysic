@@ -24,6 +24,9 @@ jax = [
   "optax>=0.2",
   "diffrax>=0.5",
 ]
+jaxfne = [
+  "jaxfne==0.2.30",
+]
 jaxley = [
   "jaxley>=0.13",
 ]
@@ -46,7 +49,7 @@ dev = [
   "black>=24",
 ]
 all = [
-  "jbiophysic[jax,jaxley,viz,tutorials,dev]",
+  "jbiophysic[jax,jaxfne,jaxley,viz,tutorials,dev]",
 ]
 
 [project.scripts]

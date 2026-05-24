@@ -1,5 +1,11 @@
 """High-level TFNE-Izhikevich spectrolaminar workflow API.
 
+NAMING NOTE (v0.0.6):
+  This module is named `jtfne` for historical reasons but is actually the
+  spectrolaminar case-study workflow API, not a wrapper around jaxfne.
+  A future release will rename this to jbiophysic.atlas or jbiophysic.workflows
+  to avoid confusion with `import jaxfne as jtfne`. Current code continues to work.
+
 This module intentionally exposes a small notebook-facing API:
 
     from jbiophysic import jtfne

@@ -12,8 +12,13 @@ descriptive message rather than a bare ModuleNotFoundError.
 
 from __future__ import annotations
 
-# Eagerly available (no JAX dependency).
-__version__ = "1.1.1"
+# Version derived from pyproject.toml (single source of truth).
+try:
+    from importlib.metadata import version as _get_version
+    __version__ = _get_version("jbiophysic")
+except Exception:
+    # Fallback if package is not installed (e.g., during development before pip install -e .).
+    __version__ = "1.0.1"
 
 __all__ = [
     # JAX-backed – populated lazily below when JAX is present.

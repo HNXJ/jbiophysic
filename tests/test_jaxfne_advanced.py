@@ -1,7 +1,23 @@
-"""Unit tests for advanced jaxfne integration module."""
+"""Unit tests for advanced jaxfne integration module.
+
+These tests require jaxfne to be installed:
+    pip install -e '.[jaxfne]'
+"""
 
 import numpy as np
 import pytest
+
+# Skip entire test module if jaxfne not available
+try:
+    import jaxfne as jtfne  # noqa: F401
+    JAXFNE_AVAILABLE = True
+except ImportError:
+    JAXFNE_AVAILABLE = False
+
+pytestmark = pytest.mark.skipif(
+    not JAXFNE_AVAILABLE,
+    reason="jaxfne not installed (pip install -e '.[jaxfne]')"
+)
 
 from jbiophysic.jaxfne_advanced import (
     CustomReceptorSpec,

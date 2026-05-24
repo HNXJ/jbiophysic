@@ -16,7 +16,15 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 
-from jaxfne import EdgeList, EIGNetwork, standard_receptor_specs
+# Guarded jaxfne import: required for this module, optional for the package.
+try:
+    import jaxfne as jtfne
+    from jaxfne import EdgeList, EIGNetwork, standard_receptor_specs
+except ImportError as exc:
+    raise ImportError(
+        "jaxfne is required for jbiophysic.jaxfne_advanced. "
+        "Install it with: pip install -e '.[jaxfne]'"
+    ) from exc
 
 Array = jax.Array
 

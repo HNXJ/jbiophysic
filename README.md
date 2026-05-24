@@ -11,52 +11,61 @@ Experimental computational neuroscience framework for:
 
 ## Status and Requirements
 
-**Scope:** Exploratory research infrastructure for computational neuroscience. Not a validated biological simulator. Optimizer success is not biological proof.
+**Scope:** Executable biophysics atlas for neural modeling. Teaches membrane, channel, synaptic, network, laminar, and field principles through runnable chapters and case studies. Not a validated biological simulator. Optimizer success is not biological proof.
 
-**Python:** Requires Python >=3.10. Validated on Python 3.10 / 3.11 / 3.12 (GitHub Actions CI). Current suite: 106 passed, 8 skipped with full [jax,dev] install.
+**Python:** Requires Python >=3.10.
 
 **Dependencies:**
 - **Core:** numpy, scipy, pandas, PyYAML (minimal — no JAX required for install)
-- **JAX stack:** jax, jaxlib, equinox, optax, diffrax (required for all modeling/simulation; install via [jax] extra)
-- **Tutorials:** jupyter, nbformat, nbconvert, ipykernel, matplotlib (optional, [tutorials] extra)
-- **Development:** pytest, pytest-cov, ruff, black (optional, [dev] extra)
+- **JAX stack:** jax, jaxlib, equinox, optax, diffrax (install via [jax] extra; required for neural modeling)
+- **jaxfne bridge:** jaxfne==0.2.30 (install via [jaxfne] extra; optional integration layer for source-to-field readouts)
+- **Jaxley:** jaxley>=0.13 (install via [jaxley] extra; morphologically-detailed models)
+- **Visualization:** matplotlib, plotly, dash (install via [viz] extra)
+- **Tutorials:** jupyter, nbformat, nbconvert, ipykernel, matplotlib (install via [tutorials] extra)
+- **Development:** pytest, pytest-cov, ruff, black (install via [dev] extra)
+
+**Atlas role:**
+- **jbiophysic teaches biophysics**: membrane, channels, synapses, networks, laminar architecture, field principles, case studies.
+- **jaxfne is the backend** (when needed): compact JAX-native TFNE engine for source-to-field/readout contracts. Installed optionally via [jaxfne] extra.
+- **Clean separation**: jbiophysic examples use jaxfne only when a chapter reaches explicit source, field, probe, objective, manifest, and claim-gate semantics.
 
 **JAX & Optax Status:**
-- JAX (0.10.0): All neural/field modules require JAX. CPU-safe baseline; GPU-compatible via standard JAX device model.
-- Optax (0.2.8): Required by optimizer modules (AGSDR, GSDR, GSGD, SDR). Provided via [jax] extra. Core bounds/manifest helpers work without Optax.
+- JAX (0.4+): Core neural/field modules require JAX. CPU-safe baseline; GPU-compatible via standard JAX device model.
+- Optax (0.2+): Required by optimizer modules (AGSDR, GSDR, GSGD, SDR). Provided via [jax] extra. Core bounds/manifest helpers work without Optax.
 - pmap/pjit: Current fallback-to-vmap CPU behavior is preserved; modernization is optional future work.
 - PRNG: Explicit key discipline enforced; same seed → same result.
+- **jaxfne (0.2.30):** Optional integration via [jaxfne] extra. Provides receptor-indexed exponential synaptic kernel and laminar field projection.
 
 ## Install
 
-Minimal (core only):
-
+**Minimal** (core utilities only, no JAX):
 ```bash
 pip install -e .
 ```
 
-Development (tests — **requires [jax] for JAX-dependent tests**):
-
-```bash
-pip install -e ".[jax,dev]"
-```
-
-JAX stack (neural modeling):
-
+**JAX stack** (neural modeling, required for most examples):
 ```bash
 pip install -e ".[jax]"
 ```
 
-Tutorials (executable notebooks):
-
+**With jaxfne bridge** (optional: source-to-field readout backend):
 ```bash
-pip install -e ".[tutorials]"
+pip install -e ".[jax,jaxfne]"
 ```
 
-Full stack (everything):
-
+**Development** (tests and linting):
 ```bash
-pip install -e ".[jax,tutorials,dev]"
+pip install -e ".[jax,dev]"
+```
+
+**Tutorials** (executable notebooks):
+```bash
+pip install -e ".[jax,tutorials]"
+```
+
+**Full stack** (everything):
+```bash
+pip install -e ".[jax,jaxfne,tutorials,dev]"
 ```
 
 ## Quick Validation
