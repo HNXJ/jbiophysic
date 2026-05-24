@@ -799,11 +799,44 @@ def _build_tfne_basis(model: SimpleNamespace, sim: JTFNESimConfig) -> dict[str, 
 
 
 def simulate(
-    tfne_model: SimpleNamespace, sim: JTFNESimConfig | Mapping[str, Any]
+    tfne_model: SimpleNamespace,
+    sim: JTFNESimConfig | Mapping[str, Any],
+    *,
+    backend: str = "legacy",
 ) -> SimpleNamespace:
-    """Simulate emitter dynamics and TFNE LFP/CSD readouts."""
+    """Simulate emitter dynamics and TFNE LFP/CSD readouts.
+
+    Parameters
+    ----------
+    tfne_model : SimpleNamespace
+        Model from construct().
+
+    sim : JTFNESimConfig or dict
+        Simulation configuration.
+
+    backend : str, default 'legacy'
+        Simulation backend: 'legacy' uses custom Izhikevich, 'jaxfne' uses jaxfne's
+        receptor-exponential kernel. Only 'legacy' currently supported for full
+        workflow (Phase 2 in progress).
+
+    Returns
+    -------
+    SimpleNamespace
+        Simulation output with trials containing spikes, voltage, LFP, CSD.
+    """
     if isinstance(sim, Mapping):
         sim = _dataclass_from_dict(JTFNESimConfig, sim)
+
+    if backend == "jaxfne" and HAS_JAXFNE_INTEGRATION:
+        return _simulate_jaxfne(tfne_model, sim)
+    elif backend == "jaxfne":
+        raise ImportError("jaxfne backend requested but jaxfne not installed")
+    else:
+        return _simulate_legacy(tfne_model, sim)
+
+
+def _simulate_legacy(tfne_model: SimpleNamespace, sim: JTFNESimConfig) -> SimpleNamespace:
+    """Original simulation path using custom Izhikevich + TFNE solver."""
     if tfne_model.tfne_basis is None:
         _build_tfne_basis(tfne_model, sim)
     scale = IzhikevichTFNEScale(sim.source_scale_A_per_native)
@@ -842,6 +875,100 @@ def simulate(
             "lfp_contacts": "V_proxy",
             "csd_contacts": "A/m^3_proxy",
         },
+    )
+
+
+def _simulate_jaxfne(tfne_model: SimpleNamespace, sim: JTFNESimConfig) -> SimpleNamespace:
+    """Simulation path using jaxfne backend.
+
+    This is Phase 2: convergence of legacy and jaxfne workflows.
+    Currently uses jaxfne's receptor-exponential kernel + laminar field projection.
+    """
+    import jax.numpy as jnp
+
+    if not HAS_JAXFNE_INTEGRATION:
+        raise ImportError("jaxfne integration not available")
+
+    # Convert model to jaxfne format
+    eig_network, edges = jbiophysic_to_eig_network(
+        tfne_model, use_receptor_exponential=True, dtype="float32"
+    )
+
+    scale = IzhikevichTFNEScale(sim.source_scale_A_per_native)
+    n_steps = int(round(sim.t_ms / sim.dt_ms))
+    trials = []
+
+    for trial_idx in range(sim.n_trials):
+        seed = tfne_model.config_init.seed + sim.seed_offset + 1009 * trial_idx
+
+        # Run simulation with jaxfne backend
+        v, u, spikes_float = simulate_with_jaxfne(
+            eig_network,
+            edges,
+            n_steps=n_steps,
+            dt_ms=sim.dt_ms,
+            seed=seed,
+            use_receptor_exponential=True,
+            dtype="float32",
+        )
+
+        # Convert spikes to boolean (jaxfne returns float 0.0/1.0)
+        spikes = spikes_float >= 0.5
+
+        # Project spikes to laminar field
+        source_spike = jnp.asarray(spikes, dtype="float32")
+        field_output = project_to_laminar_field(
+            source_spike,
+            eig_network.positions,
+            n_contacts=sim.n_contacts,
+            width=0.1,
+        )
+
+        # Convert field to physical amplitude
+        # jaxfne returns (n_steps, n_contacts); legacy expects (n_steps, n_contacts)
+        lfp_contacts = np.asarray(field_output.lfp_proxy, dtype=np.float32)  # (n_steps, n_contacts)
+        csd_contacts = np.asarray(field_output.csd_proxy, dtype=np.float32)  # (n_steps, n_contacts)
+
+        # Build trial output matching legacy structure
+        trial = {
+            "time_ms": np.arange(n_steps, dtype=np.float32) * np.float32(sim.dt_ms),
+            "dt_ms": sim.dt_ms,
+        }
+
+        for area in tfne_model.config_init.area_order:
+            area_mask = tfne_model.neurons.area == area
+            area_indices = np.where(area_mask)[0]
+
+            trial[area] = {
+                "spikes": np.asarray(spikes[:, area_indices], dtype=bool),
+                "voltage_mV": np.asarray(v[:, area_indices], dtype=np.float32),
+                "lfp_contacts": lfp_contacts,  # Shared across areas
+                "csd_contacts": csd_contacts,  # Shared across areas
+                "contact_depths_m": np.asarray(field_output.contact_depths, dtype=np.float32)
+                * tfne_model.config_init.cz_m,
+                "neurons": tfne_model.neurons.loc[area_mask].reset_index(drop=True),
+                "metadata": {
+                    "backend": "jaxfne_receptor_exponential",
+                    "spike_kernel": "receptor_exponential",
+                    "field_projection": "laminar_gaussian_proxy",
+                },
+            }
+
+        trials.append(trial)
+
+    return SimpleNamespace(
+        model=tfne_model,
+        sim_config=sim,
+        trials=trials,
+        truth_mode=tfne_model.truth_mode,
+        claim_level=tfne_model.claim_level,
+        units={
+            "time": "ms",
+            "voltage": "mV",
+            "lfp_contacts": "V_proxy",
+            "csd_contacts": "A/m^3_proxy",
+        },
+        backend="jaxfne",
     )
 
 

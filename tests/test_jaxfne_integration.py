@@ -280,5 +280,91 @@ class TestBackwardCompatibility:
         assert np.all(np.abs(edges.weight) > 0)
 
 
+class TestSimulateWithJaxfneBackend:
+    """Test integration of jaxfne backend into jtfne.simulate()."""
+
+    def test_simulate_jaxfne_backend(self):
+        """Test that simulate() can use jaxfne backend."""
+        from jbiophysic.jtfne import JTFNEInitConfig, construct, default_cfg, simulate
+        from dataclasses import replace
+
+        # Create minimal model
+        init = JTFNEInitConfig(n_neuron_per_column=20, seed=42, area_order=("V1", "V4"))
+        model = construct(init)
+
+        cfg = default_cfg()
+        sim = replace(cfg.sim, n_trials=1, t_ms=50.0, dt_ms=0.5)
+
+        # Test jaxfne backend
+        result = simulate(model, sim, backend="jaxfne")
+
+        assert hasattr(result, "backend")
+        assert result.backend == "jaxfne"
+        assert len(result.trials) == 1
+
+    def test_simulate_backend_output_shapes(self):
+        """Test that jaxfne backend produces correct output shapes."""
+        from jbiophysic.jtfne import JTFNEInitConfig, construct, default_cfg, simulate
+        from dataclasses import replace
+
+        init = JTFNEInitConfig(n_neuron_per_column=20, seed=42, area_order=("V1", "V4"))
+        model = construct(init)
+
+        cfg = default_cfg()
+        sim = replace(cfg.sim, n_trials=1, t_ms=50.0, dt_ms=0.5, n_contacts=16)
+
+        result = simulate(model, sim, backend="jaxfne")
+        trial = result.trials[0]
+
+        # Check structure
+        assert "V1" in trial
+        assert "V4" in trial
+
+        for area in ["V1", "V4"]:
+            area_data = trial[area]
+            assert "spikes" in area_data
+            assert "voltage_mV" in area_data
+            assert "lfp_contacts" in area_data
+            assert "csd_contacts" in area_data
+            assert "contact_depths_m" in area_data
+            assert "neurons" in area_data
+
+            # Check shapes
+            n_steps = 100  # 50ms / 0.5ms
+            n_neurons = len(area_data["neurons"])
+            assert area_data["spikes"].shape == (n_steps, n_neurons)
+            assert area_data["voltage_mV"].shape == (n_steps, n_neurons)
+            assert area_data["lfp_contacts"].shape == (n_steps, 16)
+            assert area_data["csd_contacts"].shape == (n_steps, 16)
+
+    def test_simulate_backend_legacy_vs_jaxfne(self):
+        """Test that both backends produce reasonable outputs."""
+        from jbiophysic.jtfne import JTFNEInitConfig, construct, default_cfg, simulate
+        from dataclasses import replace
+
+        init = JTFNEInitConfig(n_neuron_per_column=20, seed=42, area_order=("V1",))
+        model = construct(init)
+
+        cfg = default_cfg()
+        sim = replace(cfg.sim, n_trials=1, t_ms=100.0, dt_ms=0.5)
+
+        # Run both backends
+        legacy = simulate(model, sim, backend="legacy")
+        jaxfne_res = simulate(model, sim, backend="jaxfne")
+
+        # Both should have same structure
+        assert len(legacy.trials) == len(jaxfne_res.trials)
+        assert set(legacy.trials[0].keys()) == set(jaxfne_res.trials[0].keys())
+
+        # Shapes should match
+        for area in ["V1"]:
+            legacy_area = legacy.trials[0][area]
+            jaxfne_area = jaxfne_res.trials[0][area]
+
+            assert legacy_area["spikes"].shape == jaxfne_area["spikes"].shape
+            assert legacy_area["voltage_mV"].shape == jaxfne_area["voltage_mV"].shape
+            assert legacy_area["lfp_contacts"].shape == jaxfne_area["lfp_contacts"].shape
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
