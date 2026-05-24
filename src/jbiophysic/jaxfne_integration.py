@@ -341,7 +341,7 @@ def simulate_with_jaxfne(
     if use_receptor_exponential:
         if edges is None:
             raise ValueError("edges required when use_receptor_exponential=True")
-        v, u, spikes, _ = jaxfne.simulate_receptor_exponential_izhikevich(
+        v, u, spikes, _ = jtfne.simulate_receptor_exponential_izhikevich(
             eig_network.params,
             edges,
             n_steps=n_steps,
@@ -351,7 +351,7 @@ def simulate_with_jaxfne(
             drive_schedule=drive_schedule,
         )
     else:
-        v, u, spikes = jaxfne.simulate_eig_izhikevich(
+        v, u, spikes = jtfne.simulate_eig_izhikevich(
             eig_network.params,
             n_steps=n_steps,
             dt_ms=dt_ms,
@@ -470,7 +470,7 @@ def project_to_laminar_field(
     n_contacts: int = 16,
     width: float = 0.1,
     dtype: str = "float32",
-) -> jaxfne.FieldOutput:
+) -> jtfne.FieldOutput:
     """Project source traces to laminar field using jaxfne's Gaussian proxy.
 
     Parameters
@@ -513,7 +513,7 @@ def project_to_laminar_field(
             f"positions shape {positions.shape}"
         )
 
-    return jaxfne.project_laminar_sources(
+    return jtfne.project_laminar_sources(
         source_proxy.astype(dtype),
         positions.astype(dtype),
         n_contacts=n_contacts,
