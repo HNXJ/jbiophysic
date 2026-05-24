@@ -56,6 +56,18 @@ from jbiophysic.tfne import (
 from jbiophysic.tfne.operator_status import operator_status_json
 from jbiophysic.tfne.validation import assert_no_nan_inf, assert_passive_spd
 
+# jaxfne integration (Phase 1+: unified backend for simulations and fields)
+try:
+    from jbiophysic.jaxfne_integration import (
+        jbiophysic_to_eig_network,
+        project_to_laminar_field,
+        simulate_with_jaxfne,
+    )
+
+    HAS_JAXFNE_INTEGRATION = True
+except ImportError:
+    HAS_JAXFNE_INTEGRATION = False
+
 Array = np.ndarray
 
 
@@ -1292,3 +1304,11 @@ __all__ = [
     "validate",
     "manifest",
 ]
+
+# jaxfne integration (Phase 1+: unified backend)
+if HAS_JAXFNE_INTEGRATION:
+    __all__.extend([
+        "jbiophysic_to_eig_network",
+        "simulate_with_jaxfne",
+        "project_to_laminar_field",
+    ])
