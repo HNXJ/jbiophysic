@@ -36,7 +36,6 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 
@@ -125,7 +124,7 @@ def build_ei_configuration(
 
 
 def main(
-    out_dir: Optional[str] = None,
+    out_dir: str | None = None,
     duration_ms: float = 500.0,
     dt_ms: float = 0.1,
     n_e: int = 75,
@@ -164,9 +163,9 @@ def main(
     out_path.mkdir(parents=True, exist_ok=True)
 
     print(f"\n{'='*70}")
-    print(f"jaxfne v0.3.6 Tutorial: 100-Neuron E/I Population")
+    print("jaxfne v0.3.6 Tutorial: 100-Neuron E/I Population")
     print(f"{'='*70}")
-    print(f"Configuration:")
+    print("Configuration:")
     print(f"  Excitatory neurons (E):   {n_e}")
     print(f"  Inhibitory neurons (I):   {n_i}")
     print(f"  Total neurons:            {n_e + n_i}")
@@ -174,7 +173,7 @@ def main(
     print(f"  Timestep:                 {dt_ms} ms")
     print(f"  Integration steps:        {int(duration_ms / dt_ms)}")
     print(f"  PRNG seed:                {seed}")
-    print(f"\n")
+    print("\n")
 
     # Build configuration
     print("Building configuration...")
@@ -200,12 +199,12 @@ def main(
         dt_ms=dt_ms,
         seed=seed
     )
-    print(f"✓ Simulation complete")
+    print("✓ Simulation complete")
 
     # Extract and summarize results
     n_timesteps, n_neurons = signals.V_m.shape
 
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  Timesteps:                {n_timesteps}")
     print(f"  Neurons:                  {n_neurons}")
     print(f"  Spike count:              {int(signals.spikes.sum())}")
