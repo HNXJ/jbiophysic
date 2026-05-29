@@ -19,14 +19,15 @@ pytestmark = pytest.mark.skipif(
     reason="jaxfne not installed (pip install -e '.[jaxfne]')"
 )
 
-from jbiophysic.jaxfne_advanced import (
-    CustomReceptorSpec,
-    analyze_critical_neurons,
-    build_multi_area_edges,
-    compute_connection_motifs,
-    optimize_synaptic_weights,
-)
-from jbiophysic.jtfne import JTFNEInitConfig, construct
+if JAXFNE_AVAILABLE:
+    from jbiophysic.jaxfne_advanced import (
+        CustomReceptorSpec,
+        analyze_critical_neurons,
+        build_multi_area_edges,
+        compute_connection_motifs,
+        optimize_synaptic_weights,
+    )
+    from jbiophysic.jtfne import JTFNEInitConfig, construct
 
 
 @pytest.fixture
