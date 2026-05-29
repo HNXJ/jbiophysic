@@ -20,6 +20,7 @@ v0.3.0-v0.3.6
 from __future__ import annotations
 
 from typing import NamedTuple
+
 import numpy as np
 
 

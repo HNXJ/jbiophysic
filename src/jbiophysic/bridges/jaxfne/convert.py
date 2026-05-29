@@ -6,15 +6,15 @@ Does not simulate or execute; only converts structure.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from .reports import json_safe
 
 
 def jbiophysic_params_to_jaxfne(
     cell_type: str,
-    jb_params: Dict[str, Any],
-) -> Dict[str, Any]:
+    jb_params: dict[str, Any],
+) -> dict[str, Any]:
     """Convert jbiophysic cell params to jaxfne source config.
 
     Parameters
@@ -67,8 +67,8 @@ def jbiophysic_params_to_jaxfne(
 def jbiophysic_circuit_to_jaxfne(
     n_exc: int,
     n_inh: int,
-    jb_connectivity: Dict[str, Any],
-) -> Dict[str, Any]:
+    jb_connectivity: dict[str, Any],
+) -> dict[str, Any]:
     """Convert jbiophysic E/I circuit to jaxfne network manifest.
 
     Parameters

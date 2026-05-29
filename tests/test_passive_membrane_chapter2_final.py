@@ -11,10 +11,11 @@ Validates:
 v0.2.10 gate tests before v0.2.11 release.
 """
 
-import pytest
 import json
 import os
+
 import numpy as np
+import pytest
 
 from jbiophysic.passive_membrane import (
     PassiveMembraneParams,
@@ -170,9 +171,9 @@ class TestPassiveMembraneManifests:
     def test_no_nan_in_diagnostics(self):
         """Test that passive membrane diagnostics never produce NaN."""
         from jbiophysic.passive_membrane import (
-            tau_membrane_ms,
-            steady_state_voltage,
             input_resistance_mohm,
+            steady_state_voltage,
+            tau_membrane_ms,
         )
 
         # Test with range of reasonable values
@@ -260,14 +261,13 @@ class TestChapter2Completeness:
     def test_all_module_imports(self):
         """Test that all v0.2 module imports work."""
         from jbiophysic.passive_membrane import (
-            PassiveMembraneParams,
-            passive_membrane_step,
-            passive_membrane_simulate,
-            tau_membrane_ms,
-            steady_state_voltage,
-            relaxation_curve,
             input_resistance_mohm,
             membrane_potential_response,
+            passive_membrane_simulate,
+            passive_membrane_step,
+            relaxation_curve,
+            steady_state_voltage,
+            tau_membrane_ms,
         )
 
         # All imports must succeed

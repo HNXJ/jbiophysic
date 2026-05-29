@@ -13,20 +13,20 @@ v0.3.0-v0.3.6: Teaching scaffold, truth_safe_unverified, computational_scaffold.
 
 from __future__ import annotations
 
-from .simulator import (
-    HodgkinHuxleyParams,
-    hh_rate_functions,
-    hh_steady_state_gates,
-    hh_rhs_current_at_steady_gates,
-    hh_find_rest_voltage,
-    hh_currents,
-    hh_step,
-    hh_simulate,
-)
 from .diagnostics import (
-    hh_state_check,
     hh_spike_detection,
     hh_stability_report,
+    hh_state_check,
+)
+from .simulator import (
+    HodgkinHuxleyParams,
+    hh_currents,
+    hh_find_rest_voltage,
+    hh_rate_functions,
+    hh_rhs_current_at_steady_gates,
+    hh_simulate,
+    hh_steady_state_gates,
+    hh_step,
 )
 
 __all__ = [

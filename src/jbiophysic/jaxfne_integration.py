@@ -13,7 +13,7 @@ Architecture mapping:
 
 from __future__ import annotations
 
-from typing import Any, Mapping, NamedTuple
+from typing import Any, NamedTuple
 
 import jax
 import jax.numpy as jnp

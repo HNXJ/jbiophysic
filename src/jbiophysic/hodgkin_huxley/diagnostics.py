@@ -6,6 +6,7 @@ v0.3.3: Comprehensive checks for numerical stability, gate bounds, and biophysic
 from __future__ import annotations
 
 from typing import NamedTuple
+
 import numpy as np
 
 

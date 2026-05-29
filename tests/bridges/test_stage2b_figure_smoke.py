@@ -14,7 +14,6 @@ from jbiophysic.bridges.jaxfne import (
     build_single_neuron_run,
     run_and_report,
     validate_manifest_json,
-    validate_report,
 )
 
 
@@ -56,7 +55,7 @@ def test_stage2b_run_and_report_writes_manifest_json():
             dt_ms=0.1,
         )
 
-        report = run_and_report(manifest, tmpdir)
+        run_and_report(manifest, tmpdir)
 
         # Manifest file should exist
         manifest_path = Path(tmpdir) / "manifest.json"
@@ -81,7 +80,7 @@ def test_stage2b_run_and_report_writes_report_json():
             dt_ms=0.1,
         )
 
-        report = run_and_report(manifest, tmpdir)
+        run_and_report(manifest, tmpdir)
 
         # Report file should exist
         report_path = Path(tmpdir) / "jaxfne_bridge_report.json"
@@ -157,7 +156,7 @@ def test_stage2b_no_fake_success_on_dispatch_failure():
             dt_ms=0.1,
         )
 
-        report = run_and_report(manifest, tmpdir)
+        run_and_report(manifest, tmpdir)
 
         # Load written report for final check
         report_path = Path(tmpdir) / "jaxfne_bridge_report.json"

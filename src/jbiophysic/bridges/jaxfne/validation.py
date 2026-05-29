@@ -12,7 +12,7 @@ Hard validation rules:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 # Canonical constants
 TRUTH_MODE = "truth_safe_unverified"
@@ -75,9 +75,9 @@ REQUIRED_MANIFEST_FIELDS = {
 
 
 def validate_manifest_json(
-    manifest: Dict[str, Any],
+    manifest: dict[str, Any],
     strict_mode: bool = True,
-) -> Tuple[bool, List[str]]:
+) -> tuple[bool, list[str]]:
     """Validate manifest structure and truth constraints.
 
     Parameters
@@ -170,9 +170,9 @@ def validate_manifest_json(
 
 
 def validate_report(
-    report: Dict[str, Any],
+    report: dict[str, Any],
     strict_mode: bool = True,
-) -> Tuple[bool, List[str]]:
+) -> tuple[bool, list[str]]:
     """Validate full report with truth gatekeeping and dispatch semantics.
 
     CRITICAL: Rejects success=True when dispatch_status indicates unavailable/no-API/stub.

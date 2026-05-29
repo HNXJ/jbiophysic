@@ -10,9 +10,9 @@ Core functions:
 from __future__ import annotations
 
 import json
-from importlib.metadata import version, PackageNotFoundError
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 def get_installed_jaxfne_version() -> str:
@@ -95,7 +95,7 @@ def json_safe(obj: Any) -> Any:
 
 
 def write_manifest(
-    manifest: Dict[str, Any],
+    manifest: dict[str, Any],
     output_path: str,
     allow_nan: bool = False,
 ) -> str:
@@ -150,9 +150,9 @@ def write_manifest(
 
 
 def harmonize_jaxfne_output(
-    jaxfne_result: Dict[str, Any],
-    manifest: Dict[str, Any],
-) -> Dict[str, Any]:
+    jaxfne_result: dict[str, Any],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
     """Convert raw jaxfne output to harmonized format.
 
     Parameters

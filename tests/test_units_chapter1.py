@@ -1,22 +1,18 @@
 """Tests for v0.1 units and numerical discipline chapter."""
 
-import pytest
 import numpy as np
 
 from jbiophysic.units import (
-    # v0.1.2: Conversions
-    tau_membrane_ms,
-    conductance_per_soma_area,
-    mV_to_V,
-    V_to_mV,
-    # v0.1.3: Dtype comparison
     compare_dtype_passive_membrane,
+    conductance_per_soma_area,
     dtype_comparison_report,
     # v0.1.4: Stability diagnostics
     finite_value_check,
+    integration_stability_report,
     magnitude_diagnostics,
     monotonic_blow_up_check,
-    integration_stability_report,
+    # v0.1.2: Conversions
+    tau_membrane_ms,
 )
 
 
@@ -293,14 +289,12 @@ class TestChapter1Integrity:
     def test_chapter_imports_complete(self):
         """Test that all chapter functions are importable."""
         from jbiophysic.units import (
-            tau_membrane_ms,
-            conductance_per_soma_area,
             compare_dtype_passive_membrane,
             dtype_comparison_report,
             finite_value_check,
+            integration_stability_report,
             magnitude_diagnostics,
             monotonic_blow_up_check,
-            integration_stability_report,
         )
 
         # All imports should succeed

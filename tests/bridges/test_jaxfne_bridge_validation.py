@@ -4,7 +4,6 @@ CRITICAL: Includes test_reject_fake_success_with_no_jaxfne_api() that guards aga
 the exact failure mode Stage 2 forbids: success=True with failed/unavailable dispatch.
 """
 
-import pytest
 
 from jbiophysic.bridges.jaxfne import (
     build_single_neuron_run,

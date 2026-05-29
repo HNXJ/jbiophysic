@@ -7,17 +7,14 @@ import json
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from jbiophysic.bridges.jaxfne import (
     build_ei_network_run,
     build_laminar_proxy_run,
     build_single_neuron_run,
+    json_safe,
     validate_manifest_json,
     write_manifest,
-    json_safe,
 )
-
 
 REQUIRED_MANIFEST_FIELDS = {
     "run_id",

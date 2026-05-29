@@ -10,7 +10,7 @@ This module extends the basic integration with:
 
 from __future__ import annotations
 
-from typing import Any, Mapping
+from typing import Any
 
 import jax
 import jax.numpy as jnp

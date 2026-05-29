@@ -18,17 +18,17 @@ v0.2.0–v0.2.11 doctrine: computational_scaffold, truth_safe_unverified
 
 from __future__ import annotations
 
-from .simulator import (
-    PassiveMembraneParams,
-    passive_membrane_step,
-    passive_membrane_simulate,
-)
 from .diagnostics import (
-    tau_membrane_ms,
-    steady_state_voltage,
-    relaxation_curve,
     input_resistance_mohm,
     membrane_potential_response,
+    relaxation_curve,
+    steady_state_voltage,
+    tau_membrane_ms,
+)
+from .simulator import (
+    PassiveMembraneParams,
+    passive_membrane_simulate,
+    passive_membrane_step,
 )
 
 __all__ = [

@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 from .conversions import (
+    V_to_mV,
     conductance_per_soma_area,
-    mV_to_V,
     mm_to_um,
+    mV_to_V,
     nA_to_pA,
     nS_to_uS,
     pA_to_nA,
     tau_membrane_ms,
     um_to_mm,
     uS_to_nS,
-    V_to_mV,
 )
 from .dtype_comparison import (
     DtypeComparisonResult,

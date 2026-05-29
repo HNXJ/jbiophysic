@@ -6,23 +6,20 @@ Tests v0.2.2 (executable) and v0.2.3 (diagnostics).
 v0.2.2–v0.2.3 gate: All tests PASS before advancing to v0.2.4.
 """
 
-import pytest
 import numpy as np
+import pytest
 
 from jbiophysic.passive_membrane import (
     PassiveMembraneParams,
-    passive_membrane_step,
-    passive_membrane_simulate,
-    tau_membrane_ms,
-    steady_state_voltage,
-    relaxation_curve,
     input_resistance_mohm,
     membrane_potential_response,
+    passive_membrane_simulate,
+    passive_membrane_step,
+    relaxation_curve,
+    steady_state_voltage,
+    tau_membrane_ms,
 )
 from jbiophysic.units import (
-    finite_value_check,
-    magnitude_diagnostics,
-    monotonic_blow_up_check,
     integration_stability_report,
 )
 
@@ -98,8 +95,8 @@ class TestPassiveMembraneStep:
         V = -65.0
         C_m = 100.0
         g_L = 1.0
-        tau = tau_membrane_ms(C_m, g_L)
-        dt_stable = 50.0  # 0.5 * tau
+        _tau = tau_membrane_ms(C_m, g_L)
+        dt_stable = 50.0  # 0.5 * _tau
 
         # Repeated stable stepping shouldn't blow up
         for _ in range(100):
