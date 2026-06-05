@@ -11,10 +11,11 @@ Validates:
 v0.2.10 gate tests before v0.2.11 release.
 """
 
-import pytest
 import json
 import os
+
 import numpy as np
+import pytest
 
 from jbiophysic.passive_membrane import (
     PassiveMembraneParams,
@@ -28,18 +29,12 @@ class TestChapter2Documentation:
 
     def test_jaxfne_bridge_note_exists(self):
         """Test that bridge documentation file exists."""
-        bridge_path = os.path.join(
-            os.path.dirname(__file__),
-            "../docs/v0_2_jaxfne_bridge.md"
-        )
+        bridge_path = os.path.join(os.path.dirname(__file__), "../docs/v0_2_jaxfne_bridge.md")
         assert os.path.exists(bridge_path), "Bridge note not found"
 
     def test_jaxfne_bridge_contains_contract_language(self):
         """Test that bridge note explains source-field-probe contract."""
-        bridge_path = os.path.join(
-            os.path.dirname(__file__),
-            "../docs/v0_2_jaxfne_bridge.md"
-        )
+        bridge_path = os.path.join(os.path.dirname(__file__), "../docs/v0_2_jaxfne_bridge.md")
         with open(bridge_path) as f:
             content = f.read()
 
@@ -51,18 +46,12 @@ class TestChapter2Documentation:
 
     def test_exercises_exist(self):
         """Test that exercises file exists."""
-        exercises_path = os.path.join(
-            os.path.dirname(__file__),
-            "../docs/v0_2_exercises.md"
-        )
+        exercises_path = os.path.join(os.path.dirname(__file__), "../docs/v0_2_exercises.md")
         assert os.path.exists(exercises_path), "Exercises not found"
 
     def test_exercises_contain_6_problems(self):
         """Test that exercises document lists problems."""
-        exercises_path = os.path.join(
-            os.path.dirname(__file__),
-            "../docs/v0_2_exercises.md"
-        )
+        exercises_path = os.path.join(os.path.dirname(__file__), "../docs/v0_2_exercises.md")
         with open(exercises_path) as f:
             content = f.read()
 
@@ -73,28 +62,21 @@ class TestChapter2Documentation:
     def test_notebook_exists(self):
         """Test that tutorial notebook exists."""
         notebook_path = os.path.join(
-            os.path.dirname(__file__),
-            "../tutorials/v0_2_passive_membrane_tutorial.ipynb"
+            os.path.dirname(__file__), "../tutorials/v0_2_passive_membrane_tutorial.ipynb"
         )
         assert os.path.exists(notebook_path), "Notebook not found"
 
     def test_notebook_has_required_sections(self):
         """Test that notebook includes all 13 required sections."""
         notebook_path = os.path.join(
-            os.path.dirname(__file__),
-            "../tutorials/v0_2_passive_membrane_tutorial.ipynb"
+            os.path.dirname(__file__), "../tutorials/v0_2_passive_membrane_tutorial.ipynb"
         )
         with open(notebook_path) as f:
             notebook = json.load(f)
 
         # Extract markdown cell contents
-        markdown_cells = [
-            cell for cell in notebook["cells"]
-            if cell["cell_type"] == "markdown"
-        ]
-        full_text = "\n".join([
-            "".join(cell["source"]) for cell in markdown_cells
-        ])
+        markdown_cells = [cell for cell in notebook["cells"] if cell["cell_type"] == "markdown"]
+        full_text = "\n".join(["".join(cell["source"]) for cell in markdown_cells])
 
         # Check for required sections
         required_sections = [
@@ -170,9 +152,9 @@ class TestPassiveMembraneManifests:
     def test_no_nan_in_diagnostics(self):
         """Test that passive membrane diagnostics never produce NaN."""
         from jbiophysic.passive_membrane import (
-            tau_membrane_ms,
-            steady_state_voltage,
             input_resistance_mohm,
+            steady_state_voltage,
+            tau_membrane_ms,
         )
 
         # Test with range of reasonable values
@@ -246,6 +228,7 @@ class TestJaxfneGuardBehavior:
         # This test just verifies the module loads without jaxfne
         try:
             from jbiophysic.passive_membrane import passive_membrane_simulate
+
             assert callable(passive_membrane_simulate)
         except ImportError as e:
             # jaxfne is optional; jbiophysic.passive_membrane must work without it
@@ -260,14 +243,13 @@ class TestChapter2Completeness:
     def test_all_module_imports(self):
         """Test that all v0.2 module imports work."""
         from jbiophysic.passive_membrane import (
-            PassiveMembraneParams,
-            passive_membrane_step,
-            passive_membrane_simulate,
-            tau_membrane_ms,
-            steady_state_voltage,
-            relaxation_curve,
             input_resistance_mohm,
             membrane_potential_response,
+            passive_membrane_simulate,
+            passive_membrane_step,
+            relaxation_curve,
+            steady_state_voltage,
+            tau_membrane_ms,
         )
 
         # All imports must succeed
@@ -281,10 +263,7 @@ class TestChapter2Completeness:
 
     def test_bridge_note_avoids_overclaims(self):
         """Test that bridge documentation avoids overclaiming LFP/EEG."""
-        bridge_path = os.path.join(
-            os.path.dirname(__file__),
-            "../docs/v0_2_jaxfne_bridge.md"
-        )
+        bridge_path = os.path.join(os.path.dirname(__file__), "../docs/v0_2_jaxfne_bridge.md")
         with open(bridge_path) as f:
             content = f.read()
 
@@ -295,8 +274,7 @@ class TestChapter2Completeness:
     def test_examples_run_without_error(self):
         """Test that example scripts load without syntax errors."""
         example_path = os.path.join(
-            os.path.dirname(__file__),
-            "../examples/v0_2_passive_membrane_minimal.py"
+            os.path.dirname(__file__), "../examples/v0_2_passive_membrane_minimal.py"
         )
         assert os.path.exists(example_path), "Example script not found"
 
@@ -307,10 +285,7 @@ class TestChapter2Completeness:
 
     def test_doctrine_mentions_all_phases(self):
         """Test that doctrine covers v0.2.0–v0.2.11."""
-        doctrine_path = os.path.join(
-            os.path.dirname(__file__),
-            "../docs/v0_2_membrane_doctrine.md"
-        )
+        doctrine_path = os.path.join(os.path.dirname(__file__), "../docs/v0_2_membrane_doctrine.md")
         with open(doctrine_path) as f:
             content = f.read()
 

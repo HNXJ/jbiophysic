@@ -10,7 +10,7 @@ This module extends the basic integration with:
 
 from __future__ import annotations
 
-from typing import Any, Mapping
+from typing import Any
 
 import jax
 import jax.numpy as jnp
@@ -18,7 +18,7 @@ import numpy as np
 
 # Guarded jaxfne import: required for this module, optional for the package.
 try:
-    import jaxfne as jtfne
+    import jaxfne as jtfne  # noqa: F401
     from jaxfne import EdgeList, EIGNetwork, standard_receptor_specs
 except ImportError as exc:
     raise ImportError(
@@ -130,9 +130,9 @@ def build_multi_area_edges(
     if receptor_kinetics is None:
         receptor_kinetics = CustomReceptorSpec()
 
-    n_neurons = len(eig_network.params.a)
+    len(eig_network.params.a)
     cell_types = np.array(eig_network.params.labels)
-    areas = np.array(neurons_df["area"].values)
+    np.array(neurons_df["area"].values)
 
     # If existing edges provided, update tau values
     if existing_edges is not None:
@@ -143,7 +143,7 @@ def build_multi_area_edges(
 
         # Recompute tau values based on connection types
         tau_ms_list = []
-        for p, q, rec_idx in zip(pre_indices, post_indices, receptor_indices):
+        for p, q, rec_idx in zip(pre_indices, post_indices, receptor_indices, strict=False):
             pre_type = cell_types[p]
             post_type = cell_types[q]
             tau = receptor_kinetics.get_tau(pre_type, post_type, int(rec_idx))
@@ -162,9 +162,9 @@ def build_multi_area_edges(
             post_idx, pre_idx = jnp.where(W != 0)
             pre_indices = np.array(pre_idx)
             post_indices = np.array(post_idx)
-            weights = np.array([W[q, p] for p, q in zip(pre_idx, post_idx)])
+            weights = np.array([W[q, p] for p, q in zip(pre_idx, post_idx, strict=False)])
 
-            for p, q in zip(pre_indices, post_indices):
+            for p, q in zip(pre_indices, post_indices, strict=False):
                 pre_type = cell_types[p]
                 post_type = cell_types[q]
                 is_exc = pre_type == "E"
@@ -265,7 +265,7 @@ def compute_connection_motifs(
 
     # Build adjacency matrix for motif detection
     adj_matrix = np.zeros((n_neurons, n_neurons), dtype=bool)
-    for p, q in zip(edges.pre, edges.post):
+    for p, q in zip(edges.pre, edges.post, strict=False):
         adj_matrix[q, p] = True
 
     # Count reciprocal connections
@@ -331,7 +331,7 @@ def analyze_critical_neurons(
     in_degree = np.zeros(n_neurons)
     out_degree = np.zeros(n_neurons)
 
-    for p, q in zip(edges.pre, edges.post):
+    for p, q in zip(edges.pre, edges.post, strict=False):
         out_degree[p] += 1
         in_degree[q] += 1
 

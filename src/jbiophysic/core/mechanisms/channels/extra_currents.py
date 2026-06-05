@@ -3,11 +3,12 @@ import jax.numpy as jnp
 
 _JAXLEY_MSG = (
     "jbiophysic.core.mechanisms.channels requires optional dependency 'jaxley'. "
-    "Install with: pip install -e \".[jaxley]\""
+    'Install with: pip install -e ".[jaxley]"'
 )
 
 try:
     from jaxley.channels import Channel as _Channel
+
     _JAXLEY_AVAILABLE = True
 except ImportError:
     _JAXLEY_AVAILABLE = False
@@ -17,10 +18,12 @@ except ImportError:
 def _jaxley_required(cls):
     """Class decorator: raises ImportError at instantiation when jaxley is absent."""
     orig_init = cls.__init__
+
     def _guarded_init(self, *args, **kwargs):
         if not _JAXLEY_AVAILABLE:
             raise ImportError(_JAXLEY_MSG)
         return orig_init(self, *args, **kwargs)
+
     cls.__init__ = _guarded_init
     return cls
 

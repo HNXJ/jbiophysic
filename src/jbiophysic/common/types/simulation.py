@@ -1,9 +1,6 @@
 # src/jbiophysic/common/types/simulation.py
 
 
-
-
-
 from dataclasses import dataclass
 from typing import Any
 
@@ -12,6 +9,8 @@ import jax.numpy as jnp
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
 @dataclass
 class SimulationConfig:
     dt: float = 0.025

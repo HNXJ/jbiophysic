@@ -15,6 +15,7 @@ from __future__ import annotations
 # Version derived from pyproject.toml (single source of truth).
 try:
     from importlib.metadata import version as _get_version
+
     __version__ = _get_version("jbiophysic")
 except Exception:
     # Fallback if package is not installed (e.g., during development before pip install -e .).

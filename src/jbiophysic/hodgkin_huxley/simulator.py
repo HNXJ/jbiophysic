@@ -20,6 +20,7 @@ v0.3.0-v0.3.6
 from __future__ import annotations
 
 from typing import NamedTuple
+
 import numpy as np
 
 
@@ -93,10 +94,11 @@ def hh_rate_functions(V: float) -> dict:
     tolerance = 1e-6
 
     # alpha_m: handle singularity at V = -40 mV
-    if abs(V + 40) < tolerance:
-        alpha_m = 1.0  # L'Hôpital's rule: lim (0.1 * 10) / (10 * exp(0)) = 1.0
-    else:
-        alpha_m = 0.1 * (V + 40) / (1.0 - np.exp(-(V + 40) / 10.0))
+    alpha_m = (
+        1.0  # L'Hôpital's rule: lim (0.1 * 10) / (10 * exp(0)) = 1.0
+        if abs(V + 40) < tolerance
+        else 0.1 * (V + 40) / (1.0 - np.exp(-(V + 40) / 10.0))
+    )
 
     beta_m = 4.0 * np.exp(-(V + 65) / 18.0)
 
@@ -106,10 +108,11 @@ def hh_rate_functions(V: float) -> dict:
     beta_h = 1.0 / (1.0 + np.exp(-(V + 35) / 10.0))
 
     # alpha_n: handle singularity at V = -55 mV
-    if abs(V + 55) < tolerance:
-        alpha_n = 0.1  # L'Hôpital's rule: lim (0.01 * 10) / (10 * exp(0)) = 0.1
-    else:
-        alpha_n = 0.01 * (V + 55) / (1.0 - np.exp(-(V + 55) / 10.0))
+    alpha_n = (
+        0.1  # L'Hôpital's rule: lim (0.01 * 10) / (10 * exp(0)) = 0.1
+        if abs(V + 55) < tolerance
+        else 0.01 * (V + 55) / (1.0 - np.exp(-(V + 55) / 10.0))
+    )
 
     beta_n = 0.125 * np.exp(-(V + 65) / 80.0)
 
@@ -242,9 +245,7 @@ def hh_find_rest_voltage(
         Voltage at which I_rhs ≈ 0 (equilibrium voltage, mV).
     """
     voltages = np.linspace(v_min, v_max, n_grid)
-    rhs_currents = np.array(
-        [hh_rhs_current_at_steady_gates(float(v), params) for v in voltages]
-    )
+    rhs_currents = np.array([hh_rhs_current_at_steady_gates(float(v), params) for v in voltages])
     idx = int(np.argmin(np.abs(rhs_currents)))
     return float(voltages[idx])
 

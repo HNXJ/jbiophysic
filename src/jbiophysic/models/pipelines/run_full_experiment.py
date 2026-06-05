@@ -1,8 +1,6 @@
 # src/jbiophysic/models/pipelines/run_full_experiment.py
 
 
-
-
 from jbiophysic.common.types.simulation import SimulationConfig
 from jbiophysic.common.utils.logging import get_logger
 from jbiophysic.models.builders.hierarchy import build_cortical_hierarchy
@@ -10,6 +8,8 @@ from jbiophysic.models.simulation.run import run_simulation
 from jbiophysic.viz.serializers.activity import serialize_raster
 
 logger = get_logger(__name__)
+
+
 def run_pipeline():
     logger.info("🧪 Starting Full Scientific Experiment Pipeline")
 

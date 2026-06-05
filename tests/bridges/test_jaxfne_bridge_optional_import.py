@@ -3,10 +3,6 @@
 Focus: Graceful fallback when jaxfne is unavailable.
 """
 
-from unittest import mock
-
-import pytest
-
 from jbiophysic.bridges.jaxfne import (
     build_single_neuron_run,
     get_jaxfne_report,

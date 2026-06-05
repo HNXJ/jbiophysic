@@ -1,7 +1,6 @@
 # tests/core/test_properties.py
 
 
-
 import jax
 import jax.numpy as jnp
 

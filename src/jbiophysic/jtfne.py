@@ -64,7 +64,7 @@ from jbiophysic.tfne.validation import assert_no_nan_inf, assert_passive_spd
 
 # jaxfne integration (Phase 1+: unified backend for simulations and fields)
 try:
-    from jbiophysic.jaxfne_integration import (
+    from jbiophysic.jaxfne_integration import (  # noqa: F401
         diagnose_connectivity,
         get_receptor_info,
         jbiophysic_to_eig_network,
@@ -494,7 +494,7 @@ def construct(
         except Exception as e:
             import warnings
 
-            warnings.warn(f"Failed to build jaxfne network: {e}", RuntimeWarning)
+            warnings.warn(f"Failed to build jaxfne network: {e}", RuntimeWarning, stacklevel=2)
 
     result = SimpleNamespace(
         config_init=init,
@@ -958,7 +958,7 @@ def _simulate_jaxfne(tfne_model: SimpleNamespace, sim: JTFNESimConfig) -> Simple
         tfne_model, use_receptor_exponential=True, dtype="float32"
     )
 
-    scale = IzhikevichTFNEScale(sim.source_scale_A_per_native)
+    IzhikevichTFNEScale(sim.source_scale_A_per_native)
     n_steps = int(round(sim.t_ms / sim.dt_ms))
     trials = []
 
@@ -1505,10 +1505,12 @@ __all__ = [
 
 # jaxfne integration (Phase 1+: unified backend)
 if HAS_JAXFNE_INTEGRATION:
-    __all__.extend([
-        "jbiophysic_to_eig_network",
-        "simulate_with_jaxfne",
-        "project_to_laminar_field",
-        "get_receptor_info",
-        "diagnose_connectivity",
-    ])
+    __all__.extend(
+        [
+            "jbiophysic_to_eig_network",
+            "simulate_with_jaxfne",
+            "project_to_laminar_field",
+            "get_receptor_info",
+            "diagnose_connectivity",
+        ]
+    )

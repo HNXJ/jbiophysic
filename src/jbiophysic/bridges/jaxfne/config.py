@@ -7,7 +7,7 @@ claim_level: computational_scaffold
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, Literal
+from typing import Any, Literal
 
 # Canonical constants
 TRUTH_MODE = "truth_safe_unverified"
@@ -43,8 +43,8 @@ class SingleNeuronConfig(BridgeConfig):
     """Single neuron run configuration."""
 
     cell_type: Literal["izhikevich", "hodgkin_huxley"] = "izhikevich"
-    params: Dict[str, Any] = field(default_factory=dict)
-    stimulus_pattern: Dict[str, Any] = field(default_factory=dict)
+    params: dict[str, Any] = field(default_factory=dict)
+    stimulus_pattern: dict[str, Any] = field(default_factory=dict)
     duration_ms: float = 1000.0
     dt_ms: float = 0.1
 
@@ -79,8 +79,8 @@ class EINetworkConfig(BridgeConfig):
 
     n_exc: int = 100
     n_inh: int = 25
-    connectivity_config: Dict[str, Any] = field(default_factory=dict)
-    stimulus_config: Dict[str, Any] = field(default_factory=dict)
+    connectivity_config: dict[str, Any] = field(default_factory=dict)
+    stimulus_config: dict[str, Any] = field(default_factory=dict)
     duration_ms: float = 2000.0
     dt_ms: float = 0.1
 
@@ -93,7 +93,7 @@ class EINetworkConfig(BridgeConfig):
         if self.n_inh < 0:
             errors.append(f"n_inh must be >= 0, got {self.n_inh}")
         if self.n_exc + self.n_inh == 0:
-            errors.append(f"total neurons (n_exc + n_inh) must be > 0")
+            errors.append("total neurons (n_exc + n_inh) must be > 0")
 
         if self.duration_ms <= 0:
             errors.append(f"duration_ms must be > 0, got {self.duration_ms}")
@@ -118,8 +118,8 @@ class LaminarProxyConfig(BridgeConfig):
     """Laminar proxy run configuration."""
 
     source_scale: Literal["toy", "proxy", "calibrated", "physical"] = "proxy"
-    laminar_config: Dict[str, Any] = field(default_factory=dict)
-    stimulus_pattern: Dict[str, Any] = field(default_factory=dict)
+    laminar_config: dict[str, Any] = field(default_factory=dict)
+    stimulus_pattern: dict[str, Any] = field(default_factory=dict)
     duration_ms: float = 5000.0
     dt_ms: float = 0.1
 

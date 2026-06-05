@@ -6,11 +6,13 @@ v0.3.3: Comprehensive checks for numerical stability, gate bounds, and biophysic
 from __future__ import annotations
 
 from typing import NamedTuple
+
 import numpy as np
 
 
 class HHStateCheckResult(NamedTuple):
     """Result of HH state validation."""
+
     all_finite: bool
     V_finite: bool
     m_finite: bool
@@ -85,6 +87,7 @@ def hh_state_check(
 
 class HHSpikeDetectionResult(NamedTuple):
     """Result of spike detection."""
+
     n_spikes: int
     spike_indices: list
     peak_voltage_mV: float
@@ -140,6 +143,7 @@ def hh_spike_detection(
 
 class HHStabilityReport(NamedTuple):
     """Comprehensive stability and validity report."""
+
     is_stable: bool
     all_finite: bool
     gates_valid: bool
@@ -201,7 +205,10 @@ def hh_stability_report(
     stiffness_reason = ""
     if dt_ms > stiffness_dt_threshold_ms and g_Na_bar > g_L:
         stiffness_warning = True
-        stiffness_reason = f"dt={dt_ms} ms > {stiffness_dt_threshold_ms} ms and g_Na_bar={g_Na_bar} >> g_L={g_L}; potential instability"
+        stiffness_reason = (
+            f"dt={dt_ms} ms > {stiffness_dt_threshold_ms} ms and "
+            f"g_Na_bar={g_Na_bar} >> g_L={g_L}; potential instability"
+        )
 
     is_stable = state_check.all_finite and state_check.gates_in_bounds and not stiffness_warning
 

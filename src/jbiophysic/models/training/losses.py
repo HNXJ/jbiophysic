@@ -1,13 +1,13 @@
 # src/jbiophysic/models/training/losses.py
 
 
-
-
 import jax.numpy as jnp
 
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
 def compute_rate_loss(rates, target=5.0):
     diff = rates - target
     res = jnp.mean(diff**2)

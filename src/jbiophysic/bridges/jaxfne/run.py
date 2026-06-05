@@ -11,18 +11,18 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 from uuid import uuid4
 
 from . import config, convert
-from .reports import get_installed_jaxfne_version, harmonize_jaxfne_output, write_manifest
+from .reports import get_installed_jaxfne_version, write_manifest
 from .validation import validate_manifest_json, validate_report
 
 # Stage 2 operational version (incremented when bridge APIs change)
 STAGE2_BRIDGE_CODE_VERSION = "0.1.0"
 
 
-def _compute_config_hash(cfg: Dict[str, Any]) -> str:
+def _compute_config_hash(cfg: dict[str, Any]) -> str:
     """Compute SHA256 hash of config dict for manifest.
 
     Parameters
@@ -39,7 +39,7 @@ def _compute_config_hash(cfg: Dict[str, Any]) -> str:
     return hashlib.sha256(cfg_json.encode()).hexdigest()
 
 
-def _get_default_operator_status() -> Dict[str, Any]:
+def _get_default_operator_status() -> dict[str, Any]:
     """Get Stage 2 default operator status.
 
     E_theta: partial (bridges/jaxfne)
@@ -84,12 +84,12 @@ def _get_default_operator_status() -> Dict[str, Any]:
 
 def build_single_neuron_run(
     cell_type: str,
-    params: Dict[str, Any],
-    stimulus_pattern: Dict[str, Any],
+    params: dict[str, Any],
+    stimulus_pattern: dict[str, Any],
     duration_ms: float,
     dt_ms: float,
     seed: int = 0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Build schema-complete single-neuron manifest.
 
     Parameters
@@ -194,12 +194,12 @@ def build_single_neuron_run(
 def build_ei_network_run(
     n_exc: int,
     n_inh: int,
-    connectivity_config: Dict[str, Any],
-    stimulus_config: Dict[str, Any],
+    connectivity_config: dict[str, Any],
+    stimulus_config: dict[str, Any],
     duration_ms: float,
     dt_ms: float,
     seed: int = 0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Build schema-complete E/I network manifest.
 
     Parameters
@@ -307,13 +307,13 @@ def build_ei_network_run(
 
 
 def build_laminar_proxy_run(
-    laminar_config: Dict[str, Any],
+    laminar_config: dict[str, Any],
     source_scale: str,
-    stimulus_pattern: Dict[str, Any],
+    stimulus_pattern: dict[str, Any],
     duration_ms: float,
     dt_ms: float,
     seed: int = 0,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Build schema-complete laminar proxy manifest.
 
     Parameters
@@ -418,9 +418,9 @@ def build_laminar_proxy_run(
 
 
 def get_jaxfne_report(
-    manifest_dict: Dict[str, Any],
-    cache_dir: Optional[str] = None,
-) -> Dict[str, Any]:
+    manifest_dict: dict[str, Any],
+    cache_dir: str | None = None,
+) -> dict[str, Any]:
     """Fetch or compute jaxfne report from manifest.
 
     Stage 2: Attempts jaxfne import and checks for supported execution API.
@@ -441,10 +441,8 @@ def get_jaxfne_report(
     try:
         import jaxfne as jtfne
 
-        jaxfne_available = True
         jaxfne_version = get_installed_jaxfne_version()
     except ImportError as e:
-        jaxfne_available = False
         jaxfne_version = "unknown"
         return {
             "dispatch_status": "jaxfne_unavailable",
@@ -470,8 +468,8 @@ def get_jaxfne_report(
             "dispatch_status": "no_supported_jaxfne_execution_api",
             "success": False,
             "errors": [
-                "jaxfne imported but no supported execution API found. "
-                "Available APIs in jaxfne:", list(dir(jtfne))
+                "jaxfne imported but no supported execution API found. Available APIs in jaxfne:",
+                list(dir(jtfne)),
             ],
             "jaxfne_version": jaxfne_version,
             "truth_mode": "truth_safe_unverified",
@@ -492,9 +490,9 @@ def get_jaxfne_report(
 
 
 def run_and_report(
-    manifest: Dict[str, Any],
+    manifest: dict[str, Any],
     output_dir: str,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Execute jaxfne dispatch and return harmonized report.
 
     CRITICAL: Does NOT report success=True unless real jaxfne API executed.

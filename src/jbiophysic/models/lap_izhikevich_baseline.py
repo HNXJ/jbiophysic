@@ -32,6 +32,7 @@ try:  # Avoid making JAX a hard dependency for this NumPy baseline scaffold.
         REGULAR_SPIKING,
     )
 except Exception:  # pragma: no cover - used only in minimal non-JAX installs.
+
     class _Params(NamedTuple):
         a: float
         b: float
@@ -472,7 +473,7 @@ def summarize_lap_baseline(
         "seed": int(cfg.seed),
         "t_ms": float(cfg.t_ms),
         "dt_ms": float(cfg.dt_ms),
-        "n_areas": int(len(set(map(str, pop.area)))) ,
+        "n_areas": int(len(set(map(str, pop.area)))),
         "neurons_per_area": int(cfg.neurons_per_area),
         "total_neurons": int(len(pop.neuron_id)),
         "counts_by_area": {

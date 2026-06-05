@@ -216,8 +216,7 @@ def _extract_population_object(pop: Any) -> dict[str, Any]:
             return data
 
     raise TypeError(
-        "Unsupported network object. Provide a mapping, records, Population object, "
-        "or graph."
+        "Unsupported network object. Provide a mapping, records, Population object, or graph."
     )
 
 
@@ -356,11 +355,7 @@ def _jitter_close_positions(
                 if dist < 1.0e-18:
                     direction = rng.normal(size=3)
                     norm = float(np.linalg.norm(direction))
-                    direction = (
-                        np.asarray([1.0, 0.0, 0.0])
-                        if norm < 1.0e-18
-                        else direction / norm
-                    )
+                    direction = np.asarray([1.0, 0.0, 0.0]) if norm < 1.0e-18 else direction / norm
                 else:
                     direction = delta / dist
                 shift = 0.5 * (min_separation_m - dist + 1.0e-12) * direction
@@ -497,11 +492,15 @@ def _edge_xyz(
         return None
     p0 = id_to_position[pre]
     p1 = id_to_position[post]
-    return [float(p0[0]), float(p1[0]), None], [float(p0[1]), float(p1[1]), None], [
-        float(p0[2]),
-        float(p1[2]),
-        None,
-    ]
+    return (
+        [float(p0[0]), float(p1[0]), None],
+        [float(p0[1]), float(p1[1]), None],
+        [
+            float(p0[2]),
+            float(p1[2]),
+            None,
+        ],
+    )
 
 
 def _add_edges(

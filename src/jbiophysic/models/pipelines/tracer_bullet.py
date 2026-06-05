@@ -1,9 +1,6 @@
 # src/jbiophysic/models/pipelines/tracer_bullet.py
 
 
-
-
-
 import diffrax
 import jax.numpy as jnp
 
@@ -11,6 +8,8 @@ from jbiophysic.common.utils.logging import get_logger
 from jbiophysic.models.builders.tracer_neuron import TracerLIF
 
 logger = get_logger(__name__)
+
+
 def run_tracer_bullet():
     logger.info("🚀 Running Tracer Bullet: Equinox + Diffrax Integration")
 

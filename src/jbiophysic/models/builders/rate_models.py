@@ -1,15 +1,14 @@
 # src/jbiophysic/models/builders/rate_models.py
 
 
-
-
-
 import equinox as eqx
 import jax.numpy as jnp
 
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
 class EIRateModel(eqx.Module):
     """
     Standard 2-node Exc/Inh Rate Model (Axis 5).

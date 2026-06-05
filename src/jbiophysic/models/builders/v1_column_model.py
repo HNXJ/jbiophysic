@@ -1,13 +1,13 @@
 from jbiophysic.models.builders.populations import construct_column
 
 _JAXLEY_MSG = (
-    "This feature requires optional dependency 'jaxley'. "
-    "Install with: pip install -e \".[jaxley]\""
+    "This feature requires optional dependency 'jaxley'. Install with: pip install -e \".[jaxley]\""
 )
 
 try:
     import jaxley as jx
     from jaxley.synapses import IonotropicSynapse as _IonotropicSynapse
+
     _JAXLEY_AVAILABLE = True
 except ImportError:
     jx = None

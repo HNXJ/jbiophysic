@@ -1,22 +1,18 @@
 """Tests for v0.1 units and numerical discipline chapter."""
 
-import pytest
 import numpy as np
 
 from jbiophysic.units import (
-    # v0.1.2: Conversions
-    tau_membrane_ms,
-    conductance_per_soma_area,
-    mV_to_V,
-    V_to_mV,
-    # v0.1.3: Dtype comparison
     compare_dtype_passive_membrane,
+    conductance_per_soma_area,
     dtype_comparison_report,
     # v0.1.4: Stability diagnostics
     finite_value_check,
+    integration_stability_report,
     magnitude_diagnostics,
     monotonic_blow_up_check,
-    integration_stability_report,
+    # v0.1.2: Conversions
+    tau_membrane_ms,
 )
 
 
@@ -72,9 +68,8 @@ class TestDtypeComparison:
             if isinstance(value, (list, tuple)):
                 for item in value:
                     assert np.isfinite(item), f"{key}: {item} is not finite"
-            elif isinstance(value, (int, float)):
-                if isinstance(value, float):
-                    assert np.isfinite(value), f"{key}: {value} is not finite"
+            elif isinstance(value, (int, float)) and isinstance(value, float):
+                assert np.isfinite(value), f"{key}: {value} is not finite"
 
     def test_dtype_comparison_spike_counts_match(self):
         """Test that spike counts are similar between float32 and float64."""
@@ -123,9 +118,7 @@ class TestStabilityDiagnostics:
     def test_magnitude_diagnostics_in_range(self):
         """Test magnitude diagnostics with in-range values."""
         arr = np.linspace(-80, -50, 100)
-        report = magnitude_diagnostics(
-            arr, "voltage", expected_range=(-100, 0)
-        )
+        report = magnitude_diagnostics(arr, "voltage", expected_range=(-100, 0))
 
         assert report["in_range"]
         assert report["n_out_of_range"] == 0
@@ -133,9 +126,7 @@ class TestStabilityDiagnostics:
     def test_magnitude_diagnostics_out_of_range(self):
         """Test magnitude diagnostics with out-of-range values."""
         arr = np.array([-100, -50, 50, 100])
-        report = magnitude_diagnostics(
-            arr, "voltage", expected_range=(-80, 30)
-        )
+        report = magnitude_diagnostics(arr, "voltage", expected_range=(-80, 30))
 
         # -100 < -80 (OOR), -50 in range, 50 > 30 (OOR), 100 > 30 (OOR) = 3 OOR
         assert not report["in_range"]
@@ -280,9 +271,7 @@ class TestChapter1Integrity:
         # Run stability analysis
         voltage = np.sin(np.linspace(0, 10, 100)) * 10 - 65
         current = 10 * np.ones(100)
-        stability_report = integration_stability_report(
-            voltage, current, 0.1, "test"
-        )
+        stability_report = integration_stability_report(voltage, current, 0.1, "test")
 
         # Both must be JSON-serializable
         import json
@@ -293,14 +282,12 @@ class TestChapter1Integrity:
     def test_chapter_imports_complete(self):
         """Test that all chapter functions are importable."""
         from jbiophysic.units import (
-            tau_membrane_ms,
-            conductance_per_soma_area,
             compare_dtype_passive_membrane,
             dtype_comparison_report,
             finite_value_check,
+            integration_stability_report,
             magnitude_diagnostics,
             monotonic_blow_up_check,
-            integration_stability_report,
         )
 
         # All imports should succeed

@@ -6,12 +6,12 @@ from jbiophysic.common.utils.logging import get_logger
 logger = get_logger(__name__)
 
 _JAXLEY_MSG = (
-    "This feature requires optional dependency 'jaxley'. "
-    "Install with: pip install -e \".[jaxley]\""
+    "This feature requires optional dependency 'jaxley'. Install with: pip install -e \".[jaxley]\""
 )
 
 try:
     import jaxley as jx
+
     _JAXLEY_AVAILABLE = True
 except ImportError:
     jx = None

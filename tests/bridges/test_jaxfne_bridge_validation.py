@@ -4,8 +4,6 @@ CRITICAL: Includes test_reject_fake_success_with_no_jaxfne_api() that guards aga
 the exact failure mode Stage 2 forbids: success=True with failed/unavailable dispatch.
 """
 
-import pytest
-
 from jbiophysic.bridges.jaxfne import (
     build_single_neuron_run,
     validate_manifest_json,
@@ -201,9 +199,9 @@ def test_validate_report_rejects_fake_success_with_jaxfne_unavailable():
 
     is_valid, errors = validate_report(fake_report, strict_mode=True)
     assert not is_valid, f"Should reject success=True with jaxfne_unavailable. Errors: {errors}"
-    assert any(
-        "success" in e.lower() and "dispatch" in e.lower() for e in errors
-    ), f"Error message must mention success/dispatch contradiction. Got: {errors}"
+    assert any("success" in e.lower() and "dispatch" in e.lower() for e in errors), (
+        f"Error message must mention success/dispatch contradiction. Got: {errors}"
+    )
 
 
 def test_validate_report_rejects_fake_success_with_no_jaxfne_api():
@@ -221,9 +219,9 @@ def test_validate_report_rejects_fake_success_with_no_jaxfne_api():
 
     is_valid, errors = validate_report(fake_report, strict_mode=True)
     assert not is_valid, f"Should reject success=True with no-API status. Errors: {errors}"
-    assert any(
-        "success" in e.lower() and "dispatch" in e.lower() for e in errors
-    ), f"Error message must mention success/dispatch contradiction. Got: {errors}"
+    assert any("success" in e.lower() and "dispatch" in e.lower() for e in errors), (
+        f"Error message must mention success/dispatch contradiction. Got: {errors}"
+    )
     # Also check for the FATAL marker
     assert any("FATAL" in e for e in errors), f"Error should be marked FATAL. Got: {errors}"
 
@@ -239,9 +237,9 @@ def test_validate_report_rejects_fake_success_with_not_executed_stub():
 
     is_valid, errors = validate_report(fake_report, strict_mode=True)
     assert not is_valid, f"Should reject success=True with not_executed_stub. Errors: {errors}"
-    assert any(
-        "success" in e.lower() and "dispatch" in e.lower() for e in errors
-    ), f"Error message must mention success/dispatch contradiction. Got: {errors}"
+    assert any("success" in e.lower() and "dispatch" in e.lower() for e in errors), (
+        f"Error message must mention success/dispatch contradiction. Got: {errors}"
+    )
 
 
 def test_validate_report_allows_success_false_with_any_dispatch_status():

@@ -1,9 +1,6 @@
 # src/jbiophysic/common/utils/serialization.py
 
 
-
-
-
 import json
 from typing import Any
 
@@ -12,6 +9,8 @@ import numpy as np
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
 def sanitize_nans(obj: Any) -> Any:
     """Recursively converts NaN and Inf values to None for JSON compliance."""
     if isinstance(obj, dict):

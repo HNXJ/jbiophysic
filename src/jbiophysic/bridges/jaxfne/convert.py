@@ -6,15 +6,15 @@ Does not simulate or execute; only converts structure.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from .reports import json_safe
 
 
 def jbiophysic_params_to_jaxfne(
     cell_type: str,
-    jb_params: Dict[str, Any],
-) -> Dict[str, Any]:
+    jb_params: dict[str, Any],
+) -> dict[str, Any]:
     """Convert jbiophysic cell params to jaxfne source config.
 
     Parameters
@@ -44,7 +44,11 @@ def jbiophysic_params_to_jaxfne(
             "I_ext_nA": float(jb_params.get("I_inj_nA", 10.0)),
             "v0": float(jb_params.get("v0", -65.0)),
             "u0": float(jb_params.get("u0", 0.0)),
-            "extra_params": {k: v for k, v in jb_params.items() if k not in ("a", "b", "c", "d", "I_inj_nA", "v0", "u0")},
+            "extra_params": {
+                k: v
+                for k, v in jb_params.items()
+                if k not in ("a", "b", "c", "d", "I_inj_nA", "v0", "u0")
+            },
         }
     elif cell_type == "hodgkin_huxley":
         # Hodgkin-Huxley: g_Na, g_K, g_L, E_Na, E_K, E_L, C_m, I_inj_pA, optional V0
@@ -58,7 +62,11 @@ def jbiophysic_params_to_jaxfne(
             "C_m": float(jb_params.get("C_m", 1.0)),
             "I_ext_pA": float(jb_params.get("I_inj_pA", 10.0)),
             "V0": float(jb_params.get("V0", -65.0)),
-            "extra_params": {k: v for k, v in jb_params.items() if k not in ("g_Na", "g_K", "g_L", "E_Na", "E_K", "E_L", "C_m", "I_inj_pA", "V0")},
+            "extra_params": {
+                k: v
+                for k, v in jb_params.items()
+                if k not in ("g_Na", "g_K", "g_L", "E_Na", "E_K", "E_L", "C_m", "I_inj_pA", "V0")
+            },
         }
     else:
         raise ValueError(f"Unknown cell_type: {cell_type}")
@@ -67,8 +75,8 @@ def jbiophysic_params_to_jaxfne(
 def jbiophysic_circuit_to_jaxfne(
     n_exc: int,
     n_inh: int,
-    jb_connectivity: Dict[str, Any],
-) -> Dict[str, Any]:
+    jb_connectivity: dict[str, Any],
+) -> dict[str, Any]:
     """Convert jbiophysic E/I circuit to jaxfne network manifest.
 
     Parameters

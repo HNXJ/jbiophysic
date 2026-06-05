@@ -1,14 +1,14 @@
 # src/jbiophysic/common/types/visualization.py
 
 
-
-
 from dataclasses import dataclass, field
 from typing import Any
 
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
 @dataclass
 class NodeView:
     node_id: str

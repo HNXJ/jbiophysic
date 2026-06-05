@@ -73,9 +73,7 @@ def test_gsdr_supports_legacy_value_grad_has_aux_contract(toy_problem):
     opt_state = tx.init(params)
 
     # Legacy contract: value_and_grad with has_aux=True
-    (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(
-        params, x, y
-    )
+    (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(params, x, y)
 
     assert_tree_finite(grads, "grads")
     assert jnp.isfinite(loss_val), "loss not finite"
@@ -111,9 +109,7 @@ def test_gsdr_legacy_contract_jitted_step(toy_problem):
     opt_state = tx.init(params)
 
     def jitted_step(params, opt_state, x, y, key):
-        (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(
-            params, x, y
-        )
+        (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(params, x, y)
         mcdp_factors = toy_mcdp_factors(params, traces)
         updates, new_opt_state = tx.update(
             grads,
@@ -145,9 +141,7 @@ def test_agsdr_supports_legacy_value_grad_has_aux_contract(toy_problem):
     opt_state = tx.init(params)
 
     # Legacy contract: value_and_grad with has_aux=True
-    (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(
-        params, x, y
-    )
+    (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(params, x, y)
 
     assert_tree_finite(grads, "grads")
     assert jnp.isfinite(loss_val), "loss not finite"
@@ -188,9 +182,7 @@ def test_gsgd_apply_updates_compatibility(toy_problem):
     opt_state = tx.init(params)
 
     # Standard Optax contract (GSGD does not require key)
-    (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(
-        params, x, y
-    )
+    (loss_val, traces), grads = jax.value_and_grad(toy_loss, has_aux=True)(params, x, y)
 
     assert_tree_finite(grads, "grads")
     assert jnp.isfinite(loss_val), "loss not finite"

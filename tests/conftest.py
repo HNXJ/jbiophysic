@@ -2,6 +2,7 @@ import pytest
 
 try:
     import jax.numpy as jnp
+
     HAS_JAX = True
 except ModuleNotFoundError:
     HAS_JAX = False
@@ -37,6 +38,7 @@ def pytest_ignore_collect(collection_path, config):
     """
     try:
         import optax  # noqa: F401
+
         has_optax = True
     except ModuleNotFoundError:
         has_optax = False

@@ -18,6 +18,7 @@ def test_public_import_smoke():
     # gsdr_direction only present if optax installed; test guards this.
     try:
         import optax  # noqa: F401
+
         assert hasattr(optim, "gsdr_direction"), "optax installed but gsdr_direction missing"
     except ImportError:
         # optax not installed; optax-backed symbols are expected to be absent.

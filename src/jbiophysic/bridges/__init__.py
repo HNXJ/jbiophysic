@@ -4,6 +4,6 @@ Current module:
 - jaxfne: Canonical bridge to jaxfne engine.
 """
 
-from . import jaxfne
+from . import jaxfne  # noqa: F401
 
 __all__ = ["jaxfne"]

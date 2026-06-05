@@ -206,9 +206,7 @@ def integration_stability_report(
     )
 
     # Overall stability assessment
-    all_finite = (
-        report["voltage_finite"]["is_finite"] and report["current_finite"]["is_finite"]
-    )
+    all_finite = report["voltage_finite"]["is_finite"] and report["current_finite"]["is_finite"]
     voltage_in_range = report["voltage_magnitude"]["in_range"]
     no_blow_up = (
         not report["voltage_blow_up"]["is_blowing_up"]

@@ -1,14 +1,13 @@
 # src/jbiophysic/models/builders/tracer_neuron.py
 
 
-
-
-
 import equinox as eqx
 
 from jbiophysic.common.utils.logging import get_logger
 
 logger = get_logger(__name__)
+
+
 class TracerLIF(eqx.Module):
     """
     Tracer Bullet: A minimal Leaky Integrate-and-Fire model.

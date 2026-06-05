@@ -6,14 +6,17 @@ exponential synaptic kernel and laminar forward-field projection in place of
 jbiophysic's custom implementations.
 
 Architecture mapping:
-- jbiophysic neurons (per-neuron a,b,c,d in DataFrame) → jaxfne IzhikevichParams (population-level arrays)
-- jbiophysic connectivity (W_local_exc, W_local_inh, feedforward, feedback) → jaxfne EdgeList with receptor indices
-- jbiophysic TFNE forward-field solver → jaxfne.project_laminar_sources (Gaussian laminar proxy)
+- jbiophysic neurons (per-neuron a,b,c,d in DataFrame) → jaxfne IzhikevichParams
+  (population-level arrays)
+- jbiophysic connectivity (W_local_exc, W_local_inh, feedforward, feedback) →
+  jaxfne EdgeList with receptor indices
+- jbiophysic TFNE forward-field solver → jaxfne.project_laminar_sources
+  (Gaussian laminar proxy)
 """
 
 from __future__ import annotations
 
-from typing import Any, Mapping, NamedTuple
+from typing import Any, NamedTuple
 
 import jax
 import jax.numpy as jnp
@@ -23,7 +26,7 @@ import pandas as pd
 # Guarded jaxfne import: required for this module, optional for the package.
 try:
     import jaxfne as jtfne
-    from jaxfne import (
+    from jaxfne import (  # noqa: F401
         EdgeList,
         EIGNetwork,
         IzhikevichParams,
@@ -123,7 +126,10 @@ def jbiophysic_to_eig_network(
     # Convert positions to relative laminar depth [0, 1]
     z_m = positions_m[:, 2]
     z_min, z_max = z_m.min(), z_m.max()
-    z_depth_rel = (z_m - z_min) / (z_max - z_min + 1e-12) if z_max > z_min else jnp.ones_like(z_m) * 0.5
+    if z_max > z_min:
+        z_depth_rel = (z_m - z_min) / (z_max - z_min + 1e-12)
+    else:
+        z_depth_rel = jnp.ones_like(z_m) * 0.5
     positions_normalized = jnp.stack(
         [positions_m[:, 0], positions_m[:, 1], z_depth_rel],
         axis=1,
@@ -228,7 +234,7 @@ def _build_edges_from_connectivity(
     # Process local excitatory (E→all, AMPA)
     W_local_exc = W_parts["local_exc"]
     post, pre = np.where(W_local_exc != 0)
-    for p, q in zip(pre, post):
+    for p, q in zip(pre, post, strict=False):
         if cell_types[p] != "E":
             continue  # Skip non-E sources
         pre_indices.append(p)
@@ -240,7 +246,7 @@ def _build_edges_from_connectivity(
     # Process local inhibitory (I→all, GABA_A)
     W_local_inh = W_parts["local_inh"]
     post, pre = np.where(W_local_inh != 0)
-    for p, q in zip(pre, post):
+    for p, q in zip(pre, post, strict=False):
         if cell_types[p] == "E":
             continue  # Skip E sources
         pre_indices.append(p)
@@ -252,7 +258,7 @@ def _build_edges_from_connectivity(
     # Process feedforward (E→all, AMPA)
     W_ff = W_parts["feedforward"]
     post, pre = np.where(W_ff != 0)
-    for p, q in zip(pre, post):
+    for p, q in zip(pre, post, strict=False):
         pre_indices.append(p)
         post_indices.append(q)
         weights.append(W_ff[q, p])
@@ -262,7 +268,7 @@ def _build_edges_from_connectivity(
     # Process feedback (E→all, AMPA)
     W_fb = W_parts["feedback"]
     post, pre = np.where(W_fb != 0)
-    for p, q in zip(pre, post):
+    for p, q in zip(pre, post, strict=False):
         pre_indices.append(p)
         post_indices.append(q)
         weights.append(W_fb[q, p])
