@@ -12,6 +12,8 @@ descriptive message rather than a bare ModuleNotFoundError.
 
 from __future__ import annotations
 
+from . import playgrounds
+
 # Version derived from pyproject.toml (single source of truth).
 try:
     from importlib.metadata import version as _get_version
@@ -38,6 +40,7 @@ __all__ = [
     "make_cortex_network",
     "make_cortex_network_json",
     "jtfne",
+    "playgrounds",
 ]
 
 try:

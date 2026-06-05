@@ -25,7 +25,7 @@ jax = [
   "diffrax>=0.5",
 ]
 jaxfne = [
-  "jaxfne==0.2.30",
+  "jaxfne>=0.3.29,<0.4",
 ]
 jaxley = [
   "jaxley>=0.13",

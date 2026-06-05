@@ -59,44 +59,28 @@ class TestChapter2Documentation:
         exercise_count = content.count("## Exercise")
         assert exercise_count >= 6, f"Expected at least 6 exercises, found {exercise_count}"
 
-    def test_notebook_exists(self):
-        """Test that tutorial notebook exists."""
-        notebook_path = os.path.join(
-            os.path.dirname(__file__), "../tutorials/v0_2_passive_membrane_tutorial.ipynb"
-        )
-        assert os.path.exists(notebook_path), "Notebook not found"
+    def test_portable_tutorial_index_exists(self):
+        """Test that the cleaned repo keeps a portable tutorial index."""
+        index_path = os.path.join(os.path.dirname(__file__), "../tutorials/README.md")
+        assert os.path.exists(index_path), "Portable tutorial index not found"
 
-    def test_notebook_has_required_sections(self):
-        """Test that notebook includes all 13 required sections."""
-        notebook_path = os.path.join(
-            os.path.dirname(__file__), "../tutorials/v0_2_passive_membrane_tutorial.ipynb"
-        )
-        with open(notebook_path) as f:
-            notebook = json.load(f)
-
-        # Extract markdown cell contents
-        markdown_cells = [cell for cell in notebook["cells"] if cell["cell_type"] == "markdown"]
-        full_text = "\n".join(["".join(cell["source"]) for cell in markdown_cells])
-
-        # Check for required sections
-        required_sections = [
-            "Learning Objectives",
-            "Biological/Computational Question",
-            "Mathematical Glossary",
-            "Units",
-            "Simulation",
-            "Diagnostics",
-            "Sweep",
-            "Wrong-Timestep",
-            "Manifest",
-            "Interpretation",
-            "Failure Modes",
-            "Exercises",
-            "DOES NOT",
+    def test_portable_tutorials_exist_after_cleanup(self):
+        """Test the canonical source-only tutorial set after generated-artifact cleanup."""
+        tutorial_dir = os.path.join(os.path.dirname(__file__), "../tutorials")
+        expected = [
+            "00_neuronal_equations_book.ipynb",
+            "01_izhikevich_hh_single_neurons.ipynb",
+            "02_tfne_forward_fields.ipynb",
+            "03_tfne_izhikevich_hybrid.ipynb",
+            "04_laminar_oddball_three_area_cortex.ipynb",
         ]
 
-        for section in required_sections:
-            assert section in full_text, f"Required section '{section}' not found in notebook"
+        for notebook_name in expected:
+            notebook_path = os.path.join(tutorial_dir, notebook_name)
+            assert os.path.exists(notebook_path), f"Portable tutorial missing: {notebook_name}"
+
+        removed_notebook = os.path.join(tutorial_dir, "v0_2_passive_membrane_tutorial.ipynb")
+        assert not os.path.exists(removed_notebook), "Removed generated tutorial should not be required"
 
 
 class TestPassiveMembraneManifests:

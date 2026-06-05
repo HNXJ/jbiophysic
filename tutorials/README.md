@@ -1,12 +1,11 @@
 # jbiophysic tutorial notebooks
 
-This directory contains the contextually merged tutorial set derived from:
+This directory contains portable source notebooks backed by the latest
+`jbiophysic` package modules in `src/jbiophysic`. The repo intentionally avoids
+tracking generated HTML exports, executed notebook copies, and Colab-specific
+notebooks unless explicitly approved.
 
-- `tutorials/source_notebooks/neural_simulations_tutorial.original.ipynb`
-- `tutorials/source_notebooks/tfne_izhikevich_net.original.ipynb`
-- the latest `jbiophysic` package modules in `src/jbiophysic`
-
-The notebooks are book-style, executable smoke tutorials.  They are exploratory teaching
+The notebooks are book-style, executable smoke tutorials. They are exploratory teaching
 artifacts and should not be treated as validated biological claims.
 
 ## Notebooks
@@ -17,7 +16,7 @@ artifacts and should not be treated as validated biological claims.
 4. `03_tfne_izhikevich_hybrid.ipynb` — cortex builder + calibrated Izhikevich-to-TFNE source projection.
 5. `04_laminar_oddball_three_area_cortex.ipynb` — compact three-area laminar oddball/omission scaffold.
 
-Executed HTML versions are in `tutorials/html/`.
+Generated HTML/executed copies should be written outside tracked source paths or regenerated locally as needed.
 
 ## Run
 

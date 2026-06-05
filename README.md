@@ -18,6 +18,7 @@ Experimental computational neuroscience framework for:
 **Dependencies:**
 - **Core:** numpy, scipy, pandas, PyYAML (minimal — no JAX required for install)
 - **JAX stack:** jax, jaxlib, equinox, optax, diffrax (required for all modeling/simulation; install via [jax] extra)
+- **jaxfne engine:** optional neural-circuit playground backend, install via [jaxfne] extra.
 - **Tutorials:** jupyter, nbformat, nbconvert, ipykernel, matplotlib (optional, [tutorials] extra)
 - **Development:** pytest, pytest-cov, ruff, black (optional, [dev] extra)
 
@@ -56,7 +57,7 @@ pip install -e ".[tutorials]"
 Full stack (everything):
 
 ```bash
-pip install -e ".[jax,tutorials,dev]"
+pip install -e ".[jax,jaxfne,tutorials,dev]"
 ```
 
 ## Quick Validation
@@ -67,6 +68,37 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src python3 -m pytest -q
 
 Expected baseline may vary by branch; current archive bundle validates with targeted TFNE/JTFNE tests and strict manifest checks. Run the full command before claiming branch acceptance.
 
+
+
+## jaxfne neural-circuit playground
+
+`jbiophysic.playgrounds` adds dependency-safe wrappers around the jaxfne engine so the repo can act as a playground for jaxfne neural circuit network models without copying jaxfne internals. The wrappers keep optional dependencies lazy and preserve conservative status gates: `truth_safe_unverified`, `computational_scaffold`, `laminar_proxy_no_pde`, and `physical_amplitude_claim_allowed=False`.
+
+Dry-run manifest, no jaxfne install required:
+
+```bash
+PYTHONPATH=src python examples/jaxfne_playground_smoke.py \
+  --name suite2_four_celltype \
+  --seed 0 \
+  --duration-ms 10 \
+  --dt-ms 0.1 \
+  --out outputs/jaxfne_playground_smoke
+```
+
+Executable smoke, with jaxfne installed:
+
+```bash
+pip install -e ".[jax,jaxfne]"
+PYTHONPATH=src python examples/jaxfne_playground_smoke.py \
+  --name suite2_four_celltype \
+  --seed 0 \
+  --duration-ms 10 \
+  --dt-ms 0.1 \
+  --out outputs/jaxfne_playground_smoke \
+  --execute
+```
+
+See `docs/jaxfne_playground.md`.
 
 ## JTFNE spectrolaminar CLI (developmental scaffold)
 
@@ -95,11 +127,7 @@ not biological proof, mechanism proof, or calibrated CSD/EEG/MEG amplitude evide
 
 These are executable teaching artifacts and should not be treated as validated biological claims. See `tutorials/README.md` for scientific guardrails and replication constraints.
 
-**Colab artifacts (historical reference, not portable):**
-
-- `tutorials/source_notebooks/tfne_izhikevich_net.colab.ipynb` — Original Colab notebook with google.colab imports and shell magics (%cd, !pip). For reference only; use portable tutorials for executable work.
-
-HTML exports of portable tutorials live in `tutorials/html/`.
+Generated tutorial HTML/executed notebooks should stay outside git unless explicitly approved.
 
 ## Starter Examples
 
