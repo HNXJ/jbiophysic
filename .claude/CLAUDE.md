@@ -1,9 +1,11 @@
 # jbiophysic Claude Code Operating Context
 
-**Status:** Gamma Labyrinth alignment (jbiophysic specialized).  
-**Date:** 2026-05-10  
+**Status:** jbiophysic specialized operating context.  
+**Date:** 2026-05-10 (baseline + skill/identity rules updated 2026-06-12)  
 **Checkpoint:** commit aaa83cbf69eaac0a9b6a1fe3e540cfc04833a94d  
-**truth_mode:** truth_safe_unverified, tutorial_exploratory_not_biological_truth
+**truth_mode:** truth_safe_unverified, tutorial_exploratory_not_biological_truth  
+**Canonical copy:** `/Users/hamednejat/workspace/main/jbiophysic/.claude/CLAUDE.md`. A byte-mirror exists at `/Users/hamednejat/workspace/computational/jbiophysic/.claude/CLAUDE.md` — edit THIS file, then re-sync the mirror.  
+**Test baseline (authoritative, verified 2026-06-12):** `289 passed, 1 skipped`. If this number disagrees with a fresh run, the run wins — re-measure with the command in Section D and update here.
 
 ---
 
@@ -16,10 +18,11 @@ Every Claude Code report for jbiophysic must begin and end with:
 ```
 
 **Rules:**
-- Do not guess model identity or workspace path; use verified values.
+- Read the model id from the runtime; never copy a template literal and never guess. Use `pwd` for the path.
 - Use `pwd` and `python --version` in active shell to confirm.
-- If unavailable, use: `[unknown_model_do_not_guess][jbiophysic][yyyymmdd-hhmm]`
+- If genuinely unavailable, use: `[unknown_model_do_not_guess][jbiophysic][yyyymmdd-hhmm]`
 - Include start-of-work and end-of-work timestamps.
+- Omit this header/footer entirely when output is machine-parsed (subagent return value / JSON / scripted pipeline).
 
 ---
 
@@ -35,7 +38,7 @@ Every Claude Code report for jbiophysic must begin and end with:
 
 | Theme | Role | Status |
 |-------|------|--------|
-| JAX-compatible neuron/circuit sim | Core computation framework | JAX 0.10.0, CPU-safe, baseline 61/61 tests |
+| JAX-compatible neuron/circuit sim | Core computation framework | JAX 0.10.0, CPU-safe, baseline 289 passed/1 skipped (2026-06-12) |
 | Izhikevich emitters | Spiking neuron model | Preserve API; presets/docs/tests later |
 | Hodgkin-Huxley emitters | Biophysical neuron model | Preserve API; integrate with HH tests |
 | TFNE: Emitter → Source → Field → Probe | Forward-field CSD/LFP framework | Preserve architecture; add conservation/gauge tests later |
@@ -65,7 +68,7 @@ python -m pip install -e '.[dev,jax,tutorials]'
 **Test baseline:**
 ```bash
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src python -m pytest -q --tb=short
-# Result: 61 passed, 0 failed, 0 errors, 2 non-critical warnings (~13.6s)
+# Result (verified 2026-06-12): 289 passed, 1 skipped, 14 warnings (~27s). Re-run to confirm; the run wins over this comment.
 ```
 
 **JAX/Optax imports (verified):**
@@ -233,7 +236,7 @@ else:
 **Current API:** IzhikevichParams, scan-based simulation, JIT-compatible.
 
 **Preserve:**
-- Existing parameter API and tests (61/61 baseline)
+- Existing parameter API and tests (289-test baseline, 2026-06-12)
 - Scan/JIT compatibility
 - Deterministic seeds
 - Unit consistency (ms, mV, pA/nA where applicable)
@@ -357,10 +360,10 @@ git rev-parse origin/main
 
 ## M. Final Report Template
 
-Every Claude Code session ends with this format:
+This **specializes** the global Minimal Report Format (`~/.claude/CLAUDE.md`) for jbiophysic — same structure, with the Validation block fixed to this repo's gates (tests before/after, no-secrets scan, exact staged paths). Where they overlap, follow this section. Every human-facing jbiophysic session ends with this format (omit the identity header/footer when output is machine-parsed):
 
 ```
-[claude-haiku-4-5-20251001][/Users/hamednejat/workspace/main/jbiophysic][yyyymmdd-hhmm]
+[<runtime-model-id>][/Users/hamednejat/workspace/main/jbiophysic][yyyymmdd-hhmm]
 
 ### Work Performed
 - Files changed: [list]
@@ -391,7 +394,7 @@ Every Claude Code session ends with this format:
 ### Next Safe Action
 [One specific, actionable step]
 
-[claude-haiku-4-5-20251001][/Users/hamednejat/workspace/main/jbiophysic][yyyymmdd-hhmm]
+[<runtime-model-id>][/Users/hamednejat/workspace/main/jbiophysic][yyyymmdd-hhmm]
 ```
 
 **Rules:**
@@ -410,15 +413,15 @@ cd /Users/hamednejat/workspace/main/jbiophysic
 source .venv/bin/activate
 python --version  # Should be >=3.10; local env observed Python 3.13.7
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src python -m pytest -q --tb=short
-# Expected: 109 passed, 8 skipped (as of v1.1.1)
+# Expected: 289 passed, 1 skipped (verified 2026-06-12). Run to confirm — the directory/run wins over this number.
 ```
 
 **Standard workflow:**
 1. Read this file (Section N onwards)
 2. Read `README.md` for repo overview
 3. Read `docs/jax_compatibility.md` and `docs/tutorial_status.md` for current policy state
-4. Inspect `P0_BASELINE_SUMMARY.md` and `P1_DECISIONS.md` for audit trail
-5. Consult `AUDIT_AND_REFACTOR_PLAN.md` for approved GAMMA phases
+4. Inspect `docs/audit/P0_BASELINE_SUMMARY.md` and `docs/audit/P1_DECISIONS.md` for audit trail
+5. Consult `docs/audit/AUDIT_AND_REFACTOR_PLAN.md` for approved GAMMA phases
 6. Work in narrow scope (one GAMMA phase, one theme)
 7. Run validation before every commit
 8. End with identity-wrapped report (Section M)
@@ -430,9 +433,9 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONPATH=src python -m pytest -q --tb=short
 - `README.md` — Install modes, quick validation, baseline evidence, tutorial classification
 - `docs/jax_compatibility.md` — JAX baseline and modernization roadmap
 - `docs/tutorial_status.md` — Notebook audit evidence and scientific guardrails
-- `P0_BASELINE_SUMMARY.md` — Baseline validation evidence (Python 3.11, 61 tests, imports)
-- `P1_DECISIONS.md` — Policy decisions (Optax, Colab, pmap, Izhikevich, TFNE, legacy)
-- `AUDIT_AND_REFACTOR_PLAN.md` — Approved GAMMA phases and scope definition
+- `docs/audit/P0_BASELINE_SUMMARY.md` — Baseline validation evidence (Python 3.11, 61 tests, imports)
+- `docs/audit/P1_DECISIONS.md` — Policy decisions (Optax, Colab, pmap, Izhikevich, TFNE, legacy)
+- `docs/audit/AUDIT_AND_REFACTOR_PLAN.md` — Approved GAMMA phases and scope definition
 - `/Users/hamednejat/.claude/CLAUDE.md` — Global Gamma Labyrinth doctrine (reference only)
 
 ---
